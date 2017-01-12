@@ -3,8 +3,8 @@
 ## Overview
 This project is a lightweight HTML5/AngularJS 1.x component that implements an API Explorer.  The idea
 is to create a very lightweight component that can be embedded in any web server to implement API tooling
-for VMware APIs.  The component can serve API declarations that are embedded locally with the component as
-well as those retrieved from the VMware API web services
+for VMware APIs.  The component can serve API declarations that are embedded locally with the component at
+build time as well as those retrieved from the VMware API web services.
 
 ## Try it out
 
@@ -57,6 +57,9 @@ grunt serve
 ```
 
 ## Documentation
+TODO references to API services docs
+
+TODO getting started guide on how to embed this
 
 ## Releases & Major Branches
 
@@ -68,3 +71,4 @@ questions about the CLA process, please refer to our [FAQ](https://cla.vmware.co
 refer to [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
+All files are released under the terms of the MIT License, see the [LICENSE](LICENSE) file in the root of this project.
