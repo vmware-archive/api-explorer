@@ -1,0 +1,1920 @@
+{
+    "info": {
+        "termsOfService": "http://swagger.io/terms/", 
+        "description": "", 
+        "title": "cis"
+    }, 
+    "paths": {
+        "/com/vmware/cis/session": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Newly created session identifier to be used for authenticating further requests.", 
+                        "schema": {
+                            "type": "secret"
+                        }
+                    }, 
+                    "401": {
+                        "description": "if the session creation fails due to request specific issues. Due to the security nature of the API the details of the error are not disclosed. <p> Please check the following preconditions if using a SAML token to authenticate: <ul> <li>the supplied token is delegate-able.</li> <li>the time of client and server system are synchronized.</li> <li>the token supplied is valid.</li> <li>if bearer tokens are used check that system configuration allows the API endpoint to accept such tokens.</li> </ul>", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthenticated"
+                        }
+                    }, 
+                    "503": {
+                        "description": "if session creation fails due to server specific issues, for example connection to a back end component is failing. Due to the security nature of this API further details will not be disclosed in the {@term error}. Please refer to component health information, administrative logs and product specific documentation for possible causes.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.service_unavailable"
+                        }
+                    }
+                }, 
+                "parameters": [], 
+                "tags": [
+                    "session "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Creates a session with the API. This is the equivalent of login. This {@term operation} exchanges user credentials supplied in the security context for a session identifier that is to be used for authenticating subsequent calls. To authenticate subsequent calls clients are expected to include the session key."
+            }, 
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "401": {
+                        "description": "if the session id is missing from the request or the corresponding session object cannot be found.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthenticated"
+                        }
+                    }, 
+                    "503": {
+                        "description": "if session deletion fails due to server specific issues, for example connection to a back end component is failing. Due to the security nature of this API further details will not be disclosed in the {@term error}. Please refer to component health information, administrative logs and product specific documentation for possible causes.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.service_unavailable"
+                        }
+                    }
+                }, 
+                "parameters": [], 
+                "tags": [
+                    "session "
+                ], 
+                "summary": "Terminates the validity of a session token. This is the equivalent of log out. <p> A session identifier is expected as part of the request. <p>"
+            }
+        }, 
+        "/com/vmware/cis/session?~action=get": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Information about the session.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.session.info"
+                        }
+                    }, 
+                    "401": {
+                        "description": "if the session id is missing from the request or the corresponding session object cannot be found.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthenticated"
+                        }
+                    }, 
+                    "503": {
+                        "description": "if session retrieval fails due to server specific issues e.g. connection to back end component is failing. Due to the security nature of this API further details will not be disclosed in the error. Please refer to component health information, administrative logs and product specific documentation for possible causes.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.service_unavailable"
+                        }
+                    }
+                }, 
+                "parameters": [], 
+                "tags": [
+                    "session "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Returns information about the current session. This {@term operation} expects a valid session identifier to be supplied. <p> A side effect of invoking this {@term operation} may be a change to the session's last accessed time to the current time if this is supported by the session implementation. Invoking any other {@term operation} in the API will also update the session's last accessed time. <p> This API is meant to serve the needs of various front end projects that may want to display the name of the user. Examples of this include various web based user interfaces and logging facilities."
+            }
+        }, 
+        "/com/vmware/cis/tagging/category": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The identifier of the created category.", 
+                        "schema": {
+                            "type": "string"
+                        }
+                    }, 
+                    "400": {
+                        "description": "if any of the information in the {@param.name createSpec} is invalid.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.invalid_argument"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to create a category.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.category_create"
+                        }, 
+                        "required": true, 
+                        "name": "create_spec", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Creates a category. To invoke this {@term operation}, you need the create category privilege."
+            }, 
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of resource identifiers for the categories in the system.", 
+                        "schema": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }
+                }, 
+                "parameters": [], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "summary": "Enumerates the categories in the system. To invoke this {@term operation}, you need the read privilege on the individual categories. The {@term list} will only contain those categories for which you have read privileges."
+            }
+        }, 
+        "/com/vmware/cis/tagging/category/id:{category_id}": {
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "400": {
+                        "description": "if any of the information in the {@param.name updateSpec} is invalid.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.invalid_argument"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to update the category.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the category for the given {@param.name categoryId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the category to be updated.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "category_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.category_update"
+                        }, 
+                        "required": true, 
+                        "name": "update_spec", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Updates an existing category. To invoke this {@term operation}, you need the edit privilege on the category."
+            }, 
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "The {@link CategoryModel} that corresponds to {@param.name categoryId}.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.category_model"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to read the category.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the category for the given {@param.name categoryId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input category.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "category_id", 
+                        "in": "path"
+                    }
+                ], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "summary": "Fetches the category information for the given category identifier. In order to view the category information, you need the read privilege on the category."
+            }, 
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to delete the category.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the category for the given {@param.name categoryId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of category to be deleted.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "category_id", 
+                        "in": "path"
+                    }
+                ], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "summary": "Deletes an existing category. To invoke this {@term operation}, you need the delete privilege on the category."
+            }
+        }, 
+        "/com/vmware/cis/tagging/category/id:{category_id}?~action=add-to-used-by": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to add an entity to the {@link CategoryModel#usedBy} field.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the category for the given {@param.name categoryId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input category.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "category_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.category_add_to_used_by"
+                        }, 
+                        "required": true, 
+                        "name": "used_by_entity", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Adds the {@param.name usedByEntity} to the {@link CategoryModel#usedBy} subscribers {@term set} for the specified category. If the {@param.name usedByEntity} is already in the {@term set}, then this becomes an idempotent no-op. To invoke this {@term operation}, you need the modify {@link CategoryModel#usedBy} privilege on the category."
+            }
+        }, 
+        "/com/vmware/cis/tagging/category/id:{category_id}?~action=remove-from-used-by": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to remove an entity from the {@link CategoryModel#usedBy} field.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the category for the given {@param.name categoryId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input category.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "category_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.category_remove_from_used_by"
+                        }, 
+                        "required": true, 
+                        "name": "used_by_entity", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Removes the {@param.name usedByEntity} from the {@link CategoryModel#usedBy} subscribers {@term set}. If the {@param.name usedByEntity} is not using this category, then this becomes a no-op. To invoke this {@term operation}, you need the modify {@link CategoryModel#usedBy} privilege on the category."
+            }
+        }, 
+        "/com/vmware/cis/tagging/category/id:{category_id}?~action=revoke-propagating-permissions": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to revoke propagating permissions on the category.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the category for the given {@param.name categoryId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input category.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "category_id", 
+                        "in": "path"
+                    }
+                ], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Revokes all propagating permissions on the given category. You should then attach a direct permission with tagging privileges on the given category. To invoke this {@term operation}, you need category related privileges (direct or propagating) on the concerned category."
+            }
+        }, 
+        "/com/vmware/cis/tagging/category?~action=list-used-categories": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of resource identifiers for the categories in the system that are used by {@param.name usedByEntity}.", 
+                        "schema": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.category_list_used_categories"
+                        }, 
+                        "required": true, 
+                        "name": "used_by_entity", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/category "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Enumerates all categories for which the {@param.name usedByEntity} is part of the {@link CategoryModel#usedBy} subscribers {@term set}. To invoke this {@term operation}, you need the read privilege on the individual categories."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The identifier of the created tag.", 
+                        "schema": {
+                            "type": "string"
+                        }
+                    }, 
+                    "400": {
+                        "description": "if any of the input information in the {@param.name createSpec} is invalid.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.invalid_argument"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to create tag.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the category for in the given {@param.name createSpec} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_create"
+                        }, 
+                        "required": true, 
+                        "name": "create_spec", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Creates a tag. To invoke this {@term operation}, you need the create tag privilege on the input category."
+            }, 
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of resource identifiers for the tags in the system.", 
+                        "schema": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }
+                }, 
+                "parameters": [], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "summary": "Enumerates the tags in the system. To invoke this {@term operation}, you need read privilege on the individual tags. The {@term list} will only contain tags for which you have read privileges."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association/id:{tag_id}?~action=attach": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "400": {
+                        "description": "if the input tag is not eligible to be attached to this object or if the {@param.name objectId} is not valid.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.invalid_argument"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to attach the tag or do not have the privilege to read the object.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_attach"
+                        }, 
+                        "required": true, 
+                        "name": "object_id", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Attaches the given tag to the input object. The tag needs to meet the cardinality ({@link CategoryModel#cardinality}) and associability ({@link CategoryModel#associableTypes}) criteria in order to be eligible for attachment. If the tag is already attached to the object, then this {@term operation} is a no-op and an error will not be thrown. To invoke this {@term operation}, you need the attach tag privilege on the tag and the read privilege on the object."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association/id:{tag_id}?~action=attach-tag-to-multiple-objects": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The outcome of the batch {@term operation} and the {@term list} of error messages ({@link BatchResult#errorMessages}) describing attachment failures.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association.batch_result"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the attach tag privilege on the tag.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_attach_tag_to_multiple_objects"
+                        }, 
+                        "required": true, 
+                        "name": "object_ids", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Attaches the given tag to the input objects. If a tag is already attached to the object, then the individual {@term operation} is a no-op and an error will not be added to {@link BatchResult#errorMessages}. To invoke this {@term operation}, you need the attach tag privilege on the tag and the read privilege on each object."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association/id:{tag_id}?~action=detach": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to detach the tag or do not have the privilege to read the given object.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_detach"
+                        }, 
+                        "required": true, 
+                        "name": "object_id", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Detaches the tag from the given object. If the tag is already removed from the object, then this {@term operation} is a no-op and an error will not be thrown. To invoke this {@term operation}, you need the attach tag privilege on the tag and the read privilege on the object."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association/id:{tag_id}?~action=detach-tag-from-multiple-objects": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The outcome of the batch {@term operation} and the {@term list} of error messages ({@link BatchResult#errorMessages}) describing detachment failures.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association.batch_result"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the attach tag privilege on the tag.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given tag does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_detach_tag_from_multiple_objects"
+                        }, 
+                        "required": true, 
+                        "name": "object_ids", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Detaches the given tag from the input objects. If a tag is already removed from the object, then the individual {@term operation} is a no-op and an error will not be added to {@link BatchResult#errorMessages}. To invoke this {@term operation}, you need the attach tag privilege on the tag and the read privilege on each object."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association/id:{tag_id}?~action=list-attached-objects": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of attached object identifiers.", 
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to read the tag.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Fetches the {@term list} of attached objects for the given tag. To invoke this {@term operation}, you need the read privilege on the input tag. Only those objects for which you have the read privilege will be returned."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association?~action=attach-multiple-tags-to-object": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The outcome of the batch {@term operation} and the {@term list} of error messages ({@link BatchResult#errorMessages}) describing attachment failures.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association.batch_result"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to read the object.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_attach_multiple_tags_to_object"
+                        }, 
+                        "required": true, 
+                        "name": "object_id", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Attaches the given tags to the input object. If a tag is already attached to the object, then the individual {@term operation} is a no-op and an error will not be added to {@link BatchResult#errorMessages}. To invoke this {@term operation}, you need the read privilege on the object and the attach tag privilege on each tag."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association?~action=detach-multiple-tags-from-object": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The outcome of the batch {@term operation} and the {@term list} of error messages ({@link BatchResult#errorMessages}) describing detachment failures.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association.batch_result"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to read the object.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_detach_multiple_tags_from_object"
+                        }, 
+                        "required": true, 
+                        "name": "object_id", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Detaches the given tags from the input object. If a tag is already removed from the object, then the individual {@term operation} is a no-op and an error will not be added to {@link BatchResult#errorMessages}. To invoke this {@term operation}, you need the read privilege on the object and the attach tag privilege each tag."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association?~action=list-attachable-tags": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of tag identifiers that are eligible to be attached to the given object.", 
+                        "schema": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to read the object.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_list_attachable_tags"
+                        }, 
+                        "required": true, 
+                        "name": "object_id", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Fetches the {@term list} of attachable tags for the given object, omitting the tags that have already been attached. Criteria for attachability is calculated based on tagging cardinality ({@link CategoryModel#cardinality}) and associability ({@link CategoryModel#associableTypes}) constructs. To invoke this {@term operation}, you need the read privilege on the input object. The {@term list} will only contain those tags for which you have read privileges."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association?~action=list-attached-objects-on-tags": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of the tag identifiers to all object identifiers that each tag is attached to.", 
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/com.vmware.cis.tagging.tag_association.tag_to_objects"
+                            }, 
+                            "type": "array"
+                        }
+                    }
+                }, 
+                "parameters": [], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Fetches the {@term list} of {@link TagToObjects} describing the input tag identifiers and the objects they are attached to. To invoke this {@term operation}, you need the read privilege on each input tag. The {@link TagToObjects#objectIds} will only contain those objects for which you have the read privilege."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association?~action=list-attached-tags": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of all tag identifiers that correspond to the tags attached to the given object.", 
+                        "schema": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to read the object.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_list_attached_tags"
+                        }, 
+                        "required": true, 
+                        "name": "object_id", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Fetches the {@term list} of tags attached to the given object. To invoke this {@term operation}, you need the read privilege on the input object. The {@term list} will only contain those tags for which you have the read privileges."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag-association?~action=list-attached-tags-on-objects": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of the object identifiers to all tag identifiers that are attached to that object.", 
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/com.vmware.cis.tagging.tag_association.object_to_tags"
+                            }, 
+                            "type": "array"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_association_list_attached_tags_on_objects"
+                        }, 
+                        "required": true, 
+                        "name": "object_ids", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag_association "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Fetches the {@term list} of {@link ObjectToTags} describing the input object identifiers and the tags attached to each object. To invoke this {@term operation}, you need the read privilege on each input object. The {@link ObjectToTags#tagIds} will only contain those tags for which you have the read privilege."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag/id:{category_id}?~action=list-tags-for-category": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of resource identifiers for the tags in the given input category.", 
+                        "schema": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to read the category.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the category for the given {@param.name categoryId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input category.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "category_id", 
+                        "in": "path"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Enumerates all tags for the given category. To invoke this {@term operation}, you need the read privilege on the given category and the individual tags in that category."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag/id:{tag_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "The {@link TagModel} that corresponds to {@param.name tagId}.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_model"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if the user does not have the privilege to read the tag.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "summary": "Fetches the tag information for the given tag identifier. To invoke this {@term operation}, you need the read privilege on the tag in order to view the tag info."
+            }, 
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "400": {
+                        "description": "if any of the input information in the {@param.name updateSpec} is invalid.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.invalid_argument"
+                        }
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to update the tag.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_update"
+                        }, 
+                        "required": true, 
+                        "name": "update_spec", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Updates an existing tag. To invoke this {@term operation}, you need the edit privilege on the tag."
+            }, 
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to delete the tag.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "summary": "Deletes an existing tag. To invoke this {@term operation}, you need the delete privilege on the tag."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag/id:{tag_id}?~action=add-to-used-by": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to add an entity to the {@link TagModel#usedBy} field.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_add_to_used_by"
+                        }, 
+                        "required": true, 
+                        "name": "used_by_entity", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Adds the {@param.name usedByEntity} to the {@link TagModel#usedBy} subscribers {@term set}. If the {@param.name usedByEntity} is already in the {@term set}, then this becomes a no-op. To invoke this {@term operation}, you need the modify {@link TagModel#usedBy} privilege on the tag."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag/id:{tag_id}?~action=remove-from-used-by": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to remove an entity from the {@link TagModel#usedBy} field.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }, 
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_remove_from_used_by"
+                        }, 
+                        "required": true, 
+                        "name": "used_by_entity", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Removes the {@param.name usedByEntity} from the {@link TagModel#usedBy} subscribers set. If the {@param.name usedByEntity} is not using this tag, then this becomes a no-op. To invoke this {@term operation}, you need modify {@link TagModel#usedBy} privilege on the tag."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag/id:{tag_id}?~action=revoke-propagating-permissions": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }, 
+                    "403": {
+                        "description": "if you do not have the privilege to revoke propagating permissions on the tag.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.unauthorized"
+                        }
+                    }, 
+                    "404": {
+                        "description": "if the tag for the given {@param.name tagId} does not exist in the system.", 
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.vapi.std.errors.not_found"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "description": "The identifier of the input tag.", 
+                        "required": true, 
+                        "type": "string", 
+                        "name": "tag_id", 
+                        "in": "path"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Revokes all propagating permissions on the given tag. You should then attach a direct permission with tagging privileges on the given tag. To invoke this {@term operation}, you need tag related privileges (direct or propagating) on the concerned tag."
+            }
+        }, 
+        "/com/vmware/cis/tagging/tag?~action=list-used-tags": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "The {@term list} of resource identifiers for the tags in the system that are used by {@param.name usedByEntity}.", 
+                        "schema": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }
+                }, 
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/com.vmware.cis.tagging.tag_list_used_tags"
+                        }, 
+                        "required": true, 
+                        "name": "used_by_entity", 
+                        "in": "body"
+                    }
+                ], 
+                "tags": [
+                    "tagging/tag "
+                ], 
+                "consumes": [
+                    "application/json"
+                ], 
+                "summary": "Enumerates all tags for which the {@param.name usedByEntity} is part of the {@link TagModel#usedBy} subscribers {@term set}. To invoke this {@term operation}, you need the read privilege on the individual tags."
+            }
+        }
+    }, 
+    "schemes": [
+        "https", 
+        "http"
+    ], 
+    "tags": [], 
+    "basePath": "/rest", 
+    "host": "", 
+    "definitions": {
+        "com.vmware.cis.session.info": {
+            "required": [
+                "created_time", 
+                "last_accessed_time", 
+                "user"
+            ], 
+            "type": "object", 
+            "properties": {
+                "created_time": {
+                    "type": "date_time", 
+                    "description": "Time when the session was created."
+                }, 
+                "last_accessed_time": {
+                    "type": "date_time", 
+                    "description": "Last time this session was used by passing the session key for invoking an API."
+                }, 
+                "user": {
+                    "type": "string", 
+                    "description": "Fully qualified name of the end user that created the session, for example Administrator@vsphere.local. A typical use case for this information is in Graphical User Interfaces (GUI) or logging systems to visualize the identity of the current user."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.category.create_spec": {
+            "required": [
+                "cardinality", 
+                "associable_types", 
+                "name", 
+                "description"
+            ], 
+            "type": "object", 
+            "properties": {
+                "cardinality": {
+                    "description": "The associated cardinality ({@enum.values Cardinality}) of the category.", 
+                    "$ref": "#/definitions/com.vmware.cis.tagging.category_model.cardinality"
+                }, 
+                "associable_types": {
+                    "uniqueItems": true, 
+                    "items": {
+                        "type": "string"
+                    }, 
+                    "type": "array", 
+                    "description": "Object types to which this category's tags can be attached."
+                }, 
+                "name": {
+                    "type": "string", 
+                    "description": "The display name of the category."
+                }, 
+                "description": {
+                    "type": "string", 
+                    "description": "The description of the category."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.category.update_spec": {
+            "type": "object", 
+            "properties": {
+                "cardinality": {
+                    "description": "The associated cardinality ({@enum.values Cardinality}) of the category.", 
+                    "$ref": "#/definitions/com.vmware.cis.tagging.category_model.cardinality"
+                }, 
+                "associable_types": {
+                    "uniqueItems": true, 
+                    "items": {
+                        "type": "string"
+                    }, 
+                    "type": "array", 
+                    "description": "Object types to which this category's tags can be attached. <p> The {@term set} of associable types cannot be updated incrementally. For example, if {@link #associableTypes} originally contains {A,B,C} and you want to add D, then you need to pass {A,B,C,D} in your update specification. You also cannot remove any item from this {@term set}. For example, if you have {A,B,C}, then you cannot remove say {A} from it. Similarly, if you start with an empty {@term set}, then that implies that you can tag any object and hence you cannot later pass say {A}, because that would be restricting the type of objects you want to tag. Thus, associable types can only grow and not shrink."
+                }, 
+                "name": {
+                    "type": "string", 
+                    "description": "The display name of the category."
+                }, 
+                "description": {
+                    "type": "string", 
+                    "description": "The description of the category."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.category_add_to_used_by": {
+            "required": [
+                "used_by_entity"
+            ], 
+            "type": "object", 
+            "properties": {
+                "used_by_entity": {
+                    "type": "string", 
+                    "description": "The name of the user to be added to the {@link CategoryModel#usedBy} {@term set}."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.category_create": {
+            "required": [
+                "create_spec"
+            ], 
+            "type": "object", 
+            "properties": {
+                "create_spec": {
+                    "description": "Specification for the new category to be created.", 
+                    "$ref": "#/definitions/com.vmware.cis.tagging.category.create_spec"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.category_list_used_categories": {
+            "required": [
+                "used_by_entity"
+            ], 
+            "type": "object", 
+            "properties": {
+                "used_by_entity": {
+                    "type": "string", 
+                    "description": "The field on which the results will be filtered."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.category_model": {
+            "required": [
+                "description", 
+                "used_by", 
+                "cardinality", 
+                "associable_types", 
+                "id", 
+                "name"
+            ], 
+            "type": "object", 
+            "properties": {
+                "description": {
+                    "type": "string", 
+                    "description": "The description of the category."
+                }, 
+                "used_by": {
+                    "uniqueItems": true, 
+                    "items": {
+                        "type": "string"
+                    }, 
+                    "type": "array", 
+                    "description": "The {@term set} of users that can use this category. To add users to this, you need to have the edit privilege on the category. Similarly, to unsubscribe from this category, you need the edit privilege on the category. You should not modify other users subscription from this {@term set}."
+                }, 
+                "cardinality": {
+                    "description": "The associated cardinality ({@enum.values Cardinality}) of the category.", 
+                    "$ref": "#/definitions/com.vmware.cis.tagging.category_model.cardinality"
+                }, 
+                "associable_types": {
+                    "uniqueItems": true, 
+                    "items": {
+                        "type": "string"
+                    }, 
+                    "type": "array", 
+                    "description": "The types of objects that the tags in this category can be attached to. If the {@term set} is empty, then tags can be attached to all types of objects. This field works only for objects that reside in Inventory Service (IS). For non IS objects, this check is not performed today and hence a tag can be attached to any non IS object."
+                }, 
+                "id": {
+                    "type": "string", 
+                    "description": "The unique identifier of the category."
+                }, 
+                "name": {
+                    "type": "string", 
+                    "description": "The display name of the category."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.category_model.cardinality": {
+            "enum": [
+                "SINGLE", 
+                "MULTIPLE"
+            ], 
+            "type": "string", 
+            "description": "The {@name Cardinality} {@term enumerated type} defines the number of tags in a category that can be assigned to an object."
+        }, 
+        "com.vmware.cis.tagging.category_remove_from_used_by": {
+            "required": [
+                "used_by_entity"
+            ], 
+            "type": "object", 
+            "properties": {
+                "used_by_entity": {
+                    "type": "string", 
+                    "description": "The name of the user to be removed from the {@link CategoryModel#usedBy} {@term set}."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.category_update": {
+            "required": [
+                "update_spec"
+            ], 
+            "type": "object", 
+            "properties": {
+                "update_spec": {
+                    "description": "Specification to update the category.", 
+                    "$ref": "#/definitions/com.vmware.cis.tagging.category.update_spec"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag.create_spec": {
+            "required": [
+                "category_id", 
+                "name", 
+                "description"
+            ], 
+            "type": "object", 
+            "properties": {
+                "category_id": {
+                    "type": "string", 
+                    "description": "The unique identifier of the parent category in which this tag will be created."
+                }, 
+                "name": {
+                    "type": "string", 
+                    "description": "The display name of the tag. The name must be unique within its category."
+                }, 
+                "description": {
+                    "type": "string", 
+                    "description": "The description of the tag."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag.update_spec": {
+            "type": "object", 
+            "properties": {
+                "name": {
+                    "type": "string", 
+                    "description": "The display name of the tag."
+                }, 
+                "description": {
+                    "type": "string", 
+                    "description": "The description of the tag."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_add_to_used_by": {
+            "required": [
+                "used_by_entity"
+            ], 
+            "type": "object", 
+            "properties": {
+                "used_by_entity": {
+                    "type": "string", 
+                    "description": "The name of the user to be added to the {@link TagModel#usedBy} {@term set}."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association.batch_result": {
+            "required": [
+                "success", 
+                "error_messages"
+            ], 
+            "type": "object", 
+            "properties": {
+                "success": {
+                    "type": "boolean", 
+                    "description": "This is true if the batch {@term operation} completed without any errors. Otherwise it is false and all or some {@term operations} have failed."
+                }, 
+                "error_messages": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.localizable_message"
+                    }, 
+                    "type": "array", 
+                    "description": "The {@term list} of error messages."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association.object_to_tags": {
+            "required": [
+                "tag_ids", 
+                "object_id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "tag_ids": {
+                    "items": {
+                        "type": "string"
+                    }, 
+                    "type": "array", 
+                    "description": "The identifiers of the related tags."
+                }, 
+                "object_id": {
+                    "description": "The identifier of the object.", 
+                    "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association.tag_to_objects": {
+            "required": [
+                "object_ids", 
+                "tag_id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_ids": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                    }, 
+                    "type": "array", 
+                    "description": "The identifiers of the related objects."
+                }, 
+                "tag_id": {
+                    "type": "string", 
+                    "description": "The identifier of the tag."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_attach": {
+            "required": [
+                "object_id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_id": {
+                    "description": "The identifier of the input object.", 
+                    "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_attach_multiple_tags_to_object": {
+            "required": [
+                "object_id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_id": {
+                    "description": "The identifier of the input object.", 
+                    "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_attach_tag_to_multiple_objects": {
+            "required": [
+                "object_ids"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_ids": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                    }, 
+                    "type": "array", 
+                    "description": "The identifiers of the input objects."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_detach": {
+            "required": [
+                "object_id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_id": {
+                    "description": "The identifier of the input object.", 
+                    "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_detach_multiple_tags_from_object": {
+            "required": [
+                "object_id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_id": {
+                    "description": "The identifier of the input object.", 
+                    "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_detach_tag_from_multiple_objects": {
+            "required": [
+                "object_ids"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_ids": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                    }, 
+                    "type": "array", 
+                    "description": "The identifiers of the input objects."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_list_attachable_tags": {
+            "required": [
+                "object_id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_id": {
+                    "description": "The identifier of the input object.", 
+                    "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_list_attached_tags": {
+            "required": [
+                "object_id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_id": {
+                    "description": "The identifier of the input object.", 
+                    "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_association_list_attached_tags_on_objects": {
+            "required": [
+                "object_ids"
+            ], 
+            "type": "object", 
+            "properties": {
+                "object_ids": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.dynamic_ID"
+                    }, 
+                    "type": "array", 
+                    "description": "The identifiers of the input objects."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_create": {
+            "required": [
+                "create_spec"
+            ], 
+            "type": "object", 
+            "properties": {
+                "create_spec": {
+                    "description": "Specification for the new tag to be created.", 
+                    "$ref": "#/definitions/com.vmware.cis.tagging.tag.create_spec"
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_list_used_tags": {
+            "required": [
+                "used_by_entity"
+            ], 
+            "type": "object", 
+            "properties": {
+                "used_by_entity": {
+                    "type": "string", 
+                    "description": "The field on which the results will be filtered."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_model": {
+            "required": [
+                "used_by", 
+                "description", 
+                "category_id", 
+                "id", 
+                "name"
+            ], 
+            "type": "object", 
+            "properties": {
+                "used_by": {
+                    "uniqueItems": true, 
+                    "items": {
+                        "type": "string"
+                    }, 
+                    "type": "array", 
+                    "description": "The {@term set} of users that can use this tag. To add users to this, you need to have the edit privilege on the tag. Similarly, to unsubscribe from this tag, you need the edit privilege on the tag. You should not modify other users subscription from this {@term set}."
+                }, 
+                "description": {
+                    "type": "string", 
+                    "description": "The description of the tag."
+                }, 
+                "category_id": {
+                    "type": "string", 
+                    "description": "The identifier of the parent category in which this tag will be created."
+                }, 
+                "id": {
+                    "type": "string", 
+                    "description": "The unique identifier of the tag."
+                }, 
+                "name": {
+                    "type": "string", 
+                    "description": "The display name of the tag."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_remove_from_used_by": {
+            "required": [
+                "used_by_entity"
+            ], 
+            "type": "object", 
+            "properties": {
+                "used_by_entity": {
+                    "type": "string", 
+                    "description": "The name of the user to be removed from the {@link TagModel#usedBy} {@term set}."
+                }
+            }
+        }, 
+        "com.vmware.cis.tagging.tag_update": {
+            "required": [
+                "update_spec"
+            ], 
+            "type": "object", 
+            "properties": {
+                "update_spec": {
+                    "description": "Specification to update the tag.", 
+                    "$ref": "#/definitions/com.vmware.cis.tagging.tag.update_spec"
+                }
+            }
+        }, 
+        "com.vmware.vapi.std.dynamic_ID": {
+            "required": [
+                "type", 
+                "id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "type": {
+                    "type": "string", 
+                    "description": "The type of resource being identified (for example {@code com.acme.Person}). <p> {@term Services} that contain {@term operations} for creating and deleting resources typically contain a {@term constant} specifying the resource type for the resources being created and deleted. The API metamodel metadata {@term services} include a {@term service} that allows retrieving all the known resource types."
+                }, 
+                "id": {
+                    "type": "string", 
+                    "description": "The identifier for a resource whose type is specified by {@link #type}."
+                }
+            }
+        }, 
+        "com.vmware.vapi.std.errors.already_exists": {
+            "required": [
+                "messages"
+            ], 
+            "type": "object", 
+            "properties": {
+                "data": {
+                    "type": "dynamic_structure", 
+                    "description": "Data to facilitate clients responding to the {@term operation} reporting a standard {@term error} to indicating that it was unable to complete successfully. <p> {@term Operations} may provide data that clients can use when responding to {@term errors}.  Since the data that clients need may be specific to the context of the {@term operation} reporting the {@term error}, different {@term operations} that report the same {@term error} may provide different data in the {@term error}.  The documentation for each each {@term operation} will describe what, if any, data it provides for each {@term error} it reports. The {@link ArgumentLocations}, {@link FileLocations}, and {@link TransientIndication} {@term structures} are intended as possible values for this {@term field}.  {@link com.vmware.vapi.std.DynamicID} may also be useful as a value for this {@term field} (although that is not its primary purpose).  Some {@term services} may provide their own specific {@term structures} for use as the value of this {@term field} when reporting {@term errors} from their {@term operations}."
+                }, 
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.localizable_message"
+                    }, 
+                    "type": "array", 
+                    "description": "Stack of one or more localizable messages for human {@term error} consumers. <p> The message at the top of the stack (first in the list) describes the {@term error} from the perspective of the {@term operation} the client invoked. Each subsequent message in the stack describes the \"cause\" of the prior message."
+                }
+            }
+        }, 
+        "com.vmware.vapi.std.errors.invalid_argument": {
+            "required": [
+                "messages"
+            ], 
+            "type": "object", 
+            "properties": {
+                "data": {
+                    "type": "dynamic_structure", 
+                    "description": "Data to facilitate clients responding to the {@term operation} reporting a standard {@term error} to indicating that it was unable to complete successfully. <p> {@term Operations} may provide data that clients can use when responding to {@term errors}.  Since the data that clients need may be specific to the context of the {@term operation} reporting the {@term error}, different {@term operations} that report the same {@term error} may provide different data in the {@term error}.  The documentation for each each {@term operation} will describe what, if any, data it provides for each {@term error} it reports. The {@link ArgumentLocations}, {@link FileLocations}, and {@link TransientIndication} {@term structures} are intended as possible values for this {@term field}.  {@link com.vmware.vapi.std.DynamicID} may also be useful as a value for this {@term field} (although that is not its primary purpose).  Some {@term services} may provide their own specific {@term structures} for use as the value of this {@term field} when reporting {@term errors} from their {@term operations}."
+                }, 
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.localizable_message"
+                    }, 
+                    "type": "array", 
+                    "description": "Stack of one or more localizable messages for human {@term error} consumers. <p> The message at the top of the stack (first in the list) describes the {@term error} from the perspective of the {@term operation} the client invoked. Each subsequent message in the stack describes the \"cause\" of the prior message."
+                }
+            }
+        }, 
+        "com.vmware.vapi.std.errors.not_found": {
+            "required": [
+                "messages"
+            ], 
+            "type": "object", 
+            "properties": {
+                "data": {
+                    "type": "dynamic_structure", 
+                    "description": "Data to facilitate clients responding to the {@term operation} reporting a standard {@term error} to indicating that it was unable to complete successfully. <p> {@term Operations} may provide data that clients can use when responding to {@term errors}.  Since the data that clients need may be specific to the context of the {@term operation} reporting the {@term error}, different {@term operations} that report the same {@term error} may provide different data in the {@term error}.  The documentation for each each {@term operation} will describe what, if any, data it provides for each {@term error} it reports. The {@link ArgumentLocations}, {@link FileLocations}, and {@link TransientIndication} {@term structures} are intended as possible values for this {@term field}.  {@link com.vmware.vapi.std.DynamicID} may also be useful as a value for this {@term field} (although that is not its primary purpose).  Some {@term services} may provide their own specific {@term structures} for use as the value of this {@term field} when reporting {@term errors} from their {@term operations}."
+                }, 
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.localizable_message"
+                    }, 
+                    "type": "array", 
+                    "description": "Stack of one or more localizable messages for human {@term error} consumers. <p> The message at the top of the stack (first in the list) describes the {@term error} from the perspective of the {@term operation} the client invoked. Each subsequent message in the stack describes the \"cause\" of the prior message."
+                }
+            }
+        }, 
+        "com.vmware.vapi.std.errors.service_unavailable": {
+            "required": [
+                "messages"
+            ], 
+            "type": "object", 
+            "properties": {
+                "data": {
+                    "type": "dynamic_structure", 
+                    "description": "Data to facilitate clients responding to the {@term operation} reporting a standard {@term error} to indicating that it was unable to complete successfully. <p> {@term Operations} may provide data that clients can use when responding to {@term errors}.  Since the data that clients need may be specific to the context of the {@term operation} reporting the {@term error}, different {@term operations} that report the same {@term error} may provide different data in the {@term error}.  The documentation for each each {@term operation} will describe what, if any, data it provides for each {@term error} it reports. The {@link ArgumentLocations}, {@link FileLocations}, and {@link TransientIndication} {@term structures} are intended as possible values for this {@term field}.  {@link com.vmware.vapi.std.DynamicID} may also be useful as a value for this {@term field} (although that is not its primary purpose).  Some {@term services} may provide their own specific {@term structures} for use as the value of this {@term field} when reporting {@term errors} from their {@term operations}."
+                }, 
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.localizable_message"
+                    }, 
+                    "type": "array", 
+                    "description": "Stack of one or more localizable messages for human {@term error} consumers. <p> The message at the top of the stack (first in the list) describes the {@term error} from the perspective of the {@term operation} the client invoked. Each subsequent message in the stack describes the \"cause\" of the prior message."
+                }
+            }
+        }, 
+        "com.vmware.vapi.std.errors.unauthenticated": {
+            "required": [
+                "messages"
+            ], 
+            "type": "object", 
+            "properties": {
+                "data": {
+                    "type": "dynamic_structure", 
+                    "description": "Data to facilitate clients responding to the {@term operation} reporting a standard {@term error} to indicating that it was unable to complete successfully. <p> {@term Operations} may provide data that clients can use when responding to {@term errors}.  Since the data that clients need may be specific to the context of the {@term operation} reporting the {@term error}, different {@term operations} that report the same {@term error} may provide different data in the {@term error}.  The documentation for each each {@term operation} will describe what, if any, data it provides for each {@term error} it reports. The {@link ArgumentLocations}, {@link FileLocations}, and {@link TransientIndication} {@term structures} are intended as possible values for this {@term field}.  {@link com.vmware.vapi.std.DynamicID} may also be useful as a value for this {@term field} (although that is not its primary purpose).  Some {@term services} may provide their own specific {@term structures} for use as the value of this {@term field} when reporting {@term errors} from their {@term operations}."
+                }, 
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.localizable_message"
+                    }, 
+                    "type": "array", 
+                    "description": "Stack of one or more localizable messages for human {@term error} consumers. <p> The message at the top of the stack (first in the list) describes the {@term error} from the perspective of the {@term operation} the client invoked. Each subsequent message in the stack describes the \"cause\" of the prior message."
+                }
+            }
+        }, 
+        "com.vmware.vapi.std.errors.unauthorized": {
+            "required": [
+                "messages"
+            ], 
+            "type": "object", 
+            "properties": {
+                "data": {
+                    "type": "dynamic_structure", 
+                    "description": "Data to facilitate clients responding to the {@term operation} reporting a standard {@term error} to indicating that it was unable to complete successfully. <p> {@term Operations} may provide data that clients can use when responding to {@term errors}.  Since the data that clients need may be specific to the context of the {@term operation} reporting the {@term error}, different {@term operations} that report the same {@term error} may provide different data in the {@term error}.  The documentation for each each {@term operation} will describe what, if any, data it provides for each {@term error} it reports. The {@link ArgumentLocations}, {@link FileLocations}, and {@link TransientIndication} {@term structures} are intended as possible values for this {@term field}.  {@link com.vmware.vapi.std.DynamicID} may also be useful as a value for this {@term field} (although that is not its primary purpose).  Some {@term services} may provide their own specific {@term structures} for use as the value of this {@term field} when reporting {@term errors} from their {@term operations}."
+                }, 
+                "messages": {
+                    "items": {
+                        "$ref": "#/definitions/com.vmware.vapi.std.localizable_message"
+                    }, 
+                    "type": "array", 
+                    "description": "Stack of one or more localizable messages for human {@term error} consumers. <p> The message at the top of the stack (first in the list) describes the {@term error} from the perspective of the {@term operation} the client invoked. Each subsequent message in the stack describes the \"cause\" of the prior message."
+                }
+            }
+        }, 
+        "com.vmware.vapi.std.localizable_message": {
+            "required": [
+                "default_message", 
+                "args", 
+                "id"
+            ], 
+            "type": "object", 
+            "properties": {
+                "default_message": {
+                    "type": "string", 
+                    "description": "The value of this localizable string or message template in the {@code en_US} (English) locale.  If {@link #id} refers to a message template, the default message will contain the substituted arguments. This value can be used by clients that do not need to display strings and messages in the native language of the user.  It could also be used as a fallback if a client is unable to access the appropriate message catalog."
+                }, 
+                "args": {
+                    "items": {
+                        "type": "string"
+                    }, 
+                    "type": "array", 
+                    "description": "Arguments to be substituted into a message template."
+                }, 
+                "id": {
+                    "type": "string", 
+                    "description": "Unique identifier of the localizable string or message template. <p> This identifier is typically used to retrieve a locale-specific string or message template from a message catalog."
+                }
+            }
+        }
+    }, 
+    "swagger": "2.0", 
+    "externalDocs": {}
+}

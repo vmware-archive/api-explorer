@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>API Explorer</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width">
+
+<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+<!-- build:css(.) styles/vendor.css -->
+<!-- bower:css -->
+<!-- endbower -->
+
+<!-- endbuild -->
+<!-- build:css({.tmp,app,.}) styles/main.css -->
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="node_modules/clarity-ui/clarity-ui.min.css">
+<link rel="stylesheet" href="node_modules/clarity-icons/clarity-icons.min.css">
+<!-- endbuild -->
+
+<script type="text/javascript">
+    (function() {
+        // Load external theme... if applicable
+        var theme = window.location.search.match(/theme=([^&]+)/);
+        if (theme && theme.length > 1) {
+            var link = document.createElement("link");
+            link.href = theme[1];
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            link.media = "screen,print";
+            document.getElementsByTagName("head")[0].appendChild(link);
+        }
+    })();
+</script>
+
+<!-- build:js({.tmp,app}) scripts/head.js -->
+<script src="scripts/polyfill.js"></script>
+<!-- endbuild -->
+
+</head>
+<body ng-app="apiExplorerApp">
+    <!--[if lte IE 8]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div class="main-container">
+        <header class="header">
+
+            <div class="branding">
+                <a href="#">
+                    <span class="clr-icon clr-vmw-logo"></span>
+                    <span class="title">API Explorer</span>
+                </a>
+            </div>
+        </header>
+        <div class="content-container">
+            <div ng-view class="content-area ng-cloak"></div>
+        </div>
+    </div>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+    <script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-XXXXX-X', 'auto');
+    </script>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angular-environment/dist/angular-environment.js"></script>
+    <script src="bower_components/angular-filter/dist/angular-filter.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp,app,.}) scripts/scripts.js -->
+    <script src="bower_components/jquery-sieve/dist/jquery.sieve.js"></script>
+    <script src="bower_components/jquery.throttle/src/jquery-throttle.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/directives.js"></script>
+    <script src="scripts/services/api-explorer.js"></script>
+    <script src="scripts/controllers/apis/list.js"></script>
+    <script src="scripts/controllers/apis/detail.js"></script>
+    <!-- endbuild -->
+</body>
+</html>
