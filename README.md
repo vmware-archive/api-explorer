@@ -1,10 +1,14 @@
 # VMware API Explorer component
 
 ## Overview
-This project is a lightweight HTML5/AngularJS 1.x component that implements an API Explorer.  The idea
-is to create a very lightweight component that can be embedded in any web server to implement API tooling
-for VMware APIs.  The component can serve API declarations that are embedded locally with the component at
-build time as well as those retrieved from the VMware API web services.
+This project is a lightweight HTML5/AngularJS 1.x component that implements an API Explorer for VMware APIs.  This
+component has minimal dependencies and can be embedded in any product that has an embedded web server.
+
+###Features
+* Support for Swagger, RAML, or generic HTML API documentation
+* Swagger and RAML components can make API calls using the client browsers network connectivity.
+* API Metadata can be statically embedded locally with the component OR
+* API Metadata for released VMware products can come from VMware API services
 
 ## Try it out
 
