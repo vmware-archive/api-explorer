@@ -21,6 +21,7 @@ The distribution itself can be served by any web server, Node, Tomcat, Apache, w
 
 #### Tools setup on Debian Linux 7.x (and Ubuntu and probably others)
 1. Add appropriate NodeJS package source for your OS/distribution:
+
 Here you are going to edit the appropriate package source for your distribution.  If these instructions don't work for you, use Google and look for instructions on how to install NodeJS on yout platform, they are everywhere. Note
 that the instructions below should work for Debian 8.x and Ubuntu 14 if you substitute "jessie" for "wheezy" below.
 ```bash
