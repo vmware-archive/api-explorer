@@ -1,1 +1,5 @@
 node_modules/
+.tmp/
+bower_components/
+build/
+dist/

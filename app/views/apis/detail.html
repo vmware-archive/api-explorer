@@ -1,3 +1,9 @@
+<!--
+  ~ Copyright (c) 2016 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+  -->
+
 <div class="loading" ng-if="loading">
     <div class="spinner"></div>
 </div>
@@ -94,7 +100,7 @@
         <li ng-if="api.resources.samples" role="presentation" class="nav-item">
             <a href="javascript:void(0);" ng-click="setActiveTab(4)" role="tab" aria-controls="samples" class="nav-link" ng-class="{active:isTabActive(4)}">Related Code Samples</a>
         </li>
-        
+
     </ul>
 
     <section role="tabpanel" id="apiReference" ng-show="isTabActive(1)">
@@ -102,8 +108,8 @@
 
             <div ng-if="api.url === null">
                 <p>Oops! The API documentation is missing.</p>
-            </div> 
-            
+            </div>
+
             <div ng-switch-when="swagger" ng-if="api.url" class="swagger">
 
                 <div class="card preferences">
@@ -128,7 +134,7 @@
                     </div>
                 </div>
 
-                <iframe iframe-auto-size 
+                <iframe iframe-auto-size
                     ng-src="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
                 </iframe>
             </div>
@@ -164,7 +170,7 @@
             </li>
         </ul>
     </section>
-    
+
     <section ng-if="api.resources.samples" role="tabpanel" id="samples" ng-show="isTabActive(4)">
         <ul class="list-group list-group-flush">
             <li ng-repeat="sample in api.resources.samples" class="list-group-item">
@@ -181,7 +187,7 @@
                         <!--  <div ng-if="::sample.commentCount >0" ><small class="comments-count"><i class="icon-comment"></i><b>{{::sample.commentCount}}</b> Comments</small></div>-->
                         <div ng-if="::sample.lastUpdated"><small><i class="icon-time"></i>Updated at <span ng-bind="::sample.lastUpdated | date:'medium'"></span></small></div>
                     </div>
-                </div>        
+                </div>
             </li>
         </ul>
     </section>

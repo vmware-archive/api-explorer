@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016 VMware, Inc. All Rights Reserved.
+ * This software is released under MIT license.
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
 (function(angular) {
 
     "use strict";
@@ -143,21 +148,21 @@
                     }).finally(function() {
                         deferred.resolve(result);
                     });
-                    
+
                     return deferred.promise;
                 },
                 getRemoteApiResources : function(apiId){
-                	var deferred = $q.defer();                    
+                	var deferred = $q.defer();
                     var result = null;
 
                     $http({
                         method : 'GET',
                         url : $rootScope.settings.remoteApisEndpoint + '/dcr/rest/apix/apis/' + apiId + '/resources'
                     }).then(function(response) {
-                    	
+
                     	var sdks = [];
                         var docs = [];
-                        
+
                         var setArray = function(resourceType, arr, value) {
                         	if (value.resource_type == resourceType) {
 
@@ -168,24 +173,24 @@
                                     categories: value.categories,
                                     tags: value.tags
                                 });
-                            } 
+                            }
                         }
-                        
+
                         angular.forEach(response.data, function(value, index) {
                             setArray("SDK", sdks, value);
                             setArray("DOC", docs, value);
-                            
+
                         });
 
                         if (sdks.length || docs.length) {
-                        	result = {resources:{}}; 
+                        	result = {resources:{}};
                         	if (sdks.length) {
                              	result.resources.sdks = sdks;
-                             	
+
                             }
                         	if (docs.length) {
                         		result.resources.docs = docs;
-                        	}	
+                        	}
                         }
                     }).finally(function() {
                         deferred.resolve(result);
@@ -194,19 +199,19 @@
                     return deferred.promise;
                 },
                 getSamples : function(platform){
-                	var deferred = $q.defer();                    
+                	var deferred = $q.defer();
                     var result = null;
                     $http({
                         method : 'GET',
                         url : $rootScope.settings.remoteApisEndpoint + '/sampleExchange/v1/search/samples?platform=' + platform + '&summary=true'
                     }).then(function(response) {
                     	var samples = [];
-                    	
+
                         angular.forEach(response.data, function(value, index) {
                         	var tags = [];
                         	if (value.tags) {
                                 if (angular.isArray(value.tags)) {
-                                   
+
                                     angular.forEach(value.tags, function(tag, index) {
                                         tags.push(tag.name);
                                     });
@@ -227,9 +232,9 @@
                                 //commentCount: 3
                             });
                         });
-                        
+
                         if (samples.length) {
-                        	result = {data:{}}; 
+                        	result = {data:{}};
                         	result.data = samples;
                         }
                     },function(response) {

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016 VMware, Inc. All Rights Reserved.
+ * This software is released under MIT license.
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
 'use strict';
 
 angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope, $scope, $http, $window, $timeout, $route, $routeParams, $q, $sce, $cacheFactory, filterFilter, apis) {
@@ -41,7 +46,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
             // Process product filter
             if (add && $scope.filters.products.length) {
- 
+
                 if (api.products && api.products.length) {
                     for (var y=0; y<api.products.length; y++) {
                         var product = api.products[y];
@@ -59,7 +64,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
             // Process languages filter
             if (add && $scope.filters.languages.length) {
- 
+
                 if (api.languages && api.languages.length) {
                     for (var y=0; y<api.languages.length; y++) {
                         var language = api.languages[y];

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016 VMware, Inc. All Rights Reserved.
+ * This software is released under MIT license.
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
 'use strict';
 
 angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScope, $scope, $http, $window, $timeout, $route, $routeParams, $q, $sce, filterFilter, apis) {
@@ -42,7 +47,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                         	var idx = 0;
                         	angular.forEach(response.resources.sdks, function(sdk, index) {
                                 var category = sdk.categories[0];
-                                
+
                                 if (idx == 0) {
                                 	categories = category;
                                 } else {
@@ -58,11 +63,11 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                                 }, function(response) {
                                    	console.log(response.data);
                                 }).finally(function() {
-                                    
+
                                 });
 
                             }
-                        } 
+                        }
                     }, function(response) {
                     	// log error
                     	console.log(response);
@@ -70,7 +75,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                         $scope.loading -= 1;
                     });
                 }
-                
+
                 if ($scope.api.type === "swagger") {
                     // Load swagger's JSON definition to read the default "preferences"
                 	if ($scope.api.url) {
@@ -132,10 +137,10 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     $scope.isTabActive = function(tabNum) {
         return $scope.tab === tabNum;
     };
-    
-    // SDK tag filter 
+
+    // SDK tag filter
     $scope.filterTag = function(tag) {
     	return (tag.category === 'platform' || tag.category === 'programming-language');
-    };	
-        
+    };
+
 });
