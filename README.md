@@ -19,8 +19,6 @@ Building requires:
 * bower
 * grunt
 
-TODO versions of tools
-
 The distribution itself can be served by any web server, Node, Tomcat, Apache, whatever.
 
 #### Tools setup on Debian Linux 7.x (and Ubuntu and probably others)
@@ -64,9 +62,7 @@ grunt build
 grunt serve
 ```
 ## Documentation
-TODO references to API services docs
-
-TODO getting started guide on how to create a distribution and embed this
+Stay tuned.
 
 ## Releases & Major Branches
 
