@@ -46,7 +46,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
             // Process product filter
             if (add && $scope.filters.products.length) {
-
+ 
                 if (api.products && api.products.length) {
                     for (var y=0; y<api.products.length; y++) {
                         var product = api.products[y];
@@ -64,7 +64,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
             // Process languages filter
             if (add && $scope.filters.languages.length) {
-
+ 
                 if (api.languages && api.languages.length) {
                     for (var y=0; y<api.languages.length; y++) {
                         var language = api.languages[y];
@@ -100,6 +100,17 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
         $scope.filteredApis = filterFilter(apis, $scope.filters.keywords);
     };
+    
+    /**
+     * Private Functions - 
+     */
+    var setApis = function(response){
+    	$scope.products = response.filters.products;
+    	$scope.languages = response.filters.languages;
+        $scope.types = response.filters.types;
+        $scope.sources = response.filters.sources;
+        $scope.apis = response.apis;
+    };
 
     /**
      * Public Functions
@@ -112,16 +123,29 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     }
 
     $scope.loading += 1;
-    apis.getAllApis().then(function(response) {
-        $scope.products = response.filters.products;
-        $scope.languages = response.filters.languages;
-        $scope.types = response.filters.types;
-        $scope.sources = response.filters.sources;
-        $scope.apis = response.apis;
-    }).finally(function() {
-        setFilteredApis();
-        $scope.loading -= 1;
-    });
+    
+    if ($rootScope.settings.enableLocal == true && $rootScope.settings.enableRemote == true) {
+    	apis.getAllApis().then(function(response) {
+            setApis(response);
+        }).finally(function() {
+            setFilteredApis();
+            $scope.loading -= 1;
+        });
+    } else if ($rootScope.settings.enableLocal == false && $rootScope.settings.enableRemote == true){
+    	apis.getRemoteApis().then(function(response) {
+            setApis(response);
+        }).finally(function() {
+            setFilteredApis();
+            $scope.loading -= 1;
+        });
+    } else if ($rootScope.settings.enableLocal == true && $rootScope.settings.enableRemote == false){
+    	apis.getLocalApis().then(function(response) {
+            setApis(response);
+        }).finally(function() {
+            setFilteredApis();
+            $scope.loading -= 1;
+        });
+    }
 
     // When the "keywords" field has changed
     $scope.keywordsChanged = function(){

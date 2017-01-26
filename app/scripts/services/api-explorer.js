@@ -36,7 +36,7 @@
                         deferred.resolve(result);
                     } else {
                         var result = angular.merge({}, emptyResult);
-
+                        
                         // Combine all API sources into a single result
                         $q.all([definitions.getRemoteApis(), definitions.getLocalApis()]).then(function(responses){
                             angular.forEach(responses, function(response, index) {
@@ -65,27 +65,42 @@
                     }).then(function(response) {
 
                         angular.forEach(response.data, function(value, index) {
-                            var source = "remote";
+                        	var source = "remote";
 
                             // Get type and products from tags
                             var type = "swagger";
                             var products = [];
                             var languages = [];
-                            if (value.tags) {
+                            var add = false;
+                            
+                            if (value.tags && value.tags.length > 0) {
                                 if (angular.isArray(value.tags)) {
                                     type = filterFilter(value.tags, {category: "display"}, true)[0].name;
+                                    var keepGoing = true;
                                     angular.forEach(filterFilter(value.tags, {category: "product"}, true), function(value, index) {
-                                        products.push(value.name.replace(";", " "));
+                                    	if (keepGoing) { 
+                                    		if ($rootScope.settings.productCatalog) {
+                                    			if (value.name.split(";")[0].toLowerCase() == $rootScope.settings.productCatalog.toLowerCase()) {
+                                    				add = true;
+                                    				keepGoing=false;
+                                    				products.push(value.name.replace(";", " "));
+                                    			}
+                                    		} else {
+                                    			add = true;
+                                    			products.push(value.name.replace(";", " "));
+                                    		}
+                                    	}	
                                     });
+                                    
                                     angular.forEach(filterFilter(value.tags, {category: "programming-language"}, true), function(value, index) {
-                                        languages.push(value.name);
+                                    	languages.push(value.name);
                                     });
                                 }
                             }
 
                             // Clean the type
                             if (type == "iframe-documentation" || (value.api_ref_doc_url && value.api_ref_doc_url.endsWith(".html"))) {
-                                type = "html";
+                           		type = "html";
                             }
 
                            // Populate filters
@@ -93,18 +108,21 @@
                            result.filters.languages.pushUnique(languages, true);
                            result.filters.types.pushUnique(type);
                            result.filters.sources.pushUnique(source);
-
-                           result.apis.push({
-                                id: parseInt(value.id, 10),
-                                name: value.name,
-                                version: value.version,
-                                description: value.description,
-                                url: value.api_ref_doc_url,
-                                type: type,
-                                products: products,
-                                languages: languages,
-                                source: source
-                            });
+                           
+                           if (add) {
+                        	   result.apis.push({
+                                   id: parseInt(value.id, 10),
+                                   name: value.name,
+                                   version: value.version,
+                                   description: value.description,
+                                   url: value.api_ref_doc_url,
+                                   type: type,
+                                   products: products,
+                                   languages: languages,
+                                   source: source
+                               });
+                           }
+                           
                         });
 
 
@@ -148,21 +166,21 @@
                     }).finally(function() {
                         deferred.resolve(result);
                     });
-
+                    
                     return deferred.promise;
                 },
                 getRemoteApiResources : function(apiId){
-                	var deferred = $q.defer();
+                	var deferred = $q.defer();                    
                     var result = null;
 
                     $http({
                         method : 'GET',
                         url : $rootScope.settings.remoteApisEndpoint + '/dcr/rest/apix/apis/' + apiId + '/resources'
                     }).then(function(response) {
-
+                    	
                     	var sdks = [];
                         var docs = [];
-
+                        
                         var setArray = function(resourceType, arr, value) {
                         	if (value.resource_type == resourceType) {
 
@@ -173,24 +191,24 @@
                                     categories: value.categories,
                                     tags: value.tags
                                 });
-                            }
+                            } 
                         }
-
+                        
                         angular.forEach(response.data, function(value, index) {
                             setArray("SDK", sdks, value);
                             setArray("DOC", docs, value);
-
+                            
                         });
 
                         if (sdks.length || docs.length) {
-                        	result = {resources:{}};
+                        	result = {resources:{}}; 
                         	if (sdks.length) {
                              	result.resources.sdks = sdks;
-
+                             	
                             }
                         	if (docs.length) {
                         		result.resources.docs = docs;
-                        	}
+                        	}	
                         }
                     }).finally(function() {
                         deferred.resolve(result);
@@ -199,19 +217,19 @@
                     return deferred.promise;
                 },
                 getSamples : function(platform){
-                	var deferred = $q.defer();
+                	var deferred = $q.defer();                    
                     var result = null;
                     $http({
                         method : 'GET',
                         url : $rootScope.settings.remoteApisEndpoint + '/sampleExchange/v1/search/samples?platform=' + platform + '&summary=true'
                     }).then(function(response) {
                     	var samples = [];
-
+                    	
                         angular.forEach(response.data, function(value, index) {
                         	var tags = [];
                         	if (value.tags) {
                                 if (angular.isArray(value.tags)) {
-
+                                   
                                     angular.forEach(value.tags, function(tag, index) {
                                         tags.push(tag.name);
                                     });
@@ -232,9 +250,9 @@
                                 //commentCount: 3
                             });
                         });
-
+                        
                         if (samples.length) {
-                        	result = {data:{}};
+                        	result = {data:{}}; 
                         	result.data = samples;
                         }
                     },function(response) {
