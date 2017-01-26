@@ -57,12 +57,30 @@ bower install
 ```bash
 grunt build
 ```
-2. Serve content locally using grunt to start the Node server:
+3. Serve content locally using grunt to start the Node server:
 ```bash
 grunt serve
 ```
+
 ## Documentation
-Stay tuned.
+You can config the api-explorer by setting your environment variables in env.js file.  By default, the local APIs flag is enabled.  You can set the enableRemote to true to get the remote APIs from code.vmware.com.  You can also set the productCatalog variable to get the API for the specified product.
+
+```bash
+
+  ## Enable local APIs
+  window.__env.enableLocal = true;
+
+  ## local APIs endpoint
+  window.__env.localApiEndPoint = "db/local.json";
+
+  ## Enable remote APIs
+  window.__env.enableRemote = true;
+
+  ## Product catalog
+  ## Available values are: vSphere, NSX, vCenter Server, vCloud Air, vCloud Suite, Virtual SAN, vRealize Suite
+  window.__env.productCatalog = "vsphere";
+```
+
 
 ## Releases & Major Branches
 
