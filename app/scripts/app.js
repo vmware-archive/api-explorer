@@ -5,64 +5,89 @@
  */
 'use strict';
 
+var env = {};
+
+//Import variables if present (from config.js)
+if (window) {  
+  Object.assign(env, window.config);
+}
+
 var app = angular.module('apiExplorerApp', [ 'ngAnimate', 'ngCookies', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch', 'angular.filter', 'environment' ]).config(
-        function($compileProvider, $routeProvider, $httpProvider, envServiceProvider) {
 
-            // Disable debug info
-            $compileProvider.debugInfoEnabled(false);
+		function($compileProvider, $routeProvider, $httpProvider, envServiceProvider, $logProvider) {
 
-            // Enable HTTP caching by default
-            $httpProvider.defaults.cache = true;
+          // Disable debug info
+          $compileProvider.debugInfoEnabled(false);
+          
+          $logProvider.debugEnabled(env.enableDebug);
 
-            $routeProvider.when('/apis', {
-                templateUrl : 'views/apis/list.html',
-                controller : 'ApisListCtrl'
-            }).when('/apis/:id?', {
-                templateUrl : 'views/apis/detail.html',
-                controller : 'ApisDetailCtrl'
-            }).otherwise({
-                redirectTo : '/apis'
-            });
+          // Enable HTTP caching by default
+          $httpProvider.defaults.cache = true;
 
-        });
+          $routeProvider.when('/apis', {
+              templateUrl : 'views/apis/list.html',
+              controller : 'ApisListCtrl'
+          }).when('/apis/:id?', {
+              templateUrl : 'views/apis/detail.html',
+              controller : 'ApisDetailCtrl'
+          }).otherwise({
+              redirectTo : '/apis'
+          });
+
+      });
+
+//Register environment in AngularJS as constant
+app.constant('env', config);
 
 app.run(function($rootScope, $window) {
 
-    var initSettings = function() {
+  var initSettings = function() {
 
-        // If the app is embedded, we can overwrite certain properties
-        $window.apiExplorer = $window.apiExplorer || {};
-        $rootScope.settings = {};
+      // If the app is embedded, we can overwrite certain properties
+      $window.apiExplorer = $window.apiExplorer || {};
+      $rootScope.settings = {};
 
-        // Determine the "path" used for loading "external" but local resources (by default current index.html path)
-        $rootScope.settings.currentPath = $window.apiExplorer.currentPath || $window.location.pathname.slice(0, $window.location.pathname.lastIndexOf("/"));
+      // Determine the "path" used for loading "external" but local resources (by default current index.html path)
+      $rootScope.settings.currentPath = $window.apiExplorer.currentPath || $window.location.pathname.slice(0, $window.location.pathname.lastIndexOf("/"));
 
-        // Add the trailing forward slash to the "current path", if needed
-        if (!$rootScope.settings.currentPath.endsWith("/")) {
-            $rootScope.settings.currentPath += "/";
-        }
+      // Add the trailing forward slash to the "current path", if needed
+      if (!$rootScope.settings.currentPath.endsWith("/")) {
+          $rootScope.settings.currentPath += "/";
+      }
 
-        // Determine the "endpoint" used for loading remote APIs
-        $rootScope.settings.remoteApisEndpoint = $window.apiExplorer.remoteApisEndpoint || "https://dc-test-repo1.eng.vmware.com:8443"; //"https://dc-test-repo1:8443/dcr/rest/staging/artifacts/v1/apidoc?state=staged";
+      // Determine the "endpoint" used for loading remote APIs
+      $rootScope.settings.remoteApisEndpoint =  env.remoteApiEndPoint; 
 
-        // Determine the "endpoint" used for loading local APIs
-        $rootScope.settings.localApisEndpoint = $window.apiExplorer.localApisEndpoint || ($rootScope.settings.currentPath + "db/local.json");
+      // Determine the "endpoint" used for loading local APIs
+      $rootScope.settings.localApisEndpoint = env.localApiEndPoint; 
 
-    };
+      // Determine if enable local APIs
+      $rootScope.settings.enableLocal = env.enableLocal;
+      
+      // Determine if enable remote APIs
+      $rootScope.settings.enableRemote = env.enableRemote;
+      
+      // The "product" catalog for what remote APIs to get
+      $rootScope.settings.productCatalog = env.productCatalog;
+  };
 
-    // Initialize global settings
-    initSettings();
+  // Initialize global settings
+  initSettings();
 
-    // Track any route change as a Google Analytics pageview (if GA is available)
-    $rootScope.$on('$routeChangeSuccess', function() {
-        var url = $window.location.pathname + $window.location.search + $window.location.hash;
-        if ($window.ga) {
-            $window.ga('send', 'pageview', {
-                page : url
-            });
-        } else if ($window._gaq) {
-            $window._gaq.push([ '_trackPageview', url ]);
-        }
-    });
+  // Track any route change as a Google Analytics pageview (if GA is available)
+  $rootScope.$on('$routeChangeSuccess', function() {
+      var url = $window.location.pathname + $window.location.search + $window.location.hash;
+      if ($window.ga) {
+          $window.ga('send', 'pageview', {
+              page : url
+          });
+      } else if ($window._gaq) {
+          $window._gaq.push([ '_trackPageview', url ]);
+      }
+  });
 
 });
+
+
+
+
