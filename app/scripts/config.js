@@ -11,7 +11,7 @@
   window.config.enableDebug = false;
   
   // Whether or not to enable local APIs
-  window.config.enableLocal = false;
+  window.config.enableLocal = true;
     
   // local APIs endpoint
   window.config.localApiEndPoint = "local.json";
