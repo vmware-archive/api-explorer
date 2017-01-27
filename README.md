@@ -17,7 +17,9 @@ For development environment and build configuration see [build documentation](BU
 
 ### Try it out locally
 To run the API explorer locally (development mode)
+
 1. [Setup your development environment](BUILD.md)
+
 2. Run 'grunt serve' to start the local node server and open your browser
 
 ### Embed it as a component in your app
@@ -29,7 +31,7 @@ the contents of the dist folder into your tree.
 ### Component configuration
 You can config the api-explorer by setting environment variables in config.js file (shown below).  By default, the local APIs flag is enabled.  You can set where to get the local.json file in "window.config.localApiEndPoint" variable. By default, the remote APIs flag is disabled.  To get remote APIs from code.vmware.com,  set the "window.config.enableRemote" to true.  In addition, you can also specify "window.config.productCatalog" variable to get the APIs for a specified product.  By default, the "window.config.productCatalog" is not set, so all remote APIs are shown.
 
-```bash
+```javascript
 
   ## Enable local APIs
   window.config.enableLocal = true;
@@ -44,9 +46,6 @@ You can config the api-explorer by setting environment variables in config.js fi
   ## Available values are: vSphere, NSX, vCenter Server, vCloud Air, vCloud Suite, Virtual SAN, vRealize Suite
   window.config.productCatalog = "vSphere";
 ```
-
-#### Configuration local APIs
-The component uses a local.json file to define local API metadata. See
 
 ## Contributing
 The API Explorer project team welcomes contributions from the community. For more detailed information, see [CONTRIBUTING.md](CONTRIBUTING.md).
