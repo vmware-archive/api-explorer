@@ -94,7 +94,7 @@
                     <li class="api list-group-item" ng-repeat="api in filteredApis | orderBy:'name'">
                         <div class="row">
                             <div class="col-md-4">
-                                <a href="#/apis/{{::api.id}}"> {{::api.name}} </a>
+                                <a href="#!/apis/{{::api.id}}"> {{::api.name}} </a>
                                 &nbsp;
                                 <span ng-if="::api.source=='local'" class="badge badge-light-blue">local</span>
                             </div>
