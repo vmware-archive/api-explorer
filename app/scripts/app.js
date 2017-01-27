@@ -8,8 +8,8 @@
 var env = {};
 
 //Import variables if present (from config.js)
-if (window) {  
-  Object.assign(env, window.config);
+if (window && window.config) {
+    env = window.config;
 }
 
 var app = angular.module('apiExplorerApp', [ 'ngAnimate', 'ngCookies', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch', 'angular.filter', 'environment' ]).config(
@@ -18,7 +18,7 @@ var app = angular.module('apiExplorerApp', [ 'ngAnimate', 'ngCookies', 'ngResour
 
           // Disable debug info
           $compileProvider.debugInfoEnabled(false);
-          
+
           $logProvider.debugEnabled(env.enableDebug);
 
           // Enable HTTP caching by default
@@ -64,10 +64,10 @@ app.run(function($rootScope, $window) {
 
       // Determine if enable local APIs
       $rootScope.settings.enableLocal = env.enableLocal;
-      
+
       // Determine if enable remote APIs
       $rootScope.settings.enableRemote = env.enableRemote;
-      
+
       // The "product" catalog for what remote APIs to get
       $rootScope.settings.productCatalog = env.productCatalog;
   };
