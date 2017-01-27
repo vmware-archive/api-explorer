@@ -57,6 +57,7 @@ app.run(function($rootScope, $window) {
 
       // Determine the "endpoint" used for loading remote APIs
       $rootScope.settings.remoteApisEndpoint =  env.remoteApiEndPoint; 
+      $rootScope.settings.remoteSampleExchangeApiEndPoint =  env.remoteSampleExchangeApiEndPoint; 
 
       // Determine the "endpoint" used for loading local APIs
       $rootScope.settings.localApisEndpoint = env.localApiEndPoint; 

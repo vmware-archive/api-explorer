@@ -61,7 +61,7 @@
 
                     $http({
                         method : 'GET',
-                        url : $rootScope.settings.remoteApisEndpoint + '/dcr/rest/apix/apis'
+                        url : $rootScope.settings.remoteApisEndpoint + '/apis'
                     }).then(function(response) {
 
                         angular.forEach(response.data, function(value, index) {
@@ -175,7 +175,7 @@
 
                     $http({
                         method : 'GET',
-                        url : $rootScope.settings.remoteApisEndpoint + '/dcr/rest/apix/apis/' + apiId + '/resources'
+                        url : $rootScope.settings.remoteApisEndpoint + '/apis/' + apiId + '/resources'
                     }).then(function(response) {
                     	
                     	var sdks = [];
@@ -221,7 +221,7 @@
                     var result = null;
                     $http({
                         method : 'GET',
-                        url : $rootScope.settings.remoteApisEndpoint + '/sampleExchange/v1/search/samples?platform=' + platform + '&summary=true'
+                        url : $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?platform=' + platform + '&summary=true'
                     }).then(function(response) {
                     	var samples = [];
                     	
