@@ -29,7 +29,7 @@ configure the component. For now you will have to do a build (grunt build) and c
 the contents of the dist folder into your tree.
 
 ### Component configuration
-You can config the api-explorer by setting environment variables in config.js file (shown below).  By default, the local APIs flag is enabled.  You can set where to get the local.json file in "window.config.localApiEndPoint" variable. By default, the remote APIs flag is disabled.  To get remote APIs from code.vmware.com,  set the "window.config.enableRemote" to true.  In addition, you can also specify "window.config.productCatalog" variable to get the APIs for a specified product.  By default, the "window.config.productCatalog" is not set, so all remote APIs are shown.
+You can config the api-explorer by setting environment variables in config.js file (shown below).  By default, both the local APIs and remote APIs are enabled.  To disable the remote APIs, set the "window.config.enableRemote=false". For local APIs, you need to set the "local.json" file path in the "window.config.localApiEndPoint" variable. You can also specify the product name in "window.config.productCatalog" variable to only get the remote APIs for the specified product.  By default, the "window.config.productCatalog" is not set and all remote APIs are shown.
 
 ```javascript
 
@@ -40,7 +40,7 @@ You can config the api-explorer by setting environment variables in config.js fi
   window.config.localApiEndPoint = "local.json";
 
   ## Enable remote APIs
-  window.config.enableRemote = false;
+  window.config.enableRemote = true;
 
   ## Product catalog
   ## Available values are: vSphere, NSX, vCenter Server, vCloud Air, vCloud Suite, Virtual SAN, vRealize Suite
