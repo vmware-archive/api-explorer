@@ -39,7 +39,7 @@ sudo apt-get update
 ```bash
 sudo apt-get install nodejs
 ```
-4. Install bower
+4. Install bower (you can install it locally or globally)
 ```bash
 sudo npm install -g bower
 ```
@@ -53,32 +53,34 @@ sudo npm install -g grunt-cli
 npm install
 bower install
 ```
+
 2. Use grunt to build
 ```bash
 grunt build
 ```
+
 3. Serve content locally using grunt to start the Node server:
 ```bash
 grunt serve
 ```
 
 ## Documentation
-You can config the api-explorer by setting your environment variables in env.js file.  By default, the local APIs flag is enabled.  You can set the enableRemote to true to get the remote APIs from code.vmware.com.  You can also set the productCatalog variable to get the API for the specified product.
+You can config the api-explorer by setting your environment variables in config.js file.  By default, the local APIs flag is enabled.  You can set where to get the local.json file in "window.config.localApiEndPoint" variable. By default, the remote APIs flag is disabled.  To get remote APIs from code.vmware.com,  set the "window.config.enableRemote" to true.  In addition, you can also specify "window.config.productCatalog" variable to get the APIs for a specified product.  By default, the "window.config.productCatalog" is not set, so all remote APIs are shown.
 
 ```bash
 
   ## Enable local APIs
-  window.__env.enableLocal = true;
+  window.config.enableLocal = true;
 
   ## local APIs endpoint
-  window.__env.localApiEndPoint = "db/local.json";
+  window.config.localApiEndPoint = "local.json";
 
   ## Enable remote APIs
-  window.__env.enableRemote = true;
+  window.config.enableRemote = false;
 
   ## Product catalog
   ## Available values are: vSphere, NSX, vCenter Server, vCloud Air, vCloud Suite, Virtual SAN, vRealize Suite
-  window.__env.productCatalog = "vsphere";
+  window.config.productCatalog = "vSphere";
 ```
 
 
