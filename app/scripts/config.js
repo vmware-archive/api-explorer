@@ -19,10 +19,11 @@
   // Whether or not to enable remote APIs
   window.config.enableRemote = true;
   
-  //local APIs endpoint
-  window.config.remoteApiEndPoint = "https://dc-stg-repo1.vmware.com:8443";
-  
   // Product catalog 
   // Available values are: vSphere, NSX, vCenter Server, vCloud Air, vCloud Suite, Virtual SAN, vRealize Suite
   //window.config.productCatalog = "vSphere";
+  
+  // Remote APIs endpoint.  
+  window.config.remoteSampleExchangeApiEndPoint = "https://apigw.vmware.com/sampleExchange/v1";
+  window.config.remoteApiEndPoint = "https://vdc-repo.vmware.com/apix";
 }(this));
