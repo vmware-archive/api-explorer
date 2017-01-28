@@ -24,6 +24,7 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
+    version: require('./bower.json').version || '1.0.0',
     dist: 'dist'
   };
 
@@ -445,9 +446,9 @@ module.exports = function (grunt) {
             options: {
                 war_verbose: true,
                 war_dist_folder: 'build',
-                war_name: 'api-explorer-client',
+                war_name: 'api-explorer-<%= yeoman.version %>',
                 webxml_welcome: 'index.html',
-                webxml_display_name: 'API Explorer Client WAR'
+                webxml_display_name: 'API Explorer WAR'
             },
             files: [
                 {
