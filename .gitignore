@@ -5,3 +5,4 @@ build/
 dist/
 .project
 .DS_Store
+.Gruntfile.js.swp
