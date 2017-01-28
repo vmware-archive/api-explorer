@@ -1,0 +1,14 @@
+{
+    "apis": [ {
+        "name" : "VMware {code} Sample Exchange",
+        "version" : "v1",
+        "url" : "https://apigw.vmware.com/sampleExchange/v1/swagger.json",
+        "languages" : ["Java"]
+    }, {
+        "name" : "Box.com",
+        "version" : "v1",
+        "url" : "https://raw.githubusercontent.com/mulesoft/api-console/master/dist/examples/box.raml",
+        "products": ["Box.com"],
+        "languages" : [".NET"]
+    }]
+}
