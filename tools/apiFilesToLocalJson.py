@@ -66,9 +66,8 @@ class Object(object):
 def main(argv):
 
     # parser shared by all commands
-    parser = argparse.ArgumentParser(description="Platypus API explorer staging tool.",
-                                      usage="stageSwaggerJson.py --swagger <input directory or file(s)> --outdir <output directory for json files> --outfile <path to output api.json file>")
-
+    parser = argparse.ArgumentParser(description="VMware API explorer metadata staging tool.",
+                                      usage="apiFilesToLocalJson.py --swagger <input directory or file(s)> --outdir <output directory for json files> --outfile <path to output api.json file>")
     parser.add_argument('--swaggerglob', nargs='+', help='One or more glob paths to match swagger json files stage.  e.g. path/to/*.json', required=True)
     parser.add_argument('--outdir', help='Optional path to output directory to copy all swagger json files to.  Copy only done if provided.')
     parser.add_argument('--outfile', help='Optional path to output json file for api list')
@@ -110,26 +109,46 @@ def main(argv):
                 try:
                     version = json_data['info']['version']
                 except Exception, e:
-                   stdout("    warning: swagger json '%s' has no version" % ( swaggerJsonFile)) 
+                   stdout("    warning: swagger json '%s' has no version" % ( swaggerJsonFile))
                 description = ""
                 try:
                     description = json_data['info']['description']
                 except Exception, e:
-                   stdout("    warning: swagger json '%s' has no description" % ( swaggerJsonFile)) 
+                   stdout("    warning: swagger json '%s' has no description" % ( swaggerJsonFile))
 
-				#{
-				#    "apis": [ {
-				#        "name" : "NSX for vSphere API",
-				#        "version" : "6.2",
-				#        "url" : "db/swagger/api-nsx-6.2.json",
-				#        "products": ["NSX"]
-				#    }, {
+                #{
+                #    "apis": [ {
+                #        "name" : "NSX for vSphere API",
+                #        "version" : "6.2",
+                #        "url" : "db/swagger/api-nsx-6.2.json",
+                #        "products": ["NSX"]
+                #    }, {
                 api = Object()
                 api.name = title
                 api.description = description
                 api.version = version
-                api.url = "db/swagger/" + os.path.basename(swaggerJsonFile)
+
+                stdout("    including '%s' version='%s' 'title='%s'" % ( swaggerJsonFile, version, title))
+
+                relativePathToSwaggerJsonFile = os.path.basename(swaggerJsonFile)  # default path
+
+                if outputDir:
+                    # need to stage the file to the given directory and then figure out the relative path
+                    newPath = os.path.join(outputDir,os.path.basename(swaggerJsonFile))
+                    stdout("Copying '%s' to '%s'" % ( swaggerJsonFile, newPath))
+                    shutil.copyfile(swaggerJsonFile, newPath)
+                    if args.outfile:
+                        relativePathToSwaggerJsonFile = os.path.relpath(newPath,os.path.dirname(args.outfile))
+                elif args.outfile:
+                    # refer to the file in place.  figure out relative path from the local.json file to
+                    # the api ref file to use as the URL to the file in the API.
+                    relativePathToSwaggerJsonFile = os.path.relpath(swaggerJsonFile,os.path.dirname(args.outfile))
+
+                stdout("    as relative path '" + relativePathToSwaggerJsonFile + "'")
+                api.url = relativePathToSwaggerJsonFile
                 api.products = []
+                # some code to attempt to figure out which product(s) a product corresponds to
+                # based on strings in the file name.  very primitive, needs to be improved.
                 if 'nsx' in swaggerJsonFile:
                    api.products.append("NSX")
                 elif 'vrops' in swaggerJsonFile:
@@ -143,16 +162,10 @@ def main(argv):
                 elif 'vsphere' in swaggerJsonFile:
                    api.products.append("vSphere")
 
-		api.resources = []  # we don't know anything about resources yet...
+                api.resources = []  # TODO support for resources.
 
                 outputJson.apis.append(api)
 
-                stdout("    including '%s' version='%s' 'title='%s'" % ( swaggerJsonFile, version, title))
-
-                if outputDir:
-                    newPath = os.path.join(outputDir,os.path.basename(swaggerJsonFile))
-                    stdout("Copying '%s' to '%s'" % ( swaggerJsonFile, newPathe))
-                    shutil.copyfile(swaggerJsonFile, newPath)
         except Exception, e:
             sys.stderr.write("    exception parsing '%s'" % ( swaggerJsonFile))
             sys.stderr.write(traceback.format_exc())
