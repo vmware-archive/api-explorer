@@ -1,5 +1,5 @@
 {
-  "name": "api-explorer-client",
+  "name": "api-explorer",
   "private": true,
   "devDependencies": {
     "autoprefixer-core": "^5.2.1",

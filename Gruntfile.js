@@ -259,7 +259,7 @@ module.exports = function (grunt) {
         }
       }
     },
-
+    
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
@@ -386,6 +386,8 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             '*.html',
+            'local.json',
+            'config.js',
             'images/{,*/}*.{webp}',
             'styles/fonts/{,*/}*.*',
             'db/{,*/}*.*'
