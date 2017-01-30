@@ -43,7 +43,7 @@
   "scripts": {
     "build": "grunt build",
     "start": "grunt serve",
-    "test": "karma start test/karma.conf.js"
+    "test": "echo 'TODO implement unit testing'"
   },
   "dependencies": {
     "clarity-icons": "^0.7.2",
