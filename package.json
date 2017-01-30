@@ -43,7 +43,7 @@
   "scripts": {
     "build": "grunt build",
     "start": "grunt serve",
-    "test": "echo 'TODO implement unit testing'"
+    "test": "INTENTIONALLY BREAKING BUILD TO TEST NOTIFICATION"
   },
   "dependencies": {
     "clarity-icons": "^0.7.2",
