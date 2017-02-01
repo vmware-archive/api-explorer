@@ -219,9 +219,22 @@
                 getSamples : function(platform){
                 	var deferred = $q.defer();                    
                     var result = null;
+                    if (!platform) {
+                    	return;
+                    }
+                    var url = $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?';
+                    angular.forEach(platform.split(","), function(value, index) {
+                    	if (index == 0) {
+                    		url = url + 'platform=' + value;
+                    	} else {
+                    		url = url + '&platform=' + value;
+                    	}
+                    	
+                    });
+                    
                     $http({
                         method : 'GET',
-                        url : $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?platform=' + platform + '&summary=true'
+                        url : url + '&summary=true'
                     }).then(function(response) {
                     	var samples = [];
                     	
