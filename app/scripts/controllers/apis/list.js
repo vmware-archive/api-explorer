@@ -46,10 +46,9 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
             // Process product filter
             if (add && $scope.filters.products.length) {
- 
                 if (api.products && api.products.length) {
                     for (var y=0; y<api.products.length; y++) {
-                        var product = api.products[y];
+                        var product = api.products[y].replace(";", " ");
                         if ($scope.filters.products.indexOf(product) === -1) {
                             add = false;
                         } else {
@@ -102,14 +101,65 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     };
     
     /**
-     * Private Functions - 
+     * Private Functions - set the apis for the config products.
+     * The configProducts contains a comma separated products.
      */
-    var setApis = function(response){
-    	$scope.products = response.filters.products;
-    	$scope.languages = response.filters.languages;
-        $scope.types = response.filters.types;
-        $scope.sources = response.filters.sources;
-        $scope.apis = response.apis;
+    var setApis = function(response, configProducts){
+    	var emptyResult = {
+    		apis : [],
+            filters : {
+            	products : [],
+            	languages : [],
+                types : [],
+                sources : []
+            }
+        };
+    	var configProductList = null;
+    	if (configProducts && configProducts != 'undefined') {
+			configProductList = configProducts.toLowerCase().split(",");
+		}
+        var result = angular.merge({}, emptyResult);
+        
+        angular.forEach(response.apis, function(value, index) {
+        	var products = [];
+            var languages = [];
+            var add = false;
+        	if (value.products && value.products.length > 0) {
+        		if (angular.isArray(value.products)) {
+        			var keepGoing = true;
+        			angular.forEach(value.products, function(value, index) {
+        				if (configProductList) {
+        				    if (keepGoing) { 
+        				    	angular.forEach(configProductList, function(v, i) {
+        				    		if (value.split(";")[0].toLowerCase() == v.replace(/^\s+|\s+$/g, '')) {
+                        				add = true;
+                        				keepGoing=false;
+                        				products.push(value.replace(";", " "));
+                        			}
+                    			});
+        				    }	
+                    	} else {
+                    		add = true;
+                    		products.push(value.replace(";", " "));
+                    	}
+        			});
+                } 
+        	} else {
+        		add = true;
+        	}
+        	if (add) {
+        		result.filters.products.pushUnique(products, true);
+                result.filters.languages.pushUnique(value.languages, true);
+                result.filters.types.pushUnique(value.type);
+                result.filters.sources.pushUnique(value.source);
+                result.apis.push(value);
+        	}
+        });
+        $scope.products = result.filters.products;
+    	$scope.languages = result.filters.languages;
+        $scope.types = result.filters.types;
+        $scope.sources = result.filters.sources;
+        $scope.apis = result.apis;
     };
 
     /**
@@ -124,29 +174,33 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
     $scope.loading += 1;
     
-    if ($rootScope.settings.enableLocal == true && $rootScope.settings.enableRemote == true) {
-    	apis.getAllApis().then(function(response) {
-            setApis(response);
-        }).finally(function() {
-            setFilteredApis();
-            $scope.loading -= 1;
-        });
-    } else if ($rootScope.settings.enableLocal == false && $rootScope.settings.enableRemote == true){
-    	apis.getRemoteApis().then(function(response) {
-            setApis(response);
-        }).finally(function() {
-            setFilteredApis();
-            $scope.loading -= 1;
-        });
-    } else if ($rootScope.settings.enableLocal == true && $rootScope.settings.enableRemote == false){
-    	apis.getLocalApis().then(function(response) {
-            setApis(response);
-        }).finally(function() {
-            setFilteredApis();
-            $scope.loading -= 1;
-        });
-    }
-
+    $scope.getApis = function(enableLocal, enableRemote, configProducts) {
+    	if (enableLocal == true && enableRemote == true) {
+        	apis.getAllApis().then(function(response) {
+                setApis(response, configProducts);
+            }).finally(function() {
+                setFilteredApis();
+                $scope.loading -= 1;
+            });
+        } else if (enableLocal == false && enableRemote == true){
+        	apis.getRemoteApis().then(function(response) {
+                setApis(response, configProducts);
+            }).finally(function() {
+                setFilteredApis();
+                $scope.loading -= 1;
+            });
+        } else if (enableLocal == true && enableRemote == false){
+        	apis.getLocalApis().then(function(response) {
+                setApis(response);
+            }).finally(function() {
+                setFilteredApis();
+                $scope.loading -= 1;
+            });
+        }
+    };
+    
+    $scope.getApis($rootScope.settings.enableLocal, $rootScope.settings.enableRemote, $rootScope.settings.productCatalog);
+    
     // When the "keywords" field has changed
     $scope.keywordsChanged = function(){
         // Force filtering the APIs

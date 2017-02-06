@@ -20,6 +20,7 @@
     "grunt-filerev": "^2.1.2",
     "grunt-google-cdn": "^0.4.3",
     "grunt-jscs": "^1.8.0",
+    "grunt-karma": "^2.0.0",
     "grunt-newer": "^1.1.0",
     "grunt-ng-annotate": "^0.9.2",
     "grunt-postcss": "^0.5.5",
@@ -27,14 +28,16 @@
     "grunt-usemin": "^3.0.0",
     "grunt-war": "^0.5.1",
     "grunt-wiredep": "^2.0.0",
-    "jasmine-core": "^2.4.1",
+    "jasmine-core": "^2.5.2",
     "jit-grunt": "^0.9.1",
     "jshint-stylish": "^1.0.0",
-    "karma": "^0.13.21",
-    "karma-jasmine": "^0.3.7",
+    "karma": "^1.4.1",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-jasmine": "^1.1.0",
     "karma-jasmine-matchers": "^2.0.2",
-    "karma-phantomjs-launcher": "^1.0.0",
-    "phantomjs-prebuilt": "^2.1.4",
+    "karma-ng-html2js-preprocessor": "^1.0.0",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "phantomjs-prebuilt": "^2.1.14",
     "time-grunt": "^1.0.0"
   },
   "engines": {
@@ -43,7 +46,7 @@
   "scripts": {
     "build": "grunt build",
     "start": "grunt serve",
-    "test": "echo 'All tests complete.'",
+    "test": "karma start test/karma.conf.js",
     "release": "./tools/package-release.sh"
   },
   "dependencies": {
