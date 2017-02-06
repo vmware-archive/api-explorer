@@ -40,7 +40,7 @@ git checkout -b my-new-feature master
 
 # After making the desired changes, test, commit and push to your fork
 npm test
-git commit -a -s
+git commit -a -s -m "Some detailed and helpful comment here"
 git push origin my-new-feature
 ```
 

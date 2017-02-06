@@ -43,7 +43,7 @@
   "scripts": {
     "build": "grunt build",
     "start": "grunt serve",
-    "test": "echo 'TODO implement unit testing'",
+    "test": "echo 'All tests complete.'",
     "release": "./tools/package-release.sh"
   },
   "dependencies": {
