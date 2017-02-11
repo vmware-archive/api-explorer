@@ -56,7 +56,6 @@
                 },
                 getRemoteApis : function(){
                     var deferred = $q.defer();
-
                     var result = angular.merge({}, emptyResult);
 
                     $http({
@@ -78,18 +77,7 @@
                                     type = filterFilter(value.tags, {category: "display"}, true)[0].name;
                                     var keepGoing = true;
                                     angular.forEach(filterFilter(value.tags, {category: "product"}, true), function(value, index) {
-                                    	if (keepGoing) { 
-                                    		if ($rootScope.settings.productCatalog) {
-                                    			if (value.name.split(";")[0].toLowerCase() == $rootScope.settings.productCatalog.toLowerCase()) {
-                                    				add = true;
-                                    				keepGoing=false;
-                                    				products.push(value.name.replace(";", " "));
-                                    			}
-                                    		} else {
-                                    			add = true;
-                                    			products.push(value.name.replace(";", " "));
-                                    		}
-                                    	}	
+                                    	products.push(value.name);
                                     });
                                     
                                     angular.forEach(filterFilter(value.tags, {category: "programming-language"}, true), function(value, index) {
@@ -103,28 +91,18 @@
                            		type = "html";
                             }
 
-                           // Populate filters
-                           result.filters.products.pushUnique(products, true);
-                           result.filters.languages.pushUnique(languages, true);
-                           result.filters.types.pushUnique(type);
-                           result.filters.sources.pushUnique(source);
-                           
-                           if (add) {
-                        	   result.apis.push({
-                                   id: parseInt(value.id, 10),
-                                   name: value.name,
-                                   version: value.version,
-                                   description: value.description,
-                                   url: value.api_ref_doc_url,
-                                   type: type,
-                                   products: products,
-                                   languages: languages,
-                                   source: source
-                               });
-                           }
-                           
+                            result.apis.push({
+                            	id: parseInt(value.id, 10),
+                            	name: value.name,
+                            	version: value.version,
+                            	description: value.description,
+                            	url: value.api_ref_doc_url,
+                            	type: type,
+                            	products: products,
+                            	languages: languages,
+                            	source: source
+                           });
                         });
-
 
                     }).finally(function() {
                         deferred.resolve(result);
@@ -219,9 +197,22 @@
                 getSamples : function(platform){
                 	var deferred = $q.defer();                    
                     var result = null;
+                    if (!platform) {
+                    	return;
+                    }
+                    var url = $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?';
+                    angular.forEach(platform.split(","), function(value, index) {
+                    	if (index == 0) {
+                    		url = url + 'platform=' + value;
+                    	} else {
+                    		url = url + '&platform=' + value;
+                    	}
+                    	
+                    });
+                    
                     $http({
                         method : 'GET',
-                        url : $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?platform=' + platform + '&summary=true'
+                        url : url + '&summary=true'
                     }).then(function(response) {
                     	var samples = [];
                     	
