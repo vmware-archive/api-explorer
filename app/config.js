@@ -21,7 +21,7 @@
   
   // Product catalog 
   // Available values are: vSphere, NSX, vCenter Server, vCloud Air, vCloud Suite, Virtual SAN, vRealize Suite
-  //window.config.productCatalog = "vSphere";
+  //window.config.productCatalog = "vSphere, NSX";
   
   // Remote APIs endpoint.  
   window.config.remoteSampleExchangeApiEndPoint = "https://apigw.vmware.com/sampleExchange/v1";

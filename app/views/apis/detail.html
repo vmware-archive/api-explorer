@@ -87,7 +87,7 @@
         </a>
     </div>
 
-    <ul ng-if="api.resources && (api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
+    <ul ng-if="api.resources && (api.resources.docs || api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
         <li role="presentation" class="nav-item">
             <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="apiReference" class="nav-link" ng-class="{active:isTabActive(1)}">API Reference</a>
         </li>
