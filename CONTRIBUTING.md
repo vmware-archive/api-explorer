@@ -38,9 +38,8 @@ git remote add upstream https://github.com/vmware/api-explorer.git
 # Create a topic branch for your changes
 git checkout -b my-new-feature master
 
-# After making the desired changes, test, commit and push to your fork
-npm test
-git commit -a -s
+# After making the desired changes, commit and push to your fork
+git commit -a -s -m "Some detailed and helpful comment here"
 git push origin my-new-feature
 ```
 
