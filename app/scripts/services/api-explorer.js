@@ -36,7 +36,7 @@
                         deferred.resolve(result);
                     } else {
                         var result = angular.merge({}, emptyResult);
-                        
+
                         // Combine all API sources into a single result
                         $q.all([definitions.getRemoteApis(), definitions.getLocalApis()]).then(function(responses){
                             angular.forEach(responses, function(response, index) {
@@ -71,7 +71,7 @@
                             var products = [];
                             var languages = [];
                             var add = false;
-                            
+
                             if (value.tags && value.tags.length > 0) {
                                 if (angular.isArray(value.tags)) {
                                     type = filterFilter(value.tags, {category: "display"}, true)[0].name;
@@ -79,7 +79,7 @@
                                     angular.forEach(filterFilter(value.tags, {category: "product"}, true), function(value, index) {
                                     	products.push(value.name);
                                     });
-                                    
+
                                     angular.forEach(filterFilter(value.tags, {category: "programming-language"}, true), function(value, index) {
                                     	languages.push(value.name);
                                     });
@@ -124,13 +124,16 @@
                             value.id = 10000 + index;
                             value.source = "local";
 
-                            // Clean the type
-                            if (value.url && value.url.endsWith(".json")) {
-                                value.type = "swagger";
-                            } else if (value.url && value.url.endsWith(".raml")) {
-                                value.type = "raml";
-                            } else {
-                                value.type = "html";
+                            // if the local api did not provide an explict type, then
+                            // try to figure it out from the url spec file
+                            if (!value.type || 0 === value.type.length) {
+	                            if (value.url && value.url.endsWith(".json")) {
+	                                value.type = "swagger";
+	                            } else if (value.url && value.url.endsWith(".raml")) {
+	                                value.type = "raml";
+	                            } else {
+	                                value.type = "html";
+	                            }
                             }
 
                             result.filters.products.pushUnique(value.products, true);
@@ -144,21 +147,21 @@
                     }).finally(function() {
                         deferred.resolve(result);
                     });
-                    
+
                     return deferred.promise;
                 },
                 getRemoteApiResources : function(apiId){
-                	var deferred = $q.defer();                    
+                	var deferred = $q.defer();
                     var result = null;
 
                     $http({
                         method : 'GET',
                         url : $rootScope.settings.remoteApisEndpoint + '/apis/' + apiId + '/resources'
                     }).then(function(response) {
-                    	
+
                     	var sdks = [];
                         var docs = [];
-                        
+
                         var setArray = function(resourceType, arr, value) {
                         	if (value.resource_type == resourceType) {
 
@@ -169,24 +172,24 @@
                                     categories: value.categories,
                                     tags: value.tags
                                 });
-                            } 
+                            }
                         }
-                        
+
                         angular.forEach(response.data, function(value, index) {
                             setArray("SDK", sdks, value);
                             setArray("DOC", docs, value);
-                            
+
                         });
 
                         if (sdks.length || docs.length) {
-                        	result = {resources:{}}; 
+                        	result = {resources:{}};
                         	if (sdks.length) {
                              	result.resources.sdks = sdks;
-                             	
+
                             }
                         	if (docs.length) {
                         		result.resources.docs = docs;
-                        	}	
+                        	}
                         }
                     }).finally(function() {
                         deferred.resolve(result);
@@ -195,7 +198,7 @@
                     return deferred.promise;
                 },
                 getSamples : function(platform){
-                	var deferred = $q.defer();                    
+                	var deferred = $q.defer();
                     var result = null;
                     if (!platform) {
                     	return;
@@ -207,20 +210,20 @@
                     	} else {
                     		url = url + '&platform=' + value;
                     	}
-                    	
+
                     });
-                    
+
                     $http({
                         method : 'GET',
                         url : url + '&summary=true'
                     }).then(function(response) {
                     	var samples = [];
-                    	
+
                         angular.forEach(response.data, function(value, index) {
                         	var tags = [];
                         	if (value.tags) {
                                 if (angular.isArray(value.tags)) {
-                                   
+
                                     angular.forEach(value.tags, function(tag, index) {
                                         tags.push(tag.name);
                                     });
@@ -241,9 +244,9 @@
                                 //commentCount: 3
                             });
                         });
-                        
+
                         if (samples.length) {
-                        	result = {data:{}}; 
+                        	result = {data:{}};
                         	result.data = samples;
                         }
                     },function(response) {
