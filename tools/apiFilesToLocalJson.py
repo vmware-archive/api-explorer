@@ -63,42 +63,45 @@ class Object(object):
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
 
-def main(argv):
+def addProductsFromFilename( api, inputFileName ):
+    api.products = []
+    # some code to attempt to figure out which product(s) a product corresponds to
+    # based on strings in the file name.  very primitive, needs to be improved.
+    if 'nsx' in inputFileName:
+        api.products.append("NSX")
+    elif 'vrops' in inputFileName:
+        api.products.append("vRealize Operations")
+    elif 'vro' in inputFileName:
+        api.products.append("vRealize Orchestrator")
+    elif 'vra' in inputFileName:
+        api.products.append("vRealize Automation")
+    elif 'vrli' in inputFileName:
+        api.products.append("vRealize Log Insight")
+    elif 'vsphere' in inputFileName:
+        api.products.append("vSphere")
 
-    # parser shared by all commands
-    parser = argparse.ArgumentParser(description="VMware API explorer metadata staging tool.",
-                                      usage="apiFilesToLocalJson.py --swagger <input directory or file(s)> --outdir <output directory for json files> --outfile <path to output api.json file>")
-    parser.add_argument('--swaggerglob', nargs='+', help='One or more glob paths to match swagger json files stage.  e.g. path/to/*.json', required=True)
-    parser.add_argument('--outdir', help='Optional path to output directory to copy all swagger json files to.  Copy only done if provided.')
-    parser.add_argument('--outfile', help='Optional path to output json file for api list')
-
-    if len(argv) == 0:
-        parser.print_help()
-        exit(1)
-
-    args = parser.parse_args(args=argv)
-
-    outputDir = None
-    if args.outdir:
-        outputDir = os.path.abspath(args.outdir)
-        if not os.path.isdir(outputDir):
-            os.makedirs(outputDir)
-
-    swaggerJsonFilesToStage = []
-    if args.swaggerglob:
-        for swaggerglob in args.swaggerglob:
-            globMatches = glob.glob(swaggerglob)
-            for g in globMatches:
-                swaggerJsonFilesToStage.append(g)
-
-    outputJson = Object()
-    outputJson.apis = []
-
+def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFile ):
     for swaggerJsonFile in swaggerJsonFilesToStage:
         try:
             # read in json from the file
             with open(swaggerJsonFile) as swagger_file:
                 json_data = json.load(swagger_file)
+
+                # check if this is swagger 1.2
+                # {
+                #     "apiVersion":"v1",
+                #     "swaggerVersion":"1.2",
+                #     "basePath":"",
+                #     "apis":[
+                #        {"path":"apis/auth"},
+                #        {"path":"apis/available"},
+                #        {"path":"apis/availabilityzones"}
+                # ...
+                #     ]
+                #}
+
+
+
                 #{
                 #  "swagger": "2.0",
                 #  "info": {
@@ -137,30 +140,17 @@ def main(argv):
                     newPath = os.path.join(outputDir,os.path.basename(swaggerJsonFile))
                     stdout("Copying '%s' to '%s'" % ( swaggerJsonFile, newPath))
                     shutil.copyfile(swaggerJsonFile, newPath)
-                    if args.outfile:
-                        relativePathToSwaggerJsonFile = os.path.relpath(newPath,os.path.dirname(args.outfile))
-                elif args.outfile:
+                    if outputFile:
+                        relativePathToSwaggerJsonFile = os.path.relpath(newPath,os.path.dirname(outputFile))
+                elif outputFile:
                     # refer to the file in place.  figure out relative path from the local.json file to
                     # the api ref file to use as the URL to the file in the API.
-                    relativePathToSwaggerJsonFile = os.path.relpath(swaggerJsonFile,os.path.dirname(args.outfile))
+                    relativePathToSwaggerJsonFile = os.path.relpath(swaggerJsonFile,os.path.dirname(outputFile))
 
                 stdout("    as relative path '" + relativePathToSwaggerJsonFile + "'")
                 api.url = relativePathToSwaggerJsonFile
-                api.products = []
-                # some code to attempt to figure out which product(s) a product corresponds to
-                # based on strings in the file name.  very primitive, needs to be improved.
-                if 'nsx' in swaggerJsonFile:
-                   api.products.append("NSX")
-                elif 'vrops' in swaggerJsonFile:
-                   api.products.append("vRealize Operations")
-                elif 'vro' in swaggerJsonFile:
-                   api.products.append("vRealize Orchestrator")
-                elif 'vra' in swaggerJsonFile:
-                   api.products.append("vRealize Automation")
-                elif 'vrli' in swaggerJsonFile:
-                   api.products.append("vRealize Log Insight")
-                elif 'vsphere' in swaggerJsonFile:
-                   api.products.append("vSphere")
+                # append the products to it based on stuff in the file name
+                addProductsFromFilename( api, swaggerJsonFile )
 
                 api.resources = []  # TODO support for resources.
 
@@ -170,7 +160,73 @@ def main(argv):
             sys.stderr.write("    exception parsing '%s'" % ( swaggerJsonFile))
             sys.stderr.write(traceback.format_exc())
             continue
-            #raise SystemExit(2)
+
+
+def main(argv):
+
+    # parser shared by all commands
+    parser = argparse.ArgumentParser(description="VMware API explorer metadata staging tool.",
+                                      usage="apiFilesToLocalJson.py --swagger <input directory or file(s)> --outdir <output directory for json files> --outfile <path to output api.json file>")
+    parser.add_argument('--swaggerglob', nargs='+', help='One or more glob paths to match swagger json files stage.  e.g. path/to/*.json', required=False)
+    parser.add_argument('--swaggerurl', nargs='+', help='One or more swagger urls. argument should be name=<value,description=<value>,version=<value>,url=<value>,product=<value>', required=False)
+    parser.add_argument('--outdir', help='Optional path to output directory to copy all swagger json files to.  Copy only done if provided.')
+    parser.add_argument('--outfile', help='Optional path to output json file for api list')
+
+    if len(argv) == 0:
+        parser.print_help()
+        exit(1)
+
+    args = parser.parse_args(args=argv)
+
+    outputDir = None
+    if args.outdir:
+        outputDir = os.path.abspath(args.outdir)
+        if not os.path.isdir(outputDir):
+            os.makedirs(outputDir)
+
+    outputJson = Object()
+    outputJson.apis = []
+
+    swaggerJsonFilesToStage = []
+    if args.swaggerglob:
+        for swaggerglob in args.swaggerglob:
+            globMatches = glob.glob(swaggerglob)
+            for g in globMatches:
+                swaggerJsonFilesToStage.append(g)
+
+    # stage any urls manually specified
+    if args.swaggerurl:
+        for swaggerurl in args.swaggerurl:
+            metadataArray = swaggerurl.split(',')
+            api = Object()
+            api.name = False
+            api.url = False
+            api.products = []
+            api.resources = []  # TODO support for resources.
+            api.version = ''
+            api.type = 'swagger'
+            for metadata in metadataArray:
+                nameValue=metadata.split("=")
+                if 'nam' in nameValue[0]:
+                    api.name = nameValue[1].strip()
+                elif 'des' in nameValue[0]:
+                    api.description = nameValue[1].strip()
+                elif 'ver' in nameValue[0]:
+                    api.version = nameValue[1].strip()
+                elif 'url' in nameValue[0]:
+                    api.url = nameValue[1].strip()
+                elif 'pro' in nameValue[0]:
+                    api.products.append(nameValue[1].strip())
+            if api.name and api.url:
+                outputJson.apis.append(api)
+            else:
+                sys.stderr.write('ERROR: incorrect format format for swaggerurl.  Must at least have name and url\n')
+                parser.print_help()
+                exit(1)
+
+    # stage swagger2 files
+    stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, args.outfile )
+
     if args.outfile:
         stdout("Writing local index file " + args.outfile)
         with open(args.outfile,"w") as output_json_file:

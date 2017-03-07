@@ -4,5 +4,6 @@ bower_components/
 build/
 dist/
 .project
+.pydevproject
 .DS_Store
 .Gruntfile.js.swp
