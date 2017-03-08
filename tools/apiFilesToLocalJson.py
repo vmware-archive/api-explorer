@@ -79,6 +79,8 @@ def addProductsFromFilename( api, inputFileName ):
         api.products.append("vRealize Log Insight")
     elif 'vsphere' in inputFileName:
         api.products.append("vSphere")
+    elif 'photon' in inputFileName:
+        api.products.append("Photon Controller")
 
 def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFile ):
     for swaggerJsonFile in swaggerJsonFilesToStage:
