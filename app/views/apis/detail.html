@@ -109,18 +109,18 @@
 
     </ul>
 
-	<section  ng-if="api.resources.overview" role="tabpanel" id="overview" ng-show="isTabActive(1)">
+    <!--
+      TODO: this overview content may or may not be present (mostly NOT present), and as
+      such the tab for this should not be displayed in the case that it is not there, and yet
+       we want it to be the default tab displayed if the information exists.  How do we do this?
+       basically we need to set the second tab active instead of the first if this is the case.
+      -->
 
-		<!--
-
-	<div><h1>Hello Overview World.</h1></div>
-	-->
-		<iframe iframe-auto-size
+    <section  ng-if="api.resources.overview" role="tabpanel" id="overview" ng-show="isTabActive(1)">
+        <iframe iframe-auto-size
 		        ng-src="{{api.resources.overview.webUrl}}">
 		</iframe>
-
-
-	    </section>
+    </section>
 
     <section role="tabpanel" id="apiReference" ng-show="isTabActive(2)">
         <div ng-switch="::api.type">
