@@ -69,7 +69,6 @@ class Object(object):
             sort_keys=True, indent=4)
 
 def addProductsFromFilename( api, inputFileName ):
-
     # some code to attempt to figure out which product(s) a product corresponds to
     # based on strings in the file name.  very primitive, needs to be improved.
     if 'nsx' in inputFileName:
@@ -89,11 +88,11 @@ def addProductsFromFilename( api, inputFileName ):
 
 
 def addLocalOverviewResource(api, title, local_url):
-    """
-    Resources is a map of lists of objects.  For SDKs and
-    docs those are lists of Resource objects.  We are going to add
+   """
+    Resources is a map of lists of objects.  For SDKs and 
+    docs those are lists of Resource objects.  We are going to add 
     a single "overview" resource that is one object.
-    """
+    """ 
     overview_resource = Object()
     overview_resource.title = title
     overview_resource.webUrl = local_url
@@ -119,7 +118,7 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
             templateOverviewHtml = templateOverviewHtml.replace("href=\"styles/","href=\"/styles/")
     if not templateOverviewHtml:
         stdout("No overview template found.")
-
+ 
     for swaggerJsonFile in swaggerJsonFilesToStage:
         try:
             # read in json from the file
@@ -148,8 +147,7 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                 version = ""
                 try:
                     version = json_data['info']['version']
-
-                    version = version.replace("-SNAPSHOT","")  # for vRA specific, remove snapshot
+                    version = version.replace("-SNAPSHOT","")  # drop any -SNAPSHOT from version number
                 except Exception, e:
                    stdout("    warning: swagger json '%s' has no version" % ( swaggerJsonFile))
                 full_description = ""
@@ -159,9 +157,9 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                     description = json_data['info']['description']
                     full_description = description
                     abbrev_md_description = description
-
+                    
                     if (abbreviateDescription):
-                        # abbreviate the description so that it is only the first line, and
+                        # abbreviate the description so that it is only the first line, and 
                         # remove any markdown formatting
                         lfIndex = description.index('\n')
                         if lfIndex != -1:
@@ -182,7 +180,7 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                 #    }, {
                 api = Object()   # a dict based python object that has a method to easily serialize to json
                 api.name = title
-                api.description = description
+                api.description = description                
                 api.version = version
                 api.resources = {}
                 api.products = []
@@ -197,6 +195,7 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
 
                     if (generateOverviewHtml):
                         stdout("    Abbreviating description")
+
                         json_data['info']['description'] = abbrev_md_description
 
                         stdout("    Rewriting '%s' to '%s'" % ( swaggerJsonFile, newSwaggerJsonPath))
@@ -212,6 +211,7 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                                 # insert the converted markdown and write that so we get the style
                                 overviewHtml = templateOverviewHtml.replace("OVERVIEW-BODY-PLACEHOLDER",overviewHtml)
                             outputOverviewHtmlFile.write(overviewHtml)
+
 
                         relativePathToOverviewHtmlFile = "/" + os.path.relpath(overviewHtmlPath,htmlRootDir)
                         stdout("    Adding overview resource '%s'" % ( relativePathToOverviewHtmlFile))
