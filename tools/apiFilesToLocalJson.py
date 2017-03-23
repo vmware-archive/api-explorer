@@ -47,7 +47,6 @@ import markdown2
 
 
 # TODO figure out a better way to help with the column display in a terminal.
-import os, shutil
 os.environ['COLUMNS'] = '100'
 
 #str(shutil.get_terminal_size().columns)
@@ -88,7 +87,7 @@ def addProductsFromFilename( api, inputFileName ):
 
 
 def addLocalOverviewResource(api, title, local_url):
-   """
+    """
     Resources is a map of lists of objects.  For SDKs and 
     docs those are lists of Resource objects.  We are going to add 
     a single "overview" resource that is one object.
@@ -149,7 +148,7 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                     version = json_data['info']['version']
                     version = version.replace("-SNAPSHOT","")  # drop any -SNAPSHOT from version number
                 except Exception, e:
-                   stdout("    warning: swagger json '%s' has no version" % ( swaggerJsonFile))
+                    stdout("    warning: swagger json '%s' has no version" % ( swaggerJsonFile))
                 full_description = ""
                 description = ""
                 abbrev_md_description = ""
@@ -169,7 +168,7 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                             description = description.replace("#","")
 
                 except Exception, e:
-                   stdout("    warning: swagger json '%s' has no description" % ( swaggerJsonFile))
+                    stdout("    warning: swagger json '%s' has no description" % ( swaggerJsonFile))
 
                 #{
                 #    "apis": [ {
