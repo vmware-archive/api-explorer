@@ -1,3 +1,5 @@
+.idea/
+tools/*.pyc
 node_modules/
 .tmp/
 bower_components/

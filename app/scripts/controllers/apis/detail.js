@@ -37,6 +37,11 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
             if (!$scope.api || ($scope.api && $scope.api.id !== selectedApi.id)) {
                 $scope.api = selectedApi;
 
+                // if there is no overview resource, then default the tab to the api reference and not the overview
+                if ((!$scope.api.resources || ! $scope.api.resources.overview) && ($scope.tab == 1)) {
+                    $scope.tab = 2;
+                }
+
                 var categories = null;
                 //Get selected API resources
                 if ($scope.api.source == 'remote' && $scope.api.url) {

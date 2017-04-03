@@ -1,0 +1,42 @@
+<!doctype html>
+<!--
+  ~ Copyright (c) 2016 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+  -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>Overview</title>
+
+<!-- endbuild -->
+<!-- build:css({.tmp,app,.}) styles/main.css -->
+<link rel="stylesheet" href="/styles/main.css">
+<link rel="stylesheet" href="/node_modules/clarity-ui/clarity-ui.min.css">
+<link rel="stylesheet" href="/node_modules/clarity-icons/clarity-icons.min.css">
+<link rel="stylesheet" href="/styles/clarity-mod.css">
+<!-- endbuild -->
+
+<script type="text/javascript">
+    (function() {
+        // Load external theme... if applicable
+        var theme = window.location.search.match(/theme=([^&]+)/);
+        if (theme && theme.length > 1) {
+            var link = document.createElement("link");
+            link.href = theme[1];
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            link.media = "screen,print";
+            document.getElementsByTagName("head")[0].appendChild(link);
+        }
+    })();
+</script>
+
+</head>
+
+<body>
+
+OVERVIEW-BODY-PLACEHOLDER
+
+</body>
+</html>

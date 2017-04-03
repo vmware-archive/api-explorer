@@ -87,23 +87,42 @@
         </a>
     </div>
 
-    <ul ng-if="api.resources && (api.resources.docs || api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
+    <ul ng-if="api.resources && (api.resources.overview || api.resources.docs || api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
+
         <li role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="apiReference" class="nav-link" ng-class="{active:isTabActive(1)}">API Reference</a>
+            <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="overview" class="nav-link" ng-class="{active:isTabActive(1)}">API Overview</a>
         </li>
+
+        <li role="presentation" class="nav-item">
+            <a href="javascript:void(0);" ng-click="setActiveTab(2)" role="tab" aria-controls="apiReference" class="nav-link" ng-class="{active:isTabActive(2)}">API Reference</a>
+        </li>
+
         <li ng-if="api.resources.docs" role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(2)" role="tab" aria-controls="docs" class="nav-link" ng-class="{active:isTabActive(2)}">Documentation</a>
+            <a href="javascript:void(0);" ng-click="setActiveTab(3)" role="tab" aria-controls="docs" class="nav-link" ng-class="{active:isTabActive(3)}">Documentation</a>
         </li>
         <li ng-if="api.resources.sdks" role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(3)" role="tab" aria-controls="sdks" class="nav-link" ng-class="{active:isTabActive(3)}">Related SDKs</a>
+            <a href="javascript:void(0);" ng-click="setActiveTab(4)" role="tab" aria-controls="sdks" class="nav-link" ng-class="{active:isTabActive(4)}">Related SDKs</a>
         </li>
         <li ng-if="api.resources.samples" role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(4)" role="tab" aria-controls="samples" class="nav-link" ng-class="{active:isTabActive(4)}">Related Code Samples</a>
+            <a href="javascript:void(0);" ng-click="setActiveTab(5)" role="tab" aria-controls="samples" class="nav-link" ng-class="{active:isTabActive(5)}">Related Code Samples</a>
         </li>
 
     </ul>
 
-    <section role="tabpanel" id="apiReference" ng-show="isTabActive(1)">
+    <!--
+      TODO: this overview content may or may not be present (mostly NOT present), and as
+      such the tab for this should not be displayed in the case that it is not there, and yet
+       we want it to be the default tab displayed if the information exists.  How do we do this?
+       basically we need to set the second tab active instead of the first if this is the case.
+      -->
+
+    <section  ng-if="api.resources.overview" role="tabpanel" id="overview" ng-show="isTabActive(1)">
+        <iframe iframe-auto-size
+		        ng-src="{{api.resources.overview.webUrl}}">
+		</iframe>
+    </section>
+
+    <section role="tabpanel" id="apiReference" ng-show="isTabActive(2)">
         <div ng-switch="::api.type">
 
             <div ng-if="api.url === null">
@@ -146,7 +165,7 @@
         </div>
     </section>
 
-    <section ng-if="api.resources.docs" role="tabpanel" id="docs" ng-show="isTabActive(2)">
+    <section ng-if="api.resources.docs" role="tabpanel" id="docs" ng-show="isTabActive(3)">
         <ul class="list-group list-group-flush">
             <li ng-repeat="doc in api.resources.docs" class="list-group-item">
                 <a href="{{::doc.downloadUrl}}" target="_blank">{{::doc.title}}</a>
@@ -154,7 +173,7 @@
         </ul>
     </section>
 
-    <section ng-if="api.resources.sdks" role="tabpanel" id="sdks" ng-show="isTabActive(3)">
+    <section ng-if="api.resources.sdks" role="tabpanel" id="sdks" ng-show="isTabActive(4)">
         <ul class="list-group list-group-flush">
             <li ng-repeat="sdk in api.resources.sdks | orderBy:'title'" class="list-group-item">
                 <div class="row">
@@ -171,7 +190,7 @@
         </ul>
     </section>
 
-    <section ng-if="api.resources.samples" role="tabpanel" id="samples" ng-show="isTabActive(4)">
+    <section ng-if="api.resources.samples" role="tabpanel" id="samples" ng-show="isTabActive(5)">
         <ul class="list-group list-group-flush">
             <li ng-repeat="sample in api.resources.samples" class="list-group-item">
                 <div class="sample row">
