@@ -90,7 +90,7 @@
     <ul ng-if="api.resources && (api.resources.overview || api.resources.docs || api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
 
         <li role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="overview" class="nav-link" ng-class="{active:isTabActive(1)}">API Overview</a>
+            <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="overview" class="nav-link" ng-class="{active:isTabActive(1)}">Overview</a>
         </li>
 
         <li role="presentation" class="nav-item">
@@ -117,8 +117,11 @@
       -->
 
     <section  ng-if="api.resources.overview" role="tabpanel" id="overview" ng-show="isTabActive(1)">
+        <!-- TODO the web content at the remote URL is not styled.  We need to figure out a
+          way to dynamically style it.  Is there a way to directly include HTML here inline after including
+          the contents of overview-template.html without usage of an iframe? -->
         <iframe iframe-auto-size
-		        ng-src="{{api.resources.overview.webUrl}}">
+                ng-src="{{getTrustedUrl(api.resources.overview.webUrl)}}">
 		</iframe>
     </section>
 

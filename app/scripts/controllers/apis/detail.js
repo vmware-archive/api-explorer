@@ -27,6 +27,49 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     /**
      * Private Functions
      */
+    // Load resources for the currently selected API for the given remote API id
+    var loadResourcesForRemoteApi = function(apiIdToFetchResourcesFor) {
+        var categories = null;
+        if (apiIdToFetchResourcesFor) {
+            console.log("fetching resources for api id=" + apiIdToFetchResourcesFor)
+            $scope.loading += 1;
+            apis.getRemoteApiResources(apiIdToFetchResourcesFor).then(function (response) {
+                if (response) {
+                    $scope.api.resources = response.resources;
+                    var idx = 0;
+                    angular.forEach(response.resources.sdks, function (sdk, index) {
+                        var category = sdk.categories[0];
+
+                        if (idx == 0) {
+                            categories = category;
+                        } else {
+                            categories += "," + category;
+                        }
+                        idx++;
+                    });
+                    if (categories) {
+                        apis.getSamples(categories).then(function (response) {
+                            if (response) {
+                                $scope.api.resources.samples = response.data;
+                            }
+                        }, function (response) {
+                            console.log(response.data);
+                        }).finally(function () {
+
+                        });
+
+                    }
+                }
+            }, function (response) {
+                // log error
+                console.log(response);
+            }).finally(function () {
+                $scope.loading -= 1;
+            });
+        } else {
+            console.log("apiIdToFetchResourcesFor is null");
+        }
+    }
 
     // Return the currently selected API (if available)
     var setSelectedApi = function(){
@@ -42,42 +85,19 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                     $scope.tab = 2;
                 }
 
-                var categories = null;
-                //Get selected API resources
-                if ($scope.api.source == 'remote' && $scope.api.url) {
-                	$scope.loading += 1;
-                	apis.getRemoteApiResources($scope.api.id).then(function(response) {
-                        if (response) {
-                        	$scope.api.resources = response.resources;
-                        	var idx = 0;
-                        	angular.forEach(response.resources.sdks, function(sdk, index) {
-                                var category = sdk.categories[0];
+                //Get selected API resources.  There are two cases, a remote API, and then a local API that
+                // specifies an api_uid string.  In the case of a local API, we use the UID to get the latest
+                // instance of the remote API and then get the resources for it.
+                if ($scope.api.url && $scope.api.source == 'remote') {
+                    loadResourcesForRemoteApi( $scope.api.id );
+                } else if ($scope.api.url && $scope.api.source == 'local' && $scope.api.api_uid) {
+                     console.log("fetching resources for api_uid=" + $scope.api.api_uid)
 
-                                if (idx == 0) {
-                                	categories = category;
-                                } else {
-                                	categories += "," + category;
-                                }
-                                idx++;
-                            });
-                        	if (categories) {
-                        		apis.getSamples(categories).then(function(response) {
-                                    if (response) {
-                                    	$scope.api.resources.samples = response.data;
-                                    }
-                                }, function(response) {
-                                   	console.log(response.data);
-                                }).finally(function() {
-
-                                });
-
-                            }
-                        }
-                    }, function(response) {
-                    	// log error
-                    	console.log(response);
-                    }).finally(function() {
-                        $scope.loading -= 1;
+                     apis.getLatestRemoteApiIdForApiUid($scope.api.api_uid).then(function(response) {
+                         // response.data should have the id.  Might be null
+                         //console.log("got response for getLatestRemoteApiIdForApiUid");
+                         //console.log(response);
+                         loadResourcesForRemoteApi( response.data );
                     });
                 }
 
