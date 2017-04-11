@@ -95,6 +95,7 @@
                             	id: parseInt(value.id, 10),
                             	name: value.name,
                             	version: value.version,
+                            	api_uid: value.api_uid,
                             	description: value.description,
                             	url: value.api_ref_doc_url,
                             	type: type,
@@ -152,7 +153,7 @@
                 },
                 getRemoteApiResources : function(apiId){
                 	var deferred = $q.defer();
-                    var result = null;
+                    var result = {resources:{}};
 
                     $http({
                         method : 'GET',
@@ -178,17 +179,24 @@
                         angular.forEach(response.data, function(value, index) {
                             setArray("SDK", sdks, value);
                             setArray("DOC", docs, value);
-
                         });
 
                         if (sdks.length || docs.length) {
-                        	result = {resources:{}};
-                        	if (sdks.length) {
+                            console.log("got " + sdks.length + " sdks, " + docs.length + " docs");
+                            if (sdks.length) {
                              	result.resources.sdks = sdks;
-
                             }
                         	if (docs.length) {
                         		result.resources.docs = docs;
+
+                                angular.forEach(result.resources.docs, function(value, index) {
+                                    if (value.categories && (value.categories.length > 0) && value.categories[0] == 'API_OVERVIEW') {
+                                        console.log("setting overview doc");
+                                        console.log(value);
+                                        result.resources.overview = value;
+                                        value.webUrl = value.downloadUrl;
+                                    }
+                                });
                         	}
                         }
                     }).finally(function() {
@@ -256,6 +264,39 @@
                         deferred.resolve(result);
                     });
 
+                    return deferred.promise;
+                },
+                /* as the name implies this method calls web service to get a list of available API instances
+                * versions from the web service and returns the id of the latest one in the result.data.
+                * @return a promise for an object with data = id of the API
+                */
+                getLatestRemoteApiIdForApiUid : function(api_uid) {
+                    var deferred = $q.defer();
+                    var result = {data:null};
+
+                    $http({
+                        method : 'GET',
+                        url : $rootScope.settings.remoteApisEndpoint + '/apis/uids/' + api_uid
+                    }).then(function(response) {
+
+                        console.log("got response " + response)
+
+                        // TODO sort through these Api instances and get the latest versions
+                        // API id
+                        if (response.data && response.data.length > 0) {
+                            // TODO delete this debug code eventually
+                            angular.forEach(response.data, function(value, index) {
+                                console.log("api_uid=" + api_uid + " id=" + value.id + " version=" + value.version);
+                            });
+                            // get the last one
+                            result.data = response.data[response.data.length-1].id;
+
+                        } else {
+                            console.log("api_uid=" + api_uid + " has no API instances.");
+                        }
+                    }).finally(function() {
+                        deferred.resolve(result);
+                    });
                     return deferred.promise;
                 }
             };

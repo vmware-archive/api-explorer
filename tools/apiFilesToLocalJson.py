@@ -49,9 +49,9 @@ import markdown2
 # TODO figure out a better way to help with the column display in a terminal.
 os.environ['COLUMNS'] = '100'
 
-#str(shutil.get_terminal_size().columns)
+# str(shutil.get_terminal_size().columns)
 
-version="0.1"
+version = "0.1"
 
 def stdout(lineString):
     sys.stdout.write(lineString)
@@ -67,7 +67,7 @@ class Object(object):
         return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
 
-def addProductsFromFilename( api, inputFileName ):
+def addProductsFromFilename(api, inputFileName):
     # some code to attempt to figure out which product(s) a product corresponds to
     # based on strings in the file name.  very primitive, needs to be improved.
     if 'nsx' in inputFileName:
@@ -88,19 +88,19 @@ def addProductsFromFilename( api, inputFileName ):
 
 def addLocalOverviewResource(api, title, local_url):
     """
-    Resources is a map of lists of objects.  For SDKs and 
-    docs those are lists of Resource objects.  We are going to add 
+    Resources is a map of lists of objects.  For SDKs and
+    docs those are lists of Resource objects.  We are going to add
     a single "overview" resource that is one object.
-    """ 
+    """
     overview_resource = Object()
     overview_resource.title = title
     overview_resource.webUrl = local_url
-    #downloadUrl: value.download_url,
-    #categories: value.categories,
-    #tags: value.tags
+    # downloadUrl: value.download_url,
+    # categories: value.categories,
+    # tags: value.tags
     api.resources['overview'] = overview_resource
 
-def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFile, abbreviateDescription, htmlRootDir, generateOverviewHtml ):
+def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFile, abbreviateDescription, htmlRootDir, generateOverviewHtml):
 
     markdownConvertor = markdown2.Markdown()
 
@@ -108,16 +108,16 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
         htmlRootDir = os.path.dirname(outputFile)
 
     templateOverviewHtml = None
-    templateOverviewHtmlFilePath = os.path.join(htmlRootDir,"overview-template.html")
+    templateOverviewHtmlFilePath = os.path.join(htmlRootDir, "overview-template.html")
     if os.path.isfile(templateOverviewHtmlFilePath):
         stdout("Reading overview template file %s" % templateOverviewHtmlFilePath)
-        with open(templateOverviewHtmlFilePath,"r") as templateOverviewHtmlFile:
-            templateOverviewHtml =  templateOverviewHtmlFile.read()
-            #fixup relative path to style sheet to be absolute
-            templateOverviewHtml = templateOverviewHtml.replace("href=\"styles/","href=\"/styles/")
+        with open(templateOverviewHtmlFilePath, "r") as templateOverviewHtmlFile:
+            templateOverviewHtml = templateOverviewHtmlFile.read()
+            # fixup relative path to style sheet to be absolute
+            templateOverviewHtml = templateOverviewHtml.replace("href=\"styles/", "href=\"/styles/")
     if not templateOverviewHtml:
         stdout("No overview template found.")
- 
+
     for swaggerJsonFile in swaggerJsonFilesToStage:
         try:
             # read in json from the file
@@ -135,9 +135,9 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                 #        {"path":"apis/availabilityzones"}
                 # ...
                 #     ]
-                #}
+                # }
 
-                #{
+                # {
                 #  "swagger": "2.0",
                 #  "info": {
                 #    "version": "1.2",
@@ -146,9 +146,9 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                 version = ""
                 try:
                     version = json_data['info']['version']
-                    version = version.replace("-SNAPSHOT","")  # drop any -SNAPSHOT from version number
+                    version = version.replace("-SNAPSHOT", "")  # drop any -SNAPSHOT from version number
                 except Exception, e:
-                    stdout("    warning: swagger json '%s' has no version" % ( swaggerJsonFile))
+                    stdout("    warning: swagger json '%s' has no version" % (swaggerJsonFile))
                 full_description = ""
                 description = ""
                 abbrev_md_description = ""
@@ -156,90 +156,94 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                     description = json_data['info']['description']
                     full_description = description
                     abbrev_md_description = description
-                    
+
                     if (abbreviateDescription):
-                        # abbreviate the description so that it is only the first line, and 
+                        # abbreviate the description so that it is only the first line, and
                         # remove any markdown formatting
                         lfIndex = description.index('\n')
                         if lfIndex != -1:
                             description = description[:lfIndex]
                             description = description.strip()
                             abbrev_md_description = description
-                            description = description.replace("#","")
+                            description = description.replace("#", "").strip()
 
                 except Exception, e:
-                    stdout("    warning: swagger json '%s' has no description" % ( swaggerJsonFile))
+                    stdout("    warning: swagger json '%s' has no description" % (swaggerJsonFile))
 
-                #{
+                # {
                 #    "apis": [ {
                 #        "name" : "NSX for vSphere API",
                 #        "version" : "6.2",
                 #        "url" : "db/swagger/api-nsx-6.2.json",
                 #        "products": ["NSX"]
                 #    }, {
-                api = Object()   # a dict based python object that has a method to easily serialize to json
+                api = Object()  # a dict based python object that has a method to easily serialize to json
                 api.name = title
-                api.description = description                
+                api.description = description
                 api.version = version
                 api.resources = {}
                 api.products = []
 
-                stdout("Including '%s' version='%s' 'title='%s'" % ( swaggerJsonFile, version, title))
+                stdout("Including '%s' version='%s' 'title='%s'" % (swaggerJsonFile, version, title))
 
                 relativePathToSwaggerJsonFile = os.path.basename(swaggerJsonFile)  # default path
 
+                # FIXME THIS IS VRA SPECIFIC
+                api.api_uid = relativePathToSwaggerJsonFile.replace("-", "_").replace(".json", "").replace("_service", "");
+                stdout("    Creating api_uid=" + api.api_uid)
+
                 if outputDir:
                     # need to stage the file to the given directory and then figure out the relative path
-                    newSwaggerJsonPath = os.path.join(outputDir,os.path.basename(swaggerJsonFile))
+                    newSwaggerJsonPath = os.path.join(outputDir, os.path.basename(swaggerJsonFile))
 
                     if (generateOverviewHtml):
                         stdout("    Abbreviating description")
 
                         json_data['info']['description'] = abbrev_md_description
 
-                        stdout("    Rewriting '%s' to '%s'" % ( swaggerJsonFile, newSwaggerJsonPath))
-                        with open(newSwaggerJsonPath,"w") as outputSwaggerJson:
-                            json.dump(json_data,outputSwaggerJson,sort_keys=False, indent=4)
+                        stdout("    Rewriting '%s' to '%s'" % (swaggerJsonFile, newSwaggerJsonPath))
+                        with open(newSwaggerJsonPath, "w") as outputSwaggerJson:
+                            json.dump(json_data, outputSwaggerJson, sort_keys=False, indent=4)
 
                         overviewBasePath, ext = os.path.splitext(newSwaggerJsonPath)
                         overviewHtmlPath = os.path.join(outputDir, overviewBasePath + ".html")
-                        stdout("    Converting and writing overview html '%s'" % ( overviewHtmlPath))
-                        with open(overviewHtmlPath,"w") as outputOverviewHtmlFile:
+                        stdout("    Converting and writing overview html '%s'" % (overviewHtmlPath))
+                        with open(overviewHtmlPath, "w") as outputOverviewHtmlFile:
                             overviewHtml = markdownConvertor.convert(full_description)
                             if templateOverviewHtml:
                                 # insert the converted markdown and write that so we get the style
-                                overviewHtml = templateOverviewHtml.replace("OVERVIEW-BODY-PLACEHOLDER",overviewHtml)
+                                overviewHtml = templateOverviewHtml.replace("OVERVIEW-BODY-PLACEHOLDER", overviewHtml)
                             outputOverviewHtmlFile.write(overviewHtml)
 
 
-                        relativePathToOverviewHtmlFile = "/" + os.path.relpath(overviewHtmlPath,htmlRootDir)
-                        stdout("    Adding overview resource '%s'" % ( relativePathToOverviewHtmlFile))
-                        addLocalOverviewResource(api,"Overview",relativePathToOverviewHtmlFile)
+                        relativePathToOverviewHtmlFile = "/" + os.path.relpath(overviewHtmlPath, htmlRootDir)
+                        stdout("    Adding overview resource '%s'" % (relativePathToOverviewHtmlFile))
+                        addLocalOverviewResource(api, "Overview", relativePathToOverviewHtmlFile)
 
                         # TODO translate to html
                         # TODO add resource for the overview
 
                     else:
-                        stdout("Copying '%s' to '%s'" % ( swaggerJsonFile, newSwaggerJsonPath))
+                        stdout("Copying '%s' to '%s'" % (swaggerJsonFile, newSwaggerJsonPath))
                         shutil.copyfile(swaggerJsonFile, newSwaggerJsonPath)
 
                     if outputFile:
-                        relativePathToSwaggerJsonFile = os.path.relpath(newSwaggerJsonPath,os.path.dirname(outputFile))
+                        relativePathToSwaggerJsonFile = os.path.relpath(newSwaggerJsonPath, os.path.dirname(outputFile))
                 elif outputFile:
                     # refer to the file in place.  figure out relative path from the local.json file to
                     # the api ref file to use as the URL to the file in the API.
-                    relativePathToSwaggerJsonFile = os.path.relpath(swaggerJsonFile,os.path.dirname(outputFile))
+                    relativePathToSwaggerJsonFile = os.path.relpath(swaggerJsonFile, os.path.dirname(outputFile))
 
                 stdout("    as relative path '" + relativePathToSwaggerJsonFile + "'")
                 api.url = relativePathToSwaggerJsonFile
 
                 # append the products to it based on stuff in the file name
-                addProductsFromFilename( api, swaggerJsonFile )
+                addProductsFromFilename(api, swaggerJsonFile)
 
                 outputJson.apis.append(api)
 
         except Exception, e:
-            sys.stderr.write("    exception parsing '%s'" % ( swaggerJsonFile))
+            sys.stderr.write("    exception parsing '%s'" % (swaggerJsonFile))
             sys.stderr.write(traceback.format_exc())
             continue
 
@@ -284,14 +288,14 @@ def main(argv):
         for swaggerurl in args.swaggerurl:
             metadataArray = swaggerurl.split(',')
             api = Object()
-            api.name = False
-            api.url = False
+            api.name = None
+            api.url = None
             api.products = []
             api.resources = []  # TODO support for resources.
             api.version = ''
             api.type = 'swagger'
             for metadata in metadataArray:
-                nameValue=metadata.split("=")
+                nameValue = metadata.split("=")
                 if 'nam' in nameValue[0]:
                     api.name = nameValue[1].strip()
                 elif 'des' in nameValue[0]:
@@ -302,6 +306,8 @@ def main(argv):
                     api.url = nameValue[1].strip()
                 elif 'pro' in nameValue[0]:
                     api.products.append(nameValue[1].strip())
+                elif 'uid' in nameValue[0]:
+                    api.api_uid = nameValue[1].strip()
             if api.name and api.url:
                 outputJson.apis.append(api)
             else:
@@ -310,11 +316,11 @@ def main(argv):
                 exit(1)
 
     # stage swagger2 files
-    stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, args.outfile, args.abbreviateDescription, args.htmlRootDir, args.generateOverviewHtml )
+    stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, args.outfile, args.abbreviateDescription, args.htmlRootDir, args.generateOverviewHtml)
 
     if args.outfile:
         stdout("Writing local index file " + args.outfile)
-        with open(args.outfile,"w") as output_json_file:
+        with open(args.outfile, "w") as output_json_file:
             output_json_file.write(outputJson.toJSON())
 
 if __name__ == "__main__":
