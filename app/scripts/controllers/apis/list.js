@@ -166,10 +166,16 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
      * Public Functions
      */
 
+    var setDefaultFilters = false;
+
     // Load cached filters
     if (cache.get("filters")) {
         $scope.filters = cache.get("filters");
         setFilteredApis();
+    } else {
+        // there are no cached filters, so we need to set the default filter
+        // values after loading.
+        setDefaultFilters = true;
     }
 
     $scope.loading += 1;
@@ -219,5 +225,33 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         // Force filtering the APIs
         setFilteredApis();
     };
+
+    if (setDefaultFilters && $rootScope.settings.defaultFilters) {
+        if ($rootScope.settings.defaultFilters.sources) {
+            angular.forEach($rootScope.settings.defaultFilters.sources, function (value, index) {
+                $scope.filters.sources.push(value);
+            });
+        }
+        if ($rootScope.settings.defaultFilters.products) {
+            angular.forEach($rootScope.settings.defaultFilters.products, function (value, index) {
+                $scope.filters.products.push(value);
+            });
+        }
+        if ($rootScope.settings.defaultFilters.languages) {
+            angular.forEach($rootScope.settings.defaultFilters.languages, function (value, index) {
+                $scope.filters.languages.push(value);
+            });
+        }
+        if ($rootScope.settings.defaultFilters.types) {
+            angular.forEach($rootScope.settings.defaultFilters.types, function (value, index) {
+                $scope.filters.types.push(value);
+            });
+        }
+        if ($rootScope.settings.defaultFilters.keywords) {
+            $scope.filters.keywords = keywords;
+        }
+        // Force filtering the APIs
+        setFilteredApis();
+    }
 
 });
