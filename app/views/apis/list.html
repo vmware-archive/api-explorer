@@ -21,7 +21,7 @@
 
 <div class="row">
 
-    <div class="col-md-3 filters">
+    <div class="col-md-2 filters">
         <div class="card">
             <div class="card-header">Filters</div>
             <div class="card-block">
@@ -98,11 +98,8 @@
                                 &nbsp;
                                 <span ng-if="::api.source=='local'" class="badge badge-light-blue">local</span>
                             </div>
-                            <div class="col-md-1">
-                                <span>{{::api.version}}</span>
-                            </div>
-                            <div class="col-md-1">
-                                <small>{{::api.type}}</small>
+                            <div class="col-md-2">
+                                <span>{{::api.productDisplayString}}</span>
                             </div>
                             <div class="col-md-6" ng-if="::api.description && api.title.indexOf(api.description) != 0">
                                 <div>{{::api.description}}</div>
