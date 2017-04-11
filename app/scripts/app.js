@@ -68,6 +68,9 @@ app.run(function($rootScope, $window) {
       // Determine if enable remote APIs
       $rootScope.settings.enableRemote = env.enableRemote;
 
+      // set any default filter selections
+      $rootScope.settings.defaultFilters = env.defaultFilters;
+
       // The "product" catalog for what remote APIs to get
       $rootScope.settings.productCatalog = env.productCatalog;
   };
