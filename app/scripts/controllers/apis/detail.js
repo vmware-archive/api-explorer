@@ -17,6 +17,10 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     $scope.tab = 1;
     $scope.showPreferences = false;
 
+    $scope.overviewTemplateHtml = null;
+
+    $scope.noOverviewMessage = "<i>No overview is available for this API.</i>";
+
     /**
      * Private Variables
      */
@@ -35,7 +39,85 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
             $scope.loading += 1;
             apis.getRemoteApiResources(apiIdToFetchResourcesFor).then(function (response) {
                 if (response) {
-                    $scope.api.resources = response.resources;
+                    var localApiResources = $scope.api.resources;
+                    $scope.api.resources = response.resources; // overwrite with remote
+                    if (localApiResources && localApiResources.docs && localApiResources.docs.length > 0) {
+                        // iterate all local resources and overwrite any with the same title with the local version.
+                        // this is probably not what we want to do long term
+                        if ($scope.api.resources.docs) {
+                            angular.forEach(localApiResources.docs, function (localResource, index) {
+                                var found = false;
+                                angular.forEach($scope.api.resources.docs, function (remoteResource, index) {
+                                    //console.log("checking remote resource " + remoteResource.title)
+                                    if (localResource.title == remoteResource.title) {
+                                        found = true;
+                                        //console.log("replacing remote resource " + localResource.title);
+                                        $scope.api.resources.docs[index] = localResource;
+                                    }
+                                });
+                                if (!found) {
+                                    //console.log("appending local only resource " + localResource.title);
+                                    $scope.api.resources.docs.push(localResource);
+                                }
+                            });
+                        } else {
+                            // there was no remote docs resource, just use local
+                            $scope.api.resources.docs = localApiResources.docs;
+                        }
+                    }
+
+                    var docList = $scope.api.resources.docs;
+
+                    var overviewResource = null;
+                    if (docList) {
+                        // find the overview resource if it exists and remove it from the resources
+                        for (var i = docList.length - 1; i >= 0; --i) {
+                            var resource = docList[i];
+                            if (resource.categories && (resource.categories.length > 0) && (resource.categories[0] == 'API_OVERVIEW')) {
+                                overviewResource = resource;
+                                docList.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
+                    if (overviewResource) {
+                        // now we need to fetch the overview from the overviewResource.downloadUrl, merge it with the template
+                        // and set it as the overview body
+                        $scope.loading += 1;
+                        apis.getOverviewBody(overviewResource.downloadUrl).then(function (response) {
+                            if (response) {
+                                //console.log("got overview body")
+                                //console.log(response.data);
+                                // do a find and replace on the overview template to create a new string
+                                // which is the overview body for the API
+                                //console.log("current scope before attempting to build overview:")
+                                //console.log($scope);
+
+                                if ($scope.overviewTemplateHtml) {
+                                    //$scope.api.overviewHtml = $scope.overviewTemplateHtml.replace("OVERVIEW-BODY-PLACEHOLDER",response.data);
+                                    $scope.api.overviewHtml = response.data;
+                                    console.log("got completed overview html");
+                                } else {
+                                    // if there is no template
+                                    $scope.api.overviewHtml = response.data;
+                                }
+                            }
+                        }, function (response) {
+                            //error
+                            console.log(response.data);
+                        }).finally(function () {
+                            $scope.loading -= 1;
+                        });
+                    } else {
+                        //$scope.api.overviewHtml = $scope.overviewTemplateHtml.replace("OVERVIEW-BODY-PLACEHOLDER",noOverviewMessage);
+                        $scope.api.overviewHtml = $scope.noOverviewMessage;
+                    }
+
+                    // if there is no overview resource, then default the tab to the api reference and not the overview
+                    if (($scope.api.overviewHtml == $scope.noOverviewMessage) && ($scope.tab == 1)) {
+                        $scope.tab = 2;
+                    }
+
                     var idx = 0;
                     angular.forEach(response.resources.sdks, function (sdk, index) {
                         var category = sdk.categories[0];
@@ -53,11 +135,11 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                                 $scope.api.resources.samples = response.data;
                             }
                         }, function (response) {
+                            //error
                             console.log(response.data);
                         }).finally(function () {
 
                         });
-
                     }
                 }
             }, function (response) {
@@ -79,11 +161,6 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
 
             if (!$scope.api || ($scope.api && $scope.api.id !== selectedApi.id)) {
                 $scope.api = selectedApi;
-
-                // if there is no overview resource, then default the tab to the api reference and not the overview
-                if ((!$scope.api.resources || ! $scope.api.resources.overview) && ($scope.tab == 1)) {
-                    $scope.tab = 2;
-                }
 
                 //Get selected API resources.  There are two cases, a remote API, and then a local API that
                 // specifies an api_uid string.  In the case of a local API, we use the UID to get the latest
@@ -125,14 +202,16 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     /**
      * Public Functions
      */
-
-    $scope.loading += 1;
-    apis.getAllApis().then(function(response) {
-        $scope.apis = response.apis;
-    }).finally(function() {
-        setSelectedApi();
-        $scope.loading -= 1;
-    });
+    var loadApis = function () {
+        $scope.loading += 1;
+        console.log("loading APIs in details...");
+        apis.getAllApis().then(function (response) {
+            $scope.apis = response.apis;
+        }).finally(function () {
+            setSelectedApi();
+            $scope.loading -= 1;
+        });
+    }
 
     // Updates the API preferences
     $scope.updatePreferences = function(type){
@@ -167,5 +246,24 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     $scope.filterTag = function(tag) {
     	return (tag.category === 'platform' || tag.category === 'programming-language');
     };
+
+    loadApis();
+
+    // the actual code that starts the initialization chain, load the overview-template.html,
+    // then fetch all APIs
+    // $scope.loading += 1;
+    // apis.getLocalOverviewTemplate().then(function (response) {
+    //     $scope.overviewTemplateHtml = response.data;
+    //     console.log("setting overviewTemplateHtml");
+    //     //console.log($scope.overviewTemplateHtml);
+    //
+    //     //console.log("current scope after setting overviewTemplateHtml:")
+    //     //console.log($scope);
+    //
+    // }).finally(function () {
+    //     loadApis();
+    //     $scope.loading -= 1;
+    // });
+
 
 });

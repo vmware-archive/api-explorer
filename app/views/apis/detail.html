@@ -87,9 +87,9 @@
         </a>
     </div>
 
-    <ul ng-if="api.resources && (api.resources.overview || api.resources.docs || api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
+    <ul ng-if="api.resources && (api.overviewHtml || api.resources.docs || api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
 
-        <li role="presentation" class="nav-item">
+        <li ng-if="api.overviewHtml" role="presentation" class="nav-item">
             <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="overview" class="nav-link" ng-class="{active:isTabActive(1)}">Overview</a>
         </li>
 
@@ -116,13 +116,8 @@
        basically we need to set the second tab active instead of the first if this is the case.
       -->
 
-    <section  ng-if="api.resources.overview" role="tabpanel" id="overview" ng-show="isTabActive(1)">
-        <!-- TODO the web content at the remote URL is not styled.  We need to figure out a
-          way to dynamically style it.  Is there a way to directly include HTML here inline after including
-          the contents of overview-template.html without usage of an iframe? -->
-        <iframe iframe-auto-size
-                ng-src="{{getTrustedUrl(api.resources.overview.webUrl)}}">
-		</iframe>
+    <section  ng-if="api.overviewHtml" role="tabpanel" id="overview" ng-show="isTabActive(1)">
+        <p ng-bind-html="api.overviewHtml"></p>
     </section>
 
     <section role="tabpanel" id="apiReference" ng-show="isTabActive(2)">
