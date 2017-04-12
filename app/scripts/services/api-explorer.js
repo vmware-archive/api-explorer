@@ -25,24 +25,29 @@
             }
         };
 
+        // aaron note: I don't know if this is the best way to declare utility code.  perhaps this should be in a
+        // separate file and not in this service file?
+        var utils = {
+            createDisplayStringForProducts : function(products) {
+                var productDisplayString = "";
+                // create a display string to be used in the list view
+                if (products && products.length > 0) {
+                    productDisplayString = products.join(",").replace(new RegExp(";", 'g')," ");
+                }
+                return productDisplayString;
+            },
+            createProductListNoVersions : function(products) {
+                var productListNoVersions = [];
+                angular.forEach(products, function (product, index) {
+                    var productPair = product.split(";");
+                    productListNoVersions.push(productPair[0]);
+                });
+                return productListNoVersions;
+            }
+        };
+
         var definitions = {
 
-                createDisplayStringForProducts : function(products) {
-                    var productDisplayString = "";
-                    // create a display string to be used in the list view
-                    if (products && products.length > 0) {
-                        productDisplayString = products.join(",").replace(new RegExp(";", 'g')," ");
-                    }
-                    return productDisplayString;
-                },
-                createProductListNoVersions : function(products) {
-                    var productListNoVersions = [];
-                    angular.forEach(products, function (product, index) {
-                        var productPair = product.split(";");
-                        productListNoVersions.push(productPair[0]);
-                    });
-                    return productListNoVersions;
-                },
                 getAllApis : function(){
                     var cacheKey = "allApis";
                     var deferred = $q.defer();
@@ -108,7 +113,10 @@
                            		type = "html";
                             }
 
-                           result.apis.push({
+                            // for the resulting API, set the product list such that version numbers are removed.  this only
+                            // effects filtering
+
+                            result.apis.push({
                             	id: parseInt(value.id, 10),
                             	name: value.name,
                             	version: value.version,
@@ -116,11 +124,11 @@
                             	description: value.description,
                             	url: value.api_ref_doc_url,
                             	type: type,
-                            	products: definitions.createProductListNoVersions(products),
-                                productDisplayString: definitions.createDisplayStringForProducts(products),
+                            	products: utils.createProductListNoVersions(products),
+                                productDisplayString: utils.createDisplayStringForProducts(products),
                                 languages: languages,
                             	source: source
-                           });
+                            });
                         });
 
                     }).finally(function() {
@@ -156,10 +164,10 @@
                             }
 
                             // create a display string to be used in the list view
-                            value.productDisplayString = definitions.createDisplayStringForProducts(value.products);
+                            value.productDisplayString = utils.createDisplayStringForProducts(value.products);
 
-                            // remove version numbers from the products for filter purposes
-                            value.products = definitions.createProductListNoVersions(value.products);
+                            // remove version numbers from the products on the api for filter purposes
+                            value.products = utils.createProductListNoVersions(value.products);
 
                             result.filters.products.pushUnique(value.products, true);
                             result.filters.languages.pushUnique(value.languages, true);
