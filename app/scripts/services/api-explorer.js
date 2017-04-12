@@ -199,7 +199,8 @@
                         	if (value.resource_type == resourceType) {
 
                         		arr.push({
-                                	title: value.name + ' ' + value.version,
+                                	title: value.name,
+                                    version: value.version,
                                     webUrl: value.web_url,
                                     downloadUrl: value.download_url,
                                     categories: value.categories,
@@ -220,15 +221,6 @@
                             }
                         	if (docs.length) {
                         		result.resources.docs = docs;
-
-                                angular.forEach(result.resources.docs, function(value, index) {
-                                    if (value.categories && (value.categories.length > 0) && value.categories[0] == 'API_OVERVIEW') {
-                                        console.log("setting overview doc");
-                                        console.log(value);
-                                        result.resources.overview = value;
-                                        value.webUrl = value.downloadUrl;
-                                    }
-                                });
                         	}
                         }
                     }).finally(function() {
@@ -311,7 +303,7 @@
                         url : $rootScope.settings.remoteApisEndpoint + '/apis/uids/' + api_uid
                     }).then(function(response) {
 
-                        console.log("got response " + response)
+                        //console.log("got response " + response)
 
                         // TODO sort through these Api instances and get the latest versions
                         // API id
@@ -326,6 +318,46 @@
                         } else {
                             console.log("api_uid=" + api_uid + " has no API instances.");
                         }
+                    }).finally(function() {
+                        deferred.resolve(result);
+                    });
+                    return deferred.promise;
+                },
+                /**
+                 * Get the local overview-template.html file as a string and return it as a promise.
+                 * String will be present in return objects .data member when resolved.
+                 */
+                getLocalOverviewTemplate : function(){
+                    var deferred = $q.defer();
+                    var result = {data:null};
+                    //console.log("loading overview template");
+
+                    $http({
+                        method : 'GET',
+                        url : '/overview-template.html'
+                    }).then(function(response) {
+                        //console.log("got overview template");
+                        result.data = response.data;
+                    }).finally(function() {
+                        deferred.resolve(result);
+                    });
+                    return deferred.promise;
+                },
+                /**
+                 * Get the remote overview html as a string and return it as a promise.
+                 * String will be present in return objects .data member when resolved.
+                 */
+                getOverviewBody : function(url){
+                    var deferred = $q.defer();
+                    var result = {data:null};
+                    //console.log("loading overview body");
+
+                    $http({
+                        method : 'GET',
+                        url : url
+                    }).then(function(response) {
+                        //console.log("got overview body");
+                        result.data = response.data;
                     }).finally(function() {
                         deferred.resolve(result);
                     });

@@ -40,6 +40,7 @@ import glob
 import shutil
 import json
 import traceback
+import re
 
 # relative import of markdown2 tool copied from https://github.com/trentm/python-markdown2
 # to avoid requirement of pip installing the tool in order to use
@@ -92,25 +93,41 @@ def addLocalOverviewResource(api, title, local_url):
     docs those are lists of Resource objects.  We are going to add
     a single "overview" resource that is one object.
     """
+    if 'docs' not in api.resources:
+        api.resources['docs'] = []
+        
     overview_resource = Object()
     overview_resource.title = title
     overview_resource.webUrl = local_url
+    overview_resource.downloadUrl = local_url
+    overview_resource.categories = [];
+    overview_resource.categories.append("API_OVERVIEW");                           
+                                    
     # downloadUrl: value.download_url,
     # categories: value.categories,
     # tags: value.tags
-    api.resources['overview'] = overview_resource
+    api.resources['docs'].append(overview_resource)
 
-def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFile, abbreviateDescription, htmlRootDir, generateOverviewHtml,
-                       productNameOverride, apiVersionOverride):
+def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, args):
+    
+    outputFile = args.outfile
+    abbreviateDescription = args.abbreviateDescription
+    htmlRootDir = args.htmlRootDir
+    generateOverviewHtml = args.generateOverviewHtml
+    templateOverviewHtmlFilePath = args.templateOverviewHtmlFilePath
+    productNameOverride = args.productName
+    apiVersionOverride = args.apiVersion
+    apiPrepend = args.apiPrepend
+    
 
     markdownConvertor = markdown2.Markdown()
 
     if not htmlRootDir and outputFile:
         htmlRootDir = os.path.dirname(outputFile)
 
-    templateOverviewHtml = None
-    templateOverviewHtmlFilePath = os.path.join(htmlRootDir, "overview-template.html")
-    if os.path.isfile(templateOverviewHtmlFilePath):
+    templateOverviewHtml = None   
+    #templateOverviewHtmlFilePath = os.path.join(htmlRootDir, "overview-template.html")
+    if templateOverviewHtmlFilePath and os.path.isfile(templateOverviewHtmlFilePath):
         stdout("Reading overview template file %s" % templateOverviewHtmlFilePath)
         with open(templateOverviewHtmlFilePath, "r") as templateOverviewHtmlFile:
             templateOverviewHtml = templateOverviewHtmlFile.read()
@@ -183,10 +200,14 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                 #        "products": ["NSX"]
                 #    }, {
                 api = Object()  # a dict based python object that has a method to easily serialize to json
-                api.name = title
+                if apiPrepend:
+                    api.name = apiPrepend + title
+                else:
+                    api.name = title
                 api.description = description
                 api.version = version
                 api.resources = {}
+                api.resources["docs"] = []
                 api.products = []
 
                 stdout("Including '%s' version='%s' 'title='%s'" % (swaggerJsonFile, version, title))
@@ -214,7 +235,15 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                         overviewHtmlPath = os.path.join(outputDir, overviewBasePath + ".html")
                         stdout("    Converting and writing overview html '%s'" % (overviewHtmlPath))
                         with open(overviewHtmlPath, "w") as outputOverviewHtmlFile:
-                            overviewHtml = markdownConvertor.convert(full_description)
+                            
+                            # TODO iterate through full_description downgrading all headers by adding
+                            # a single 
+                            headerConvertedDescription = re.sub(r'([#]+)', r'\1#', full_description)
+   
+
+                            
+                            
+                            overviewHtml = markdownConvertor.convert(headerConvertedDescription)
                             if templateOverviewHtml:
                                 # insert the converted markdown and write that so we get the style
                                 overviewHtml = templateOverviewHtml.replace("OVERVIEW-BODY-PLACEHOLDER", overviewHtml)
@@ -223,7 +252,7 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
 
                         relativePathToOverviewHtmlFile = "/" + os.path.relpath(overviewHtmlPath, htmlRootDir)
                         stdout("    Adding overview resource '%s'" % (relativePathToOverviewHtmlFile))
-                        addLocalOverviewResource(api, "Overview", relativePathToOverviewHtmlFile)
+                        addLocalOverviewResource(api, "API Overview", relativePathToOverviewHtmlFile)
 
                         # TODO translate to html
                         # TODO add resource for the overview
@@ -267,8 +296,10 @@ def main(argv):
     parser.add_argument('--outfile', help='Optional path to output json file for api list')
     parser.add_argument('--productName', help='Optional product name string to user for all APIs')
     parser.add_argument('--apiVersion', help='Optional API version string override to use for all APIs')
+    parser.add_argument('--apiPrepend', help='Optional string to prepend to all API names.')
     parser.add_argument('--abbreviateDescription', help='If provided, abbreviate the description to only be the first line.', action='store_true')
     parser.add_argument('--generateOverviewHtml', help='If provided, generate overview HTML in the output directory', action='store_true')
+    parser.add_argument('--templateOverviewHtmlFilePath', help='If provided, generate overview HTML in the output directory')  
     parser.add_argument('--htmlRootDir', help='Root directory for generated relative links.')
 
     if len(argv) == 0:
@@ -326,7 +357,7 @@ def main(argv):
                 exit(1)
 
     # stage swagger2 files
-    stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, args.outfile, args.abbreviateDescription, args.htmlRootDir, args.generateOverviewHtml, args.productName, args.apiVersion)
+    stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, args)
 
     if args.outfile:
         stdout("Writing local index file " + args.outfile)
