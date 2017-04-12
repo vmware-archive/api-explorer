@@ -226,6 +226,8 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         setFilteredApis();
     };
 
+    // check to see if there are default filter settings that we need to apply to the list
+    // of APIs now that we have them, only done first time the page loads.
     if (setDefaultFilters && $rootScope.settings.defaultFilters) {
         if ($rootScope.settings.defaultFilters.sources) {
             angular.forEach($rootScope.settings.defaultFilters.sources, function (value, index) {

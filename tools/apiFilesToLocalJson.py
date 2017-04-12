@@ -100,7 +100,8 @@ def addLocalOverviewResource(api, title, local_url):
     # tags: value.tags
     api.resources['overview'] = overview_resource
 
-def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFile, abbreviateDescription, htmlRootDir, generateOverviewHtml):
+def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFile, abbreviateDescription, htmlRootDir, generateOverviewHtml,
+                       productNameOverride, apiVersionOverride):
 
     markdownConvertor = markdown2.Markdown()
 
@@ -144,11 +145,15 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                 #    "title": "VMware vRealize Operations 6.2",
                 title = json_data['info']['title']
                 version = ""
-                try:
-                    version = json_data['info']['version']
-                    version = version.replace("-SNAPSHOT", "")  # drop any -SNAPSHOT from version number
-                except Exception, e:
-                    stdout("    warning: swagger json '%s' has no version" % (swaggerJsonFile))
+                if not apiVersionOverride:
+                    try:
+                        version = json_data['info']['version']
+                        version = version.replace("-SNAPSHOT", "")  # drop any -SNAPSHOT from version number
+                    except Exception, e:
+                        stdout("    warning: swagger json '%s' has no version" % (swaggerJsonFile))
+                else:
+                    version = apiVersionOverride
+                    
                 full_description = ""
                 description = ""
                 abbrev_md_description = ""
@@ -238,7 +243,10 @@ def stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, outputFil
                 api.url = relativePathToSwaggerJsonFile
 
                 # append the products to it based on stuff in the file name
-                addProductsFromFilename(api, swaggerJsonFile)
+                if not productNameOverride:
+                    addProductsFromFilename(api, swaggerJsonFile)
+                else:
+                    api.products.append(productNameOverride)
 
                 outputJson.apis.append(api)
 
@@ -257,6 +265,8 @@ def main(argv):
     parser.add_argument('--swaggerurl', nargs='+', help='One or more swagger urls. argument should be name=<value,description=<value>,version=<value>,url=<value>,product=<value>', required=False)
     parser.add_argument('--outdir', help='Optional path to output directory to copy all swagger json files to.  Copy only done if provided.')
     parser.add_argument('--outfile', help='Optional path to output json file for api list')
+    parser.add_argument('--productName', help='Optional product name string to user for all APIs')
+    parser.add_argument('--apiVersion', help='Optional API version string override to use for all APIs')
     parser.add_argument('--abbreviateDescription', help='If provided, abbreviate the description to only be the first line.', action='store_true')
     parser.add_argument('--generateOverviewHtml', help='If provided, generate overview HTML in the output directory', action='store_true')
     parser.add_argument('--htmlRootDir', help='Root directory for generated relative links.')
@@ -316,7 +326,7 @@ def main(argv):
                 exit(1)
 
     # stage swagger2 files
-    stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, args.outfile, args.abbreviateDescription, args.htmlRootDir, args.generateOverviewHtml)
+    stageLocalSwagger2(swaggerJsonFilesToStage, outputJson, outputDir, args.outfile, args.abbreviateDescription, args.htmlRootDir, args.generateOverviewHtml, args.productName, args.apiVersion)
 
     if args.outfile:
         stdout("Writing local index file " + args.outfile)
