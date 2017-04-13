@@ -43,6 +43,14 @@
                     productListNoVersions.push(productPair[0]);
                 });
                 return productListNoVersions;
+            },
+            // this utility function is to work around an issue with insecure certificates on vdc-download.vmware.com
+            fixVMwareDownloadUrl : function(url) {
+                if (url) {
+                    return url.replace("vdc-download", "vdc-repo");
+                } else {
+                    return url;
+                }
             }
         };
 
@@ -122,7 +130,7 @@
                             	version: value.version,
                             	api_uid: value.api_uid,
                             	description: value.description,
-                            	url: value.api_ref_doc_url,
+                            	url: utils.fixVMwareDownloadUrl(value.api_ref_doc_url),
                             	type: type,
                             	products: utils.createProductListNoVersions(products),
                                 productDisplayString: utils.createDisplayStringForProducts(products),
@@ -201,8 +209,8 @@
                         		arr.push({
                                 	title: value.name,
                                     version: value.version,
-                                    webUrl: value.web_url,
-                                    downloadUrl: value.download_url,
+                                    webUrl: utils.fixVMwareDownloadUrl(value.web_url),
+                                    downloadUrl: utils.fixVMwareDownloadUrl(value.download_url),
                                     categories: value.categories,
                                     tags: value.tags
                                 });
@@ -265,8 +273,8 @@
                         	samples.push({
                             	title: value.name,
                             	platform: platform,
-                                webUrl: value.webUrl,
-                                downloadUrl: value.downloadUrl,
+                                webUrl: utils.fixVMwareDownloadUrl(value.webUrl),
+                                downloadUrl: utils.fixVMwareDownloadUrl(value.downloadUrl),
                                 contributor: value.author.communitiesUser,
                                 createdDate: value.created,
                                 lastUpdated: value.lastUpdated,
