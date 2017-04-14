@@ -110,13 +110,12 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                         });
                     } else {
                         //$scope.api.overviewHtml = $scope.overviewTemplateHtml.replace("OVERVIEW-BODY-PLACEHOLDER",noOverviewMessage);
-                        $scope.api.overviewHtml = $scope.noOverviewMessage;
-                    }
+                        $scope.api.overviewHtml = null;//$scope.noOverviewMessage;
 
-                    // if there is no overview resource, then default the tab to the api reference and not the overview
-                    if (($scope.api.overviewHtml == $scope.noOverviewMessage) && ($scope.tab == 1)) {
                         $scope.tab = 2;
                     }
+
+
 
                     var idx = 0;
                     angular.forEach(response.resources.sdks, function (sdk, index) {
