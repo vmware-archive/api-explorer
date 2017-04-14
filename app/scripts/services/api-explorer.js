@@ -44,13 +44,17 @@
                 });
                 return productListNoVersions;
             },
-            // this utility function is to work around an issue with insecure certificates on vdc-download.vmware.com
+            // this utility function is to work around an issue with insecure certificates on vdc-download.vmware.com.
+            // As it turns on we figured out that in fact the certificate is OK, but this is a bug in many webkit browsers
+            // including Chrome.  For Chrome browsers version 57 or later is needed (63 has the issue).  It seems that it
+            // is also an issue for Safari.
             fixVMwareDownloadUrl : function(url) {
-                if (url) {
-                    return url.replace("vdc-download", "vdc-repo");
-                } else {
-                    return url;
-                }
+               return url;
+               // if (url) {
+               //     return url.replace("vdc-download", "vdc-repo");
+               // } else {
+               //     return url;
+               // }
             }
         };
 
