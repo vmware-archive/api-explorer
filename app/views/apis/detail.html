@@ -81,6 +81,28 @@
     padding: 0 20px;
 }
 
+.api-overview-html h2 {
+    color: #0c8d63;
+    font-size: 22px;
+    margin: 16px 0 16px;
+    line-height: 20px;
+    font-weight: normal;
+}
+
+.api-overview-html h3 {
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 4px 0 0 0;
+}
+
+.api-overview-html h4 {
+    color: #0c8d63;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 2px 0 0 0;
+}
+
 .api-overview-html p {
     display: inline;
 }
@@ -97,13 +119,20 @@
 }
 
 .api-overview-html pre {
-    background-color: #fcf6db;
+    background-color: #f8f8f8;
 }
 
 .api-overview-html pre code {
-    background-color: #fcf6db;
+    background-color: transparent;
 }
 
+.api-overview-html tr {
+    border-bottom: 1px solid grey;
+}
+
+table.prettytable {
+    border-collapse: collapse;
+}
 
 </style>
 
@@ -136,15 +165,6 @@
         </li>
 
     </ul>
-
-    <!--
-      TODO: this overview content may or may not be present (mostly NOT present), and as
-      such the tab for this should not be displayed in the case that it is not there, and yet
-       we want it to be the default tab displayed if the information exists.  How do we do this?
-       basically we need to set the second tab active instead of the first if this is the case.
-
-
-      -->
 
     <section  ng-if="api.overviewHtml" role="tabpanel" id="overview" ng-show="isTabActive(1)">
         <div class="api-overview-html" ng-bind-html="api.overviewHtml"></div>
