@@ -77,6 +77,34 @@
     color: #0099cc;
 }
 
+.api .api-overview-html {
+    padding: 0 20px;
+}
+
+.api-overview-html p {
+    display: inline;
+}
+
+.api-overview-html code {
+    padding: .2rem .4rem;
+    padding-top: 0.2rem;
+    padding-right: 0.4rem;
+    padding-bottom: 0.2rem;
+    padding-left: 0.4rem;
+
+    color: black;
+    background-color: #f0f0f0;
+}
+
+.api-overview-html pre {
+    background-color: #fcf6db;
+}
+
+.api-overview-html pre code {
+    background-color: #fcf6db;
+}
+
+
 </style>
 
 <div class="card api">
@@ -89,7 +117,7 @@
 
     <ul ng-if="api.resources && (api.overviewHtml || api.resources.docs || api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
 
-        <li ng-if="api.overviewHtml" role="presentation" class="nav-item">
+        <li ng-show="api.overviewHtml" role="presentation" class="nav-item">
             <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="overview" class="nav-link" ng-class="{active:isTabActive(1)}">Overview</a>
         </li>
 
@@ -114,10 +142,12 @@
       such the tab for this should not be displayed in the case that it is not there, and yet
        we want it to be the default tab displayed if the information exists.  How do we do this?
        basically we need to set the second tab active instead of the first if this is the case.
+
+
       -->
 
     <section  ng-if="api.overviewHtml" role="tabpanel" id="overview" ng-show="isTabActive(1)">
-        <p ng-bind-html="api.overviewHtml"></p>
+        <div class="api-overview-html" ng-bind-html="api.overviewHtml"></div>
     </section>
 
     <section role="tabpanel" id="apiReference" ng-show="isTabActive(2)">
