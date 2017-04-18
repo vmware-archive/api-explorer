@@ -31,7 +31,10 @@ popd
 pushd ${BRANCH_DIR}/tools
 echo "Zipping ${BRANCH_DIR}/tools to ${TOOLS_ZIP}"
 rm *.pyo *.pyc
-zip -r ${TOOLS_ZIP} ./*.py ./apixlocal.zip
+mkdir apixlocal
+unzip -o -d ./apixlocal ./apixlocal.zip 
+zip -r ${TOOLS_ZIP} ./*.py ./apixlocal
+rm -rf ./apixlocal
 popd
 
 cp -v ${BRANCH_DIR}/build/api-explorer-${VERSION}.war ${OUTPUT_DIR}
