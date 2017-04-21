@@ -210,8 +210,15 @@
                         var setArray = function(resourceType, arr, value) {
                         	if (value.resource_type == resourceType) {
 
+                        	    // make the title of the item included a version if there was one provided
+                                // and the name doesn't already end with the version string
+                                var title = value.name;
+                        	    if (value.version && !title.endsWith(value.version)) {
+                        	        title = title + " " + value.version;
+                                }
+
                         		arr.push({
-                                	title: value.name,
+                                	title: title,
                                     version: value.version,
                                     webUrl: utils.fixVMwareDownloadUrl(value.web_url),
                                     downloadUrl: utils.fixVMwareDownloadUrl(value.download_url),
