@@ -56,11 +56,11 @@ app.run(function($rootScope, $window) {
       }
 
       // Determine the "endpoint" used for loading remote APIs
-      $rootScope.settings.remoteApisEndpoint =  env.remoteApiEndPoint; 
-      $rootScope.settings.remoteSampleExchangeApiEndPoint =  env.remoteSampleExchangeApiEndPoint; 
+      $rootScope.settings.remoteApisEndpoint =  env.remoteApiEndPoint;
+      $rootScope.settings.remoteSampleExchangeApiEndPoint =  env.remoteSampleExchangeApiEndPoint;
 
       // Determine the "endpoint" used for loading local APIs
-      $rootScope.settings.localApisEndpoint = env.localApiEndPoint; 
+      $rootScope.settings.localApisEndpoint = env.localApiEndPoint;
 
       // Determine if enable local APIs
       $rootScope.settings.enableLocal = env.enableLocal;
@@ -71,8 +71,6 @@ app.run(function($rootScope, $window) {
       // set any default filter selections
       $rootScope.settings.defaultFilters = env.defaultFilters;
 
-      // The "product" catalog for what remote APIs to get
-      $rootScope.settings.productCatalog = env.productCatalog;
   };
 
   // Initialize global settings

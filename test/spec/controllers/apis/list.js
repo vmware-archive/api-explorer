@@ -9,7 +9,7 @@ describe('Controller: ApisListCtrl', function() {
 	var ApisListCtrl, route, apiService;
 	var $rootScope, $scope, $q;
 	var deferred;
-	
+
 	var localApis = [ {
         "name" : "vRealize Automation REST API",
         "version" : "7",
@@ -42,12 +42,12 @@ describe('Controller: ApisListCtrl', function() {
         "languages" : ["Java"],
         "type" : "Swagger"
     }]
-	
+
 	var allApis = localApis.concat(remoteApis);
-	    
+
 	// load the controller's module
     beforeEach(module('apiExplorerApp'));
-	
+
     // Initialize the controller and a mock scope
     beforeEach(inject(function($controller, _$rootScope_, $route, _$q_, apis) {
     	$rootScope = _$rootScope_;
@@ -58,12 +58,12 @@ describe('Controller: ApisListCtrl', function() {
 
         // We use the $q service to create a mock instance of defer
         deferred = _$q_.defer();
-        
+
         // Use a Jasmine Spy to return the deferred promise
         spyOn(apis, 'getAllApis').and.returnValue(deferred.promise);
         spyOn(apis, 'getLocalApis').and.returnValue(deferred.promise);
         spyOn(apis, 'getRemoteApis').and.returnValue(deferred.promise);
-        
+
         ApisListCtrl = $controller('ApisListCtrl', {
         	$scope : $scope,
             $route : route,
@@ -107,7 +107,7 @@ describe('Controller: ApisListCtrl', function() {
     		expect($scope.filters.sources.length).toEqual(0);
     	});
     });
-  
+
     describe('get apis', function() {
     	var emptyResult = {
     		apis : [],
@@ -118,7 +118,7 @@ describe('Controller: ApisListCtrl', function() {
                 sources : []
             }
         };
-    	
+
         it('should get all apis', function () {
         	$scope.getApis(true, true);
         	var result = angular.merge({}, emptyResult);
@@ -129,8 +129,8 @@ describe('Controller: ApisListCtrl', function() {
             expect($scope.error).toBe(undefined);
             expect($scope.apis.length).toEqual(4);
     	});
-    	
-    	it('should get local apis', function () {    		
+
+    	it('should get local apis', function () {
     		$scope.getApis(true, false);
     		var result = angular.merge({}, emptyResult);
             result.apis = localApis;
@@ -140,8 +140,8 @@ describe('Controller: ApisListCtrl', function() {
             expect($scope.error).toBe(undefined);
             expect($scope.apis.length).toEqual(2);
     	});
-    	
-    	it('should get all remote apis', function () {    		
+
+    	it('should get all remote apis', function () {
     		$scope.getApis(false, true);
     		var result = angular.merge({}, emptyResult);
             result.apis = remoteApis;
@@ -151,50 +151,40 @@ describe('Controller: ApisListCtrl', function() {
             expect($scope.error).toBe(undefined);
             expect($scope.apis.length).toEqual(2);
         });
-    	
-        it('should get vCenter 6.5 remote apis', function () {    		
-        	$scope.getApis(false, true, 'vCenter');
-    		var result = angular.merge({}, emptyResult);
-    		result.apis = remoteApis;
-            deferred.resolve(result);
-            $scope.$apply();
-            expect($scope.apis).not.toBe(undefined);
-            expect($scope.error).toBe(undefined);
-            expect($scope.apis.length).toEqual(1);
-        });
+
     });
-    
+
     describe('filter the apis', function() {
     	it('should return 1 vSphere api', function() {
     		$scope.apis = allApis;
-    	    $scope.filters.products = ['vSphere 6.5']; 
+    	    $scope.filters.products = ['vSphere 6.5'];
     	    var filter = [];
     	    var value = 'product';
     	    $scope.toggleFilterSelection(value, filter);
     	    expect($scope.filteredApis.length).toEqual(1);
     	});
-    	
+
     	it('should return 3 Java apis', function() {
     		$scope.apis = allApis;
-    		$scope.filters.languages = ['Java']; 
+    		$scope.filters.languages = ['Java'];
     	    var filter = [];
     	    var value = 'language';
     	    $scope.toggleFilterSelection(value, filter);
     	    expect($scope.filteredApis.length).toEqual(3);
     	});
-    	
+
     	it('should return 3 swagger api', function() {
     		$scope.apis = allApis;
-    		$scope.filters.types = ['Swagger']; 
+    		$scope.filters.types = ['Swagger'];
     	    var filter = [];
     	    var value = 'type';
     	    $scope.toggleFilterSelection(value, filter);
     	    expect($scope.filteredApis.length).toEqual(3);
     	});
-    	
+
     	it('should return 2 local api', function() {
     		$scope.apis = allApis;
-    		$scope.filters.sources = ['local']; 
+    		$scope.filters.sources = ['local'];
     	    var filter = [];
     	    var value = 'source';
     	    $scope.toggleFilterSelection(value, filter);

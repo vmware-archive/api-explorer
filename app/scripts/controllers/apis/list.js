@@ -25,6 +25,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         types: [],
         sources: []
     };
+    $scope.defaultProduct = false;
 
     /**
      * Private Variables
@@ -48,7 +49,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             if (add && $scope.filters.products.length) {
                 if (api.products && api.products.length) {
                     for (var y=0; y<api.products.length; y++) {
-                        var product = api.products[y].replace(";", " ");
+                        var product = api.products[y];
                         if ($scope.filters.products.indexOf(product) === -1) {
                             add = false;
                         } else {
@@ -104,7 +105,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
      * Private Functions - set the apis for the config products.
      * The configProducts contains a comma separated products.
      */
-    var setApis = function(response, configProducts){
+    var setApis = function(response){
         var emptyResult = {
     		apis : [],
             filters : {
@@ -114,46 +115,26 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
                 sources : []
             }
         };
-    	var configProductList = null;
-    	if (configProducts && configProducts != 'undefined') {
-			configProductList = configProducts.toLowerCase().split(",");
-		}
+
         var result = angular.merge({}, emptyResult);
 
         angular.forEach(response.apis, function(value, index) {
         	var products = [];
             var languages = [];
-            var add = false;
+
         	if (value.products && value.products.length > 0) {
         		if (angular.isArray(value.products)) {
-        			var keepGoing = true;
         			angular.forEach(value.products, function(value, index) {
-        				if (configProductList) {
-        				    if (keepGoing) {
-        				    	angular.forEach(configProductList, function(v, i) {
-        				    		if (value.split(";")[0].toLowerCase() == v.replace(/^\s+|\s+$/g, '')) {
-                        				add = true;
-                        				keepGoing=false;
-                        				products.push(value.replace(";", " "));
-                        			}
-                    			});
-        				    }
-                    	} else {
-                    		add = true;
-                    		products.push(value.replace(";", " "));
-                    	}
-        			});
+        				products.push(value.replace(";", " "));
+                    });
                 }
-        	} else {
-        		add = true;
         	}
-        	if (add) {
-        		result.filters.products.pushUnique(products, true);
-                result.filters.languages.pushUnique(value.languages, true);
-                result.filters.types.pushUnique(value.type);
-                result.filters.sources.pushUnique(value.source);
-                result.apis.push(value);
-        	}
+        	result.filters.products.pushUnique(products, true);
+            result.filters.languages.pushUnique(value.languages, true);
+            result.filters.types.pushUnique(value.type);
+            result.filters.sources.pushUnique(value.source);
+            result.apis.push(value);
+
         });
         $scope.products = result.filters.products;
     	$scope.languages = result.filters.languages;
@@ -180,17 +161,17 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
     $scope.loading += 1;
 
-    $scope.getApis = function(enableLocal, enableRemote, configProducts) {
+    $scope.getApis = function(enableLocal, enableRemote) {
     	if (enableLocal == true && enableRemote == true) {
         	apis.getAllApis().then(function(response) {
-                setApis(response, configProducts);
+                setApis(response);
             }).finally(function() {
                 setFilteredApis();
                 $scope.loading -= 1;
             });
         } else if (enableLocal == false && enableRemote == true){
         	apis.getRemoteApis().then(function(response) {
-                setApis(response, configProducts);
+                setApis(response);
             }).finally(function() {
                 setFilteredApis();
                 $scope.loading -= 1;
@@ -205,7 +186,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         }
     };
 
-    $scope.getApis($rootScope.settings.enableLocal, $rootScope.settings.enableRemote, $rootScope.settings.productCatalog);
+    $scope.getApis($rootScope.settings.enableLocal, $rootScope.settings.enableRemote);
 
     // When the "keywords" field has changed
     $scope.keywordsChanged = function(){
@@ -234,7 +215,8 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
                 $scope.filters.sources.push(value);
             });
         }
-        if ($rootScope.settings.defaultFilters.products) {
+        if ($rootScope.settings.defaultFilters.products && $rootScope.settings.defaultFilters.products.length > 0) {
+            $scope.defaultProduct = true;
             angular.forEach($rootScope.settings.defaultFilters.products, function (value, index) {
                 $scope.filters.products.push(value);
             });

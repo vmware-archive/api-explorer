@@ -25,7 +25,7 @@
         <div class="card">
             <div class="card-header">Filters</div>
             <div class="card-block">
-                <div ng-if="products.length && products.length > 1">
+                <div ng-if="defaultProduct == false &&  products.length && products.length > 1">
                     <h3 class="card-title">Products</h3>
                     <ul class="list-unstyled">
                         <li ng-repeat="product in products | orderBy:'toString()'">
@@ -92,7 +92,7 @@
                 </div>
 
                 <ul class="list-group">
-                    <li class="api list-group-item" ng-repeat="api in filteredApis | orderBy:'name'">
+                    <li class="api list-group-item" ng-repeat="api in filteredApis | orderBy: ['-productDisplayString', 'name']">
                         <div class="row">
                             <div class="col-md-4">
                                 <a href="#!/apis/{{::api.id}}"> {{::api.name}} </a>
