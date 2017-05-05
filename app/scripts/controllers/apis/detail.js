@@ -32,10 +32,10 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
      * Private Functions
      */
     // Load resources for the currently selected API for the given remote API id
-    var loadResourcesForRemoteApi = function(apiIdToFetchResourcesFor) {
+    var loadResourcesForRemoteApi = function(apiIdToFetchResourcesFor, api_uid) {
         var categories = null;
         if (apiIdToFetchResourcesFor) {
-            console.log("fetching resources for api id=" + apiIdToFetchResourcesFor)
+            console.log("fetching resources for api id=" + apiIdToFetchResourcesFor + " uid=" + api_uid)
             $scope.loading += 1;
             apis.getRemoteApiResources(apiIdToFetchResourcesFor).then(function (response) {
                 if (response) {
@@ -115,13 +115,23 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                         $scope.tab = 2;
                     }
 
+                    // categories are the values that we are going to pass to the sample search service
+                    // to search for matching samples.
+                    categories = ""
 
+                    // include the UID of this API in the sample search as a platform value.  The sample backend is
+                    // smart enough to handle the api:  string in a special way.
+                    if (api_uid) {
+                        categories = api_uid;
+                    }
 
+                    // Use any category value from any SDK that was included
+                    // in the list of SDKs.
                     var idx = 0;
                     angular.forEach(response.resources.sdks, function (sdk, index) {
                         var category = sdk.categories[0];
 
-                        if (idx == 0) {
+                        if (categories.length == 0) {
                             categories = category;
                         } else {
                             categories += "," + category;
@@ -165,7 +175,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                 // specifies an api_uid string.  In the case of a local API, we use the UID to get the latest
                 // instance of the remote API and then get the resources for it.
                 if ($scope.api.url && $scope.api.source == 'remote') {
-                    loadResourcesForRemoteApi( $scope.api.id );
+                    loadResourcesForRemoteApi( $scope.api.id, $scope.api.api_uid );
                 } else if ($scope.api.url && $scope.api.source == 'local' && $scope.api.api_uid) {
                      console.log("fetching resources for api_uid=" + $scope.api.api_uid)
 
@@ -173,7 +183,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                          // response.data should have the id.  Might be null
                          //console.log("got response for getLatestRemoteApiIdForApiUid");
                          //console.log(response);
-                         loadResourcesForRemoteApi( response.data );
+                         loadResourcesForRemoteApi( response.data, $scope.api.api_uid );
                     });
                 }
 
