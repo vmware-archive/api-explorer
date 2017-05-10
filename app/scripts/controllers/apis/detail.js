@@ -35,7 +35,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     var loadResourcesForRemoteApi = function(apiIdToFetchResourcesFor) {
         var categories = null;
         if (apiIdToFetchResourcesFor) {
-            console.log("fetching resources for api id=" + apiIdToFetchResourcesFor)
+            console.log("fetching resources for api id=" + apiIdToFetchResourcesFor )
             $scope.loading += 1;
             apis.getRemoteApiResources(apiIdToFetchResourcesFor).then(function (response) {
                 if (response) {
@@ -115,13 +115,29 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                         $scope.tab = 2;
                     }
 
+                    // categories are the values that we are going to pass to the sample search service
+                    // to search for matching samples.
+                    categories = ""
 
+                    // include the UID of this API in the sample search as a platform value.
+                    if ($scope.api.api_uid) {
+                        categories = $scope.api.api_uid;
+                    }
+                    if ($scope.api.name) {
+                        if (categories.length == 0) {
+                            categories = $scope.api.name;
+                        } else {
+                            categories += "," + $scope.api.name;
+                        }
+                    }
 
+                    // Use any category value from any SDK that was included
+                    // in the list of SDKs.
                     var idx = 0;
                     angular.forEach(response.resources.sdks, function (sdk, index) {
                         var category = sdk.categories[0];
 
-                        if (idx == 0) {
+                        if (categories.length == 0) {
                             categories = category;
                         } else {
                             categories += "," + category;
