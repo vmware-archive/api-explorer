@@ -71,6 +71,15 @@ app.run(function($rootScope, $window) {
       // set any default filter selections
       $rootScope.settings.defaultFilters = env.defaultFilters;
 
+      // defaults for control over the filter pane
+      $rootScope.settings.hideFilters = env.hideFilters;
+      $rootScope.settings.hideProductFilter = env.hideProductFilter;
+      $rootScope.settings.hideLanguageFilter = env.hideLanguageFilter;
+      $rootScope.settings.hideSourcesFilter = env.hideSourcesFilter;
+
+      // text displayed above the API list
+      $rootScope.settings.apiListHeaderText = env.apiListHeaderText;
+
   };
 
   // Initialize global settings

@@ -21,11 +21,11 @@
 
 <div class="row">
 
-    <div class="col-md-2 filters">
+    <div class="col-md-2 filters" ng-if="!hideFilters">
         <div class="card">
             <div class="card-header">Filters</div>
             <div class="card-block">
-                <div ng-if="defaultProduct == false &&  products.length && products.length > 1">
+                <div ng-if="(!hideProductFilter) &&  products.length && products.length > 1">
                     <h3 class="card-title">Products</h3>
                     <ul class="list-unstyled">
                         <li ng-repeat="product in products | orderBy:'toString()'">
@@ -38,7 +38,7 @@
                     <div class="card-divider"></div>
                 </div>
 
-                <div ng-if="languages.length && languages.length > 1">
+                <div ng-if="(!hideLanguageFilter) && languages.length && languages.length > 1">
                     <h3 class="card-title">Language Bindings</h3>
                     <ul class="list-unstyled">
                         <li ng-repeat="language in languages | orderBy:'toString()'">
@@ -65,7 +65,7 @@
                 </div>
                 -->
 
-                <div ng-if="sources.length && sources.length > 1">
+                <div ng-if="(!hideSourcesFilter) && sources.length && sources.length > 1">
                     <h3 class="card-title">Sources</h3>
                     <ul class="list-unstyled">
                         <li ng-repeat="source in sources | orderBy:'toString()'">
@@ -84,7 +84,7 @@
     <div class="col-md-9 apis">
 
         <div class="card">
-            <div class="card-header">Available APIs</div>
+            <div class="card-header">{{apiListHeaderText}}</div>
             <div class="card-block">
 
                 <div class="card-text">
