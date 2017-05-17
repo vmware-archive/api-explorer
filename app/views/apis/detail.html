@@ -213,7 +213,7 @@ table.prettytable {
         </div>
     </section>
 
-    <section ng-if="api.resources.docs" role="tabpanel" id="docs" ng-show="isTabActive(3)">
+    <section ng-if="api.resources.docs && (api.resources.docs.length > 0)" role="tabpanel" id="docs" ng-show="isTabActive(3)">
         <ul class="list-group list-group-flush">
             <li ng-repeat="doc in api.resources.docs" class="list-group-item">
                 <a href="{{::doc.downloadUrl}}" target="_blank">{{::doc.title}}</a>

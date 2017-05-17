@@ -26,10 +26,10 @@
   // default filtering to apply to the window after the initial load is done.
   window.config.defaultFilters = {
       keywords : "",
-      products : ["vSphere"],
+      products : [],
       languages: [],
       types: [],
-      sources: ["local","remote"]
+      sources: []
   };
 
   // Default control over display of filters.  This has nothing to do do with the actual values of the filters,
