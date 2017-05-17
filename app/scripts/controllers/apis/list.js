@@ -10,7 +10,6 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     /**
      * Public Variables
      */
-
     $scope.loading = 0; // Loading when > 0
     $scope.apis = [];
     $scope.filteredApis = [];
@@ -25,7 +24,14 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         types: [],
         sources: []
     };
-    $scope.defaultProduct = false;
+    $scope.apiListHeaderText = $rootScope.settings.apiListHeaderText;
+    $scope.hideFilters = $rootScope.settings.hideFilters;
+    $scope.hideProductFilter = $rootScope.settings.hideProductFilter;
+    $scope.hideLanguageFilter = $rootScope.settings.hideLanguageFilter;
+    $scope.hideSourcesFilter = $rootScope.settings.hideSourcesFilter;
+
+    $scope.initDefaultFilters = false;
+
 
     /**
      * Private Variables
@@ -37,8 +43,47 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
      * Private Functions
      */
 
+    var setDefaultFilters = function() {
+        if ($scope.initDefaultFilters) {
+            // this is treated as a one shot
+            $scope.initDefaultFilters = false;
+            console.log("in setDefaultFilters")
+
+            if ($rootScope.settings.defaultFilters) {
+                console.log("setDefaultFilters actually setting initial filters")
+
+                if ($rootScope.settings.defaultFilters.sources) {
+                    angular.forEach($rootScope.settings.defaultFilters.sources, function (value, index) {
+                        $scope.filters.sources.push(value);
+                    });
+                }
+                if ($rootScope.settings.defaultFilters.products && $rootScope.settings.defaultFilters.products.length > 0) {
+                    angular.forEach($rootScope.settings.defaultFilters.products, function (value, index) {
+                        $scope.filters.products.push(value);
+                    });
+                }
+                if ($rootScope.settings.defaultFilters.languages) {
+                    angular.forEach($rootScope.settings.defaultFilters.languages, function (value, index) {
+                        $scope.filters.languages.push(value);
+                    });
+                }
+                if ($rootScope.settings.defaultFilters.types) {
+                    angular.forEach($rootScope.settings.defaultFilters.types, function (value, index) {
+                        $scope.filters.types.push(value);
+                    });
+                }
+                if ($rootScope.settings.defaultFilters.keywords) {
+                    $scope.filters.keywords = keywords;
+                }
+            }
+        }
+    }
     // Filters the available APIs according to selected "checkbox" filters
     var setFilteredApis = function(){
+
+        // check to see if we need to set default filters.  only done once.
+        setDefaultFilters();
+
         var apis = [];
 
         for (var x=0; x<$scope.apis.length; x++) {
@@ -147,7 +192,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
      * Public Functions
      */
 
-    var setDefaultFilters = false;
+
 
     // Load cached filters
     if (cache.get("filters")) {
@@ -155,8 +200,8 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         setFilteredApis();
     } else {
         // there are no cached filters, so we need to set the default filter
-        // values after loading.
-        setDefaultFilters = true;
+        // values after we load for the first time.
+        $scope.initDefaultFilters = true;
     }
 
     $scope.loading += 1;
@@ -206,36 +251,4 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         // Force filtering the APIs
         setFilteredApis();
     };
-
-    // check to see if there are default filter settings that we need to apply to the list
-    // of APIs now that we have them, only done first time the page loads.
-    if (setDefaultFilters && $rootScope.settings.defaultFilters) {
-        if ($rootScope.settings.defaultFilters.sources) {
-            angular.forEach($rootScope.settings.defaultFilters.sources, function (value, index) {
-                $scope.filters.sources.push(value);
-            });
-        }
-        if ($rootScope.settings.defaultFilters.products && $rootScope.settings.defaultFilters.products.length > 0) {
-            $scope.defaultProduct = true;
-            angular.forEach($rootScope.settings.defaultFilters.products, function (value, index) {
-                $scope.filters.products.push(value);
-            });
-        }
-        if ($rootScope.settings.defaultFilters.languages) {
-            angular.forEach($rootScope.settings.defaultFilters.languages, function (value, index) {
-                $scope.filters.languages.push(value);
-            });
-        }
-        if ($rootScope.settings.defaultFilters.types) {
-            angular.forEach($rootScope.settings.defaultFilters.types, function (value, index) {
-                $scope.filters.types.push(value);
-            });
-        }
-        if ($rootScope.settings.defaultFilters.keywords) {
-            $scope.filters.keywords = keywords;
-        }
-        // Force filtering the APIs
-        setFilteredApis();
-    }
-
 });

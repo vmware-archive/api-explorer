@@ -4,6 +4,9 @@
 This project is a lightweight HTML5/AngularJS 1.x component that implements an API Explorer for VMware APIs.  This
 component has minimal dependencies and can be embedded in any product that has an embedded web server.
 
+If you wish to see an instance of this project in action, check out the [VMware Platypus Project](http://github.com/vmware/platypus/), 
+which is a package of this API Explorer in a convenient Docker container.
+
 ###Features
 * Support for Swagger, RAML, or generic HTML API documentation
 * Swagger and RAML components can make API calls using the client browsers network connectivity.
@@ -29,22 +32,55 @@ configure the component. For now you will have to do a build (grunt build) and c
 the contents of the dist folder into your tree.
 
 ### Component configuration
-You can config the api-explorer by setting environment variables in config.js file (shown below).  By default, both the local APIs and remote APIs are enabled.  To disable the remote APIs, set the "window.config.enableRemote=false". For local APIs, you need to set the "local.json" file path in the "window.config.localApiEndPoint" variable. You can also specify the product name in "window.config.productCatalog" variable to only get the remote APIs for the specified product.  By default, the "window.config.productCatalog" is not set and all remote APIs are shown.
+You can config the api-explorer by setting environment variables in config.js file (shown below).  By default, both the local APIs and remote APIs are enabled.  To disable the remote APIs, set the "window.config.enableRemote=false". For local APIs, you need to set the "local.json" file path in the "window.config.localApiEndPoint" variable. 
+
+It is possible to specify default settings for filter values in the defaultFilters variable.
+This can be used to only display APIs for a particular product for example.
+
+Additionally if you wish to prevent the user from being able to change a particular filter 
+selection, you can specify a "true" value for one of the  window.config.hide* variables. These
+values cause either all of the filters (in the case of "hideFilters"), or a particular filter
+pane to be hidden by default.
+
+In the example below, we create an API explorer that only displays local vSphere APIs by
+setting defaultFilters values as well as hideFilters = true.
 
 ```javascript
 
-  ## Enable local APIs
+  // Whether or not to enable debug mode
+  // Setting this to false will disable console output
+  window.config.enableDebug = false;
+  
+  // Whether or not to enable local APIs
   window.config.enableLocal = true;
-
-  ## local APIs endpoint
+    
+  // local APIs endpoint
   window.config.localApiEndPoint = "local.json";
-
-  ## Enable remote APIs
+  
+  // Whether or not to enable remote APIs and resources
   window.config.enableRemote = true;
 
-  ## Product catalog
-  ## Available values are: vSphere, NSX, vCenter Server, vCloud Air, vCloud Suite, Virtual SAN, vRealize Suite
-  window.config.productCatalog = "vSphere";
+  // you can customize the text that is displayed above the APIs, to scope
+  // to a particular product for example.
+  window.config.apiListHeaderText = "vSphere APIs";
+
+  // default filtering to apply to the window after the initial load is done.
+  window.config.defaultFilters = {
+      keywords : "",
+      products : ["vSphere"],
+      languages: [],
+      types: [],
+      sources: ["local"]
+  };
+
+  // Default control over display of filters.  This has nothing to do do with the actual values of the filters,
+  // only over the display of them.  If all filters or a particular filter pane are not displayed and yet there is
+  // a defaultFilters value for it, the user will not be able to change the value. This can be used to scope to a
+  // particular product for example.
+  window.config.hideFilters = true;             // if true, the filter pane is not displayed at all
+  window.config.hideProductFilter = false;       // if true, the products filter is hidden
+  window.config.hideLanguageFilter = false;      // if true, the language filter is hidden
+  window.config.hideSourcesFilter = false;       // if true, the sources filter is hidden
 ```
 
 ## Contributing

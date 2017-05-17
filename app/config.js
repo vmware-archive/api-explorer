@@ -19,9 +19,11 @@
   // Whether or not to enable remote APIs and resources
   window.config.enableRemote = true;
 
-  // default filtering to apply to the window after the initial load is done.  This is different
-  // from enablinh remote or local as well a productCatalog because it is possible for the user to
-  //change the selection after page load
+  // you can customize the text that is displayed above the APIs, to scope
+  // to a particular product for example.
+  window.config.apiListHeaderText = "Available APIs";
+
+  // default filtering to apply to the window after the initial load is done.
   window.config.defaultFilters = {
       keywords : "",
       products : [],
@@ -29,14 +31,16 @@
       types: [],
       sources: []
   };
-  
-  // Product catalog: if specified, only the products in the list are added to the GUI irrespective of
-  // any selection that the user makes.  If you only ever want a subset of products available this is the
-  // option to use.  If however you want to have DEFAULT selections and be able to change them, you should
-  // instead use the defaultFilters.
-  // Available values are: vSphere, NSX, vCenter Server, vCloud Air, vCloud Suite, Virtual SAN, vRealize Suite
-  //window.config.productCatalog = "vRealize Automation";
-  
+
+  // Default control over display of filters.  This has nothing to do do with the actual values of the filters,
+  // only over the display of them.  If all filters or a particular filter pane are not displayed and yet there is
+  // a defaultFilters value for it, the user will not be able to change the value. This can be used to scope to a
+  // particular product for example.
+  window.config.hideFilters = false;             // if true, the filter pane is not displayed at all
+  window.config.hideProductFilter = false;       // if true, the products filter is hidden
+  window.config.hideLanguageFilter = false;      // if true, the language filter is hidden
+  window.config.hideSourcesFilter = false;       // if true, the sources filter is hidden
+
   // Remote APIs endpoint.  
   window.config.remoteSampleExchangeApiEndPoint = "https://apigw.vmware.com/sampleExchange/v1";
   window.config.remoteApiEndPoint = "https://vdc-repo.vmware.com/apix";
