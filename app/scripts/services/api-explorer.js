@@ -96,7 +96,6 @@
                         method : 'GET',
                         url : $rootScope.settings.remoteApisEndpoint + '/apis'
                     }).then(function(response) {
-
                         angular.forEach(response.data, function(value, index) {
                         	var source = "remote";
 
@@ -104,12 +103,17 @@
                             var type = "swagger";
                             var products = [];
                             var languages = [];
+                            var apiGroup = "";
                             var add = false;
 
                             if (value.tags && value.tags.length > 0) {
                                 if (angular.isArray(value.tags)) {
                                     type = filterFilter(value.tags, {category: "display"}, true)[0].name;
-                                    var keepGoing = true;
+                                    var apiGroupTags = filterFilter(value.tags, {category: "api-group"}, true);
+
+                                    if (apiGroupTags && apiGroupTags.length > 0) {
+                                        apiGroup = apiGroupTags[0].name;
+                                    }
                                     angular.forEach(filterFilter(value.tags, {category: "product"}, true), function(value, index) {
                                     	products.push(value.name);
                                     });
@@ -130,17 +134,19 @@
 
                             result.apis.push({
                             	id: parseInt(value.id, 10),
-                            	name: value.name,
-                            	version: value.version,
-                            	api_uid: value.api_uid,
-                            	description: value.description,
-                            	url: utils.fixVMwareDownloadUrl(value.api_ref_doc_url),
-                            	type: type,
-                            	products: utils.createProductListNoVersions(products),
+                                name: value.name,
+                        	    version: value.version,
+                        	    api_uid: value.api_uid,
+                        	    description: value.description,
+                        	    url: utils.fixVMwareDownloadUrl(value.api_ref_doc_url),
+                        	    type: type,
+                        	    products: utils.createProductListNoVersions(products),
                                 productDisplayString: utils.createDisplayStringForProducts(products),
                                 languages: languages,
-                            	source: source
+                            	source: source,
+                                apiGroup: apiGroup
                             });
+
                         });
 
                     }).finally(function() {

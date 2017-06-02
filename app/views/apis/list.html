@@ -13,111 +13,209 @@
     cursor: pointer;
 }
 
-.api {
-    border-bottom: 1px solid #eee;
-    padding: 5px 0;
+.apis > #tabs {
+    padding: 0 18px;
 }
+
+.apis button {
+    float: right !important;
+    font-size: 10px !important;
+    margin: 10px 12px 6px 0;
+}
+.overview {
+    padding: 15px;
+    overflow-x:auto;
+}
+
+.overview h2 {
+    color: #565656;
+    font-size: 25px;
+    font-weight: 300;
+    margin: 0px;
+}
+
+.overview h3 {
+    color: #565656;
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0 0 10px 0!important;
+    padding: 20px 0!important;
+}
+
+.overview table {
+    position: relative;
+    display: block;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.overview th {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+}
+.overview th, td {
+    padding: 10px;
+    text-align: left;
+    min-width: 20%;
+}
+
+.overview tr:hover {
+    background-color: #f5f5f5
+}
+
+.hide {
+    float: right;
+    font-size: 12px;
+}
+
+.filters-trigger {
+    position: absolute;
+    width: 10px;
+    height: 200px;
+    left: 0px;
+    top: 40%;
+    background-color: #685959;
+    line-height: 200px;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 0 5px 5px 0;
+    opacity: 0.5;
+}
+
+i {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
 </style>
+<div class="filters-trigger" ng-if="!hideFilters && hideLeftNav" ng-click="toggleFilterDisplay()">
+    <i class="right"></i>
+</div>
+<div class="card apis">
 
-<div class="row">
+    <ul ng-if="overviewHtml" id="tabs" class="nav" role="tablist">
 
-    <div class="col-md-2 filters" ng-if="!hideFilters">
-        <div class="card">
-            <div class="card-header">Filters</div>
-            <div class="card-block">
-                <div ng-if="(!hideProductFilter) &&  products.length && products.length > 1">
-                    <h3 class="card-title">Products</h3>
-                    <ul class="list-unstyled">
-                        <li ng-repeat="product in products | orderBy:'toString()'">
-                            <label>
-                                <input type="checkbox" name="filterProducts[]" ng-checked="filters.products.indexOf(product) > -1" ng-click="toggleFilterSelection(product, filters.products)"></input>
-                                &nbsp;{{::product}}
-                            </label>
-                        </li>
-                    </ul>
-                    <div class="card-divider"></div>
-                </div>
+        <li ng-show="overviewHtml" role="presentation" class="nav-item">
+            <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="overview" class="nav-link" ng-class="{active:isTabActive(1)}">Overview</a>
+        </li>
+        <li role="presentation" class="nav-item">
+            <a href="javascript:void(0);" ng-click="setActiveTab(2)" role="tab" aria-controls="apis" class="nav-link" ng-class="{active:isTabActive(2)}">Apis</a>
+        </li>
+    </ul>
 
-                <div ng-if="(!hideLanguageFilter) && languages.length && languages.length > 1">
-                    <h3 class="card-title">Language Bindings</h3>
-                    <ul class="list-unstyled">
-                        <li ng-repeat="language in languages | orderBy:'toString()'">
-                            <label>
-                                <input type="checkbox" name="filterLanguages[]" ng-checked="filters.languages.indexOf(language) > -1" ng-click="toggleFilterSelection(language, filters.languages)"></input>
-                                &nbsp;{{::language}}
-                            </label>
-                        </li>
-                    </ul>
-                    <div class="card-divider"></div>
-                </div>
-               <!-- aaron note: I don't think the doc types is necessary or helpful.
-                <div ng-if="types.length && types.length > 1">
-                    <h3 class="card-title">Documentation Types</h3>
-                    <ul class="list-unstyled">
-                        <li ng-repeat="type in types | orderBy:'toString()'">
-                            <label>
-                                <input type="checkbox" name="filterTypes[]" ng-checked="filters.types.indexOf(type) > -1" ng-click="toggleFilterSelection(type, filters.types)"></input>
-                                &nbsp;{{::type}}
-                            </label>
-                        </li>
-                    </ul>
-                    <div class="card-divider"></div>
-                </div>
-                -->
+    <section  ng-if="overviewHtml" role="tabpanel" id="overview" ng-show="isTabActive(1)">
+        <div class="overview" ng-bind-html="overviewHtml"></div>
+    </section>
 
-                <div ng-if="(!hideSourcesFilter) && sources.length && sources.length > 1">
-                    <h3 class="card-title">Sources</h3>
-                    <ul class="list-unstyled">
-                        <li ng-repeat="source in sources | orderBy:'toString()'">
-                            <label>
-                                <input type="checkbox" name="filterSources[]" ng-checked="filters.sources.indexOf(source) > -1" ng-click="toggleFilterSelection(source, filters.sources)"></input>
-                                &nbsp;{{::source}}
-                            </label>
-                        </li>
-                    </ul>
-                </div>
+    <section role="tabpanel" id="apis" ng-show="isTabActive(2)">
+        <div class="row">
 
-            </div>
-        </div>
-    </div>
+            <div class="filters col-md-2" ng-if="!hideFilters && !hideLeftNav" >
+                <div class="card">
+                    <div class="card-header">Filters
+                        <a class="hide" ng-click="toggleFilterDisplay()" href="">Hide</a>
 
-    <div class="col-md-9 apis">
-
-        <div class="card">
-            <div class="card-header">{{apiListHeaderText}}</div>
-            <div class="card-block">
-
-                <div class="card-text">
-                    <input type="text" class="form-control" ng-model="filters.keywords" placeholder="Filter APIs..." autofocus ng-change="keywordsChanged()">
-                </div>
-
-                <ul class="list-group">
-                    <li class="api list-group-item" ng-repeat="api in filteredApis | orderBy: ['-productDisplayString', 'name']">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <a href="#!/apis/{{::api.id}}"> {{::api.name}} </a>
-                                &nbsp;
-                                <span ng-if="::api.source=='local'" class="badge badge-light-blue">local</span>
-                            </div>
-                            <div class="col-md-2">
-                                <span>{{::api.productDisplayString}}</span>
-                            </div>
-                            <div class="col-md-6" ng-if="::api.description && api.title.indexOf(api.description) != 0">
-                                <div>{{::api.description}}</div>
-                            </div>
+                    </div>
+                    <div class="card-block">
+                        <div ng-if="(!hideProductFilter) &&  products.length && products.length > 1">
+                            <h3 class="card-title">Products</h3>
+                            <ul class="list-unstyled">
+                                <li ng-repeat="product in products | orderBy:'toString()'">
+                                    <label>
+                                        <input type="checkbox" name="filterProducts[]" ng-checked="filters.products.indexOf(product) > -1" ng-click="toggleFilterSelection(product, filters.products)"></input>
+                                        &nbsp;{{::product}}
+                                    </label>
+                                </li>
+                            </ul>
+                            <div class="card-divider"></div>
                         </div>
-                    </li>
-                </ul>
 
-                <div class="alert alert-warning alert-sm" ng-hide="filteredApis.length">
-                    <div class="alert-item">
-                        <span class="alert-text">No APIs found.</span>
+                        <div ng-if="(!hideLanguageFilter) && languages.length && languages.length > 1">
+                            <h3 class="card-title">Language Bindings</h3>
+                            <ul class="list-unstyled">
+                                <li ng-repeat="language in languages | orderBy:'toString()'">
+                                    <label>
+                                        <input type="checkbox" name="filterLanguages[]" ng-checked="filters.languages.indexOf(language) > -1" ng-click="toggleFilterSelection(language, filters.languages)"></input>
+                                        &nbsp;{{::language}}
+                                    </label>
+                                </li>
+                            </ul>
+                            <div class="card-divider"></div>
+                        </div>
+                        <!-- aaron note: I don't think the doc types is necessary or helpful.
+                            <div ng-if="types.length && types.length > 1">
+                                <h3 class="card-title">Documentation Types</h3>
+                                <ul class="list-unstyled">
+                                    <li ng-repeat="type in types | orderBy:'toString()'">
+                                        <label>
+                                            <input type="checkbox" name="filterTypes[]" ng-checked="filters.types.indexOf(type) > -1" ng-click="toggleFilterSelection(type, filters.types)"></input>
+                                            &nbsp;{{::type}}
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="card-divider"></div>
+                            </div>
+                            -->
+
+                        <div ng-if="(!hideSourcesFilter) && sources.length && sources.length > 1">
+                            <h3 class="card-title">Sources</h3>
+                            <ul class="list-unstyled">
+                                <li ng-repeat="source in sources | orderBy:'toString()'">
+                                    <label>
+                                        <input type="checkbox" name="filterSources[]" ng-checked="filters.sources.indexOf(source) > -1" ng-click="toggleFilterSelection(source, filters.sources)"></input>
+                                        &nbsp;{{::source}}
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="apis" ng-class="(hideFilters || hideLeftNav) ? 'col-md-12' : 'col-md-10'">
+                <div class="card">
+                    <div class="card-header">{{apiListHeaderText}}</div>
+                    <div class="card-block">
+
+                        <div class="card-text">
+                            <input type="text" class="form-control" ng-model="filters.keywords" placeholder="Filter APIs..." autofocus ng-change="keywordsChanged()">
+                        </div>
+
+                        <ul class="list-group">
+                            <li class="api list-group-item" ng-repeat="api in filteredApis | orderBy: ['-productDisplayString', 'name']">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <a href="#!/apis/{{::api.id}}"> {{::api.name}} </a>
+                                        &nbsp;
+                                        <span ng-if="::api.source=='local'" class="badge badge-light-blue">local</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span>{{::api.productDisplayString}}</span>
+                                    </div>
+                                    <div class="col-md-6" ng-if="::api.description && api.title.indexOf(api.description) != 0">
+                                        <div>{{::api.description}}</div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="alert alert-warning alert-sm" ng-hide="filteredApis.length">
+                            <div class="alert-item">
+                                <span class="alert-text">No APIs found.</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
-
-    </div>
-
+    </section>
 </div>

@@ -32,6 +32,9 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
     $scope.initDefaultFilters = false;
 
+    $scope.overviewHtml = null;
+    $scope.tab = 1;
+
 
     /**
      * Private Variables
@@ -47,7 +50,6 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         if ($scope.initDefaultFilters) {
             // this is treated as a one shot
             $scope.initDefaultFilters = false;
-            console.log("in setDefaultFilters")
 
             if ($rootScope.settings.defaultFilters) {
                 console.log("setDefaultFilters actually setting initial filters")
@@ -126,6 +128,9 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             }
 
             // Process types filter
+            if (add && api.type == "internal") {
+                add = false;
+            }
             if (add && $scope.filters.types.length && $scope.filters.types.indexOf(api.type) === -1) {
                 add = false;
             }
@@ -147,8 +152,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     };
 
     /**
-     * Private Functions - set the apis for the config products.
-     * The configProducts contains a comma separated products.
+     * Private Functions - set the apis for the default products.
      */
     var setApis = function(response){
         var emptyResult = {
@@ -189,10 +193,71 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     };
 
     /**
-     * Public Functions
+     * Private Function - load the API group overview text for the default product in the config.js.
      */
 
+    var loadAPIGroupOverview = function() {
+        if ($scope.filters.products && $scope.filters.products.length > 0) {
+            var apiGroup = $scope.filters.products[0];
+            var overviewApiId = null;
+            if (apiGroup) {
+                angular.forEach($scope.apis, function(value, index) {
+                    if (value.type == "internal" && value.apiGroup == apiGroup.replace(" ", "-").toLowerCase()) {
+                        overviewApiId = parseInt(value.id, 10);
+                    }
+                });
+            }
+            console.log("id=" + overviewApiId);
+            if (overviewApiId) {
+                $scope.loading += 1;
+                apis.getRemoteApiResources(overviewApiId).then(function (response) {
+                    if (response) {
+                        var docList = response.resources.docs;
+                        var overviewResource = null;
+                        if (docList) {
+                            for (var i = docList.length - 1; i >= 0; --i) {
+                                var resource = docList[i];
+                                if (resource.categories && (resource.categories.length > 0) && (resource.categories[0] == 'API_OVERVIEW')) {
+                                    overviewResource = resource;
+                                    docList.splice(i, 1);
+                                    break;
+                                }
+                            }
+                        }
+                        if (overviewResource) {
+                            $scope.loading += 1;
+                            apis.getOverviewBody(overviewResource.downloadUrl).then(function (response) {
+                                if (response) {
+                                    $scope.overviewHtml = response.data;
+                                }
+                            }, function (response) {
+                                //error
+                                console.log(response.data);
+                            }).finally(function () {
+                                $scope.loading -= 1;
+                            });
+                        } else {
+                            $scope.overviewHtml = null;
+                            $scope.tab = 2;
+                        }
+                    }
+                }, function (response) {
+                    // log error
+                    console.log(response);
+                }).finally(function () {
+                    $scope.loading -= 1;
+                });
+            } else {
+                $scope.tab = 2;
+            }
+        } else {
+            $scope.tab = 2;
+        }
+    }
 
+    /**
+     * Public Functions
+     */
 
     // Load cached filters
     if (cache.get("filters")) {
@@ -212,6 +277,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
                 setApis(response);
             }).finally(function() {
                 setFilteredApis();
+                loadAPIGroupOverview($scope.filters.products);
                 $scope.loading -= 1;
             });
         } else if (enableLocal == false && enableRemote == true){
@@ -219,6 +285,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
                 setApis(response);
             }).finally(function() {
                 setFilteredApis();
+                loadAPIGroupOverview($scope.filters.products);
                 $scope.loading -= 1;
             });
         } else if (enableLocal == true && enableRemote == false){
@@ -251,4 +318,18 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         // Force filtering the APIs
         setFilteredApis();
     };
+
+    // Sets the active tab
+    $scope.setActiveTab = function(newTab) {
+        $scope.tab = newTab;
+    };
+
+    // Checks if a tab is active
+    $scope.isTabActive = function(tabNum) {
+        return $scope.tab === tabNum;
+    };
+
+    $scope.toggleFilterDisplay = function() {
+        $scope.hideLeftNav = !$scope.hideLeftNav;
+    }
 });
