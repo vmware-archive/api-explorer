@@ -262,6 +262,7 @@
                     }
                     var url = $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?';
                     angular.forEach(platform.split(","), function(value, index) {
+                        value = encodeURIComponent(value)
                     	if (index == 0) {
                     		url = url + 'platform=' + value;
                     	} else {
@@ -269,6 +270,8 @@
                     	}
 
                     });
+
+                    console.log("Trying to get samples " + url)
 
                     $http({
                         method : 'GET',
@@ -305,6 +308,7 @@
                         if (samples.length) {
                         	result = {data:{}};
                         	result.data = samples;
+                            console.log("got " + samples.length + " samples.")
                         }
                     },function(response) {
                     	var temp = response.data;
