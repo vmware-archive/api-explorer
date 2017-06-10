@@ -5,12 +5,18 @@
  */
 app.directive('iframeAutoSize', [ function() {
     return {
+        priority: -1,
         restrict : 'A',
         link : function(scope, element, attrs) {
             var iframeDocument;
             var minHeight = element.height(); // The iframe should never be shorter then the original height
 
+            var attachResizeHandler = function(){
+                angular.element(iframeDocument).one('click keyup hashchange popstate mouseenter mouseleave', $.throttle(resize));
+            };
+
             var resize = function() {
+                attachResizeHandler();
                 var _resize = function() {
                     var height = Math.max(iframeDocument.body.offsetHeight + 100, minHeight) + 'px';
                     element.css('height', height);
@@ -22,7 +28,7 @@ app.directive('iframeAutoSize', [ function() {
                     setTimeout(_resize, 1000 * i + 2); // Every 1s (starting from 2s) up to 12s
                 }
 
-            }
+            };
 
             element.on('load', function() {
 
@@ -40,7 +46,6 @@ app.directive('iframeAutoSize', [ function() {
                     angular.element(iframeDocument).find("html").css("overflow", "hidden");
 
                     setTimeout(resize, 0);
-                    angular.element(iframeDocument).on('click keyup hashchange popstate mouseenter mouseleave', $.throttle(resize));
                 }
             });
 
@@ -48,6 +53,42 @@ app.directive('iframeAutoSize', [ function() {
             scope.$on('$destroy', function() {
                 angular.element(iframeDocument).remove();
             });
+        }
+    }
+} ]);
+
+app.directive('localIframe', ['$http', '$rootScope', '$window', function($http, $rootScope, $window) {
+    return {
+        restrict : 'A',
+        scope:{
+            localIframe: '@localIframe'
+        },
+        link : function(scope, element, attrs) {
+
+            if (attrs.localIframe) {
+                var url = attrs.localIframe.indexOf("/") === 0 ? ($window.location.origin + $rootScope.settings.currentPath + attrs.localIframe) : attrs.localIframe;
+                console.log(url);
+
+                $http({
+                    method : 'GET',
+                    url : url
+                }).then(function(response) {
+                    setTimeout(function(){
+                        var iframeDocument = element[0].contentWindow.document;
+                        var content = response.data;
+                        iframeDocument.open('text/html');
+                        iframeDocument.write(content);
+                        iframeDocument.close();
+
+                        // Add the queryString parameters of the original URL as a hash to the new iframe
+                        var split = url.split("?");
+                        if (split.length > 1) {
+                            iframeDocument.location.hash = split[1];
+                        }
+
+                    }, 0);
+                });
+            }
         }
     }
 } ]);
