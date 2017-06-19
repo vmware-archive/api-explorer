@@ -55,6 +55,27 @@
                // } else {
                //     return url;
                // }
+            },
+            createMethodList : function(type, _url) {
+            	var methods = [];
+            	// Add Methods for Swagger APIs
+        		if(type === 'swagger'){
+                	$.ajax({
+                		url: _url,
+                		type: 'GET',  
+                        dataType: 'json',  
+                        async: false,  
+                        success: function(data){
+                        	$.each(data.paths, function(_k, _v){
+                    			for(var _type in _v){
+                    				methods.push(data.info.title + " : " + _type + " " + _k);
+                    				break;
+                    			}
+                    		});
+                        }
+                	});
+                }
+        		return methods;
             }
         };
 
@@ -78,6 +99,7 @@
                                 result.filters.languages.pushUnique(response.filters.languages, true);
                                 result.filters.types.pushUnique(response.filters.types, true);
                                 result.filters.sources.pushUnique(response.filters.sources, true);
+                                //result.filters.methods.pushUnique(response.filters.methods, true);
                                 result.apis = result.apis.concat(response.apis);
                             });
                         }).finally(function() {
@@ -144,7 +166,8 @@
                                 productDisplayString: utils.createDisplayStringForProducts(products),
                                 languages: languages,
                             	source: source,
-                                apiGroup: apiGroup
+                                apiGroup: apiGroup,
+                                methods: utils.createMethodList(type, value.api_ref_doc_url)
                             });
 
                         });

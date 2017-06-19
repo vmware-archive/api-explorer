@@ -95,6 +95,12 @@ i {
     -webkit-transform: rotate(-45deg);
 }
 
+.card .card-header .filter-all {
+    text-align: left;
+}
+.card .card-header .filter-all input {
+    width: 90%
+}
 </style>
 <div class="filters-trigger" ng-if="!hideFilters && hideLeftNav" ng-click="toggleFilterDisplay()">
     <i class="right"></i>
@@ -182,12 +188,13 @@ i {
 
             <div class="apis" ng-class="(hideFilters || hideLeftNav) ? 'col-md-12' : 'col-md-10'">
                 <div class="card">
-                    <div class="card-header">{{apiListHeaderText}}</div>
+                    <div class="card-header row">
+                        <div class="col-md-4">{{apiListHeaderText}}</div>
+                        <div class="col-md-8 filter-all"><input type="text" ng-model="filters.keywords" ng-change="keywordsChanged()" placeholder="Search APIs/Methods..."/><clr-icon shape="search" size="12" ng-click="keywordsChanged()"></clr-icon></div>
+                    </div>
                     <div class="card-block">
 
-                        <div class="card-text">
-                            <input type="text" class="form-control" ng-model="filters.keywords" placeholder="Filter APIs..." autofocus ng-change="keywordsChanged()">
-                        </div>
+                        
 
                         <ul class="list-group">
                             <li class="api list-group-item" ng-repeat="api in filteredApis | orderBy: ['-productDisplayString', 'name']">
@@ -202,6 +209,11 @@ i {
                                     </div>
                                     <div class="col-md-6" ng-if="::api.description && api.title.indexOf(api.description) != 0">
                                         <div>{{::api.description}}</div>
+                                    </div>
+                                </div>
+                                <div class="row" ng-repeat="method in api.methods" ng-if="filters.keywords != ''">
+                                    <div class="col-md-12" ng-if="method.indexOf(filters.keywords) != -1">
+                                        <div>{{::method}}</div>
                                     </div>
                                 </div>
                             </li>
