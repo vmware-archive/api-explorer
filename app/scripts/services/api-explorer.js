@@ -57,25 +57,25 @@
                // }
             },
             createMethodList : function(type, _url) {
-            	var methods = [];
-            	// Add Methods for Swagger APIs
-        		if(type === 'swagger'){
-                	$.ajax({
-                		url: _url,
-                		type: 'GET',  
+                var methods = [];
+                // Add Methods for Swagger APIs
+                if(type === 'swagger'){
+                    $.ajax({
+                        url: _url,
+                        type: 'GET',  
                         dataType: 'json',  
                         async: false,  
                         success: function(data){
-                        	$.each(data.paths, function(_k, _v){
-                    			for(var _type in _v){
-                    				methods.push(data.info.title + " : " + _type + " " + _k);
-                    				break;
-                    			}
-                    		});
+                            $.each(data.paths, function(_k, _v){
+                                for(var _type in _v){
+                                    methods.push(data.info.title + " : " + _type + " " + _k);
+                                    break;
+                                }
+                            });
                         }
-                	});
+                    });
                 }
-        		return methods;
+                return methods;
             }
         };
 
@@ -119,7 +119,7 @@
                         url : $rootScope.settings.remoteApisEndpoint + '/apis'
                     }).then(function(response) {
                         angular.forEach(response.data, function(value, index) {
-                        	var source = "remote";
+                            var source = "remote";
 
                             // Get type and products from tags
                             var type = "swagger";
@@ -137,35 +137,35 @@
                                         apiGroup = apiGroupTags[0].name;
                                     }
                                     angular.forEach(filterFilter(value.tags, {category: "product"}, true), function(value, index) {
-                                    	products.push(value.name);
+                                        products.push(value.name);
                                     });
 
                                     angular.forEach(filterFilter(value.tags, {category: "programming-language"}, true), function(value, index) {
-                                    	languages.push(value.name);
+                                        languages.push(value.name);
                                     });
                                 }
                             }
 
                             // Clean the type
                             if (type == "iframe-documentation" || (value.api_ref_doc_url && value.api_ref_doc_url.endsWith(".html"))) {
-                           		type = "html";
+                                   type = "html";
                             }
 
                             // for the resulting API, set the product list such that version numbers are removed.  this only
                             // effects filtering
 
                             result.apis.push({
-                            	id: parseInt(value.id, 10),
+                                id: parseInt(value.id, 10),
                                 name: value.name,
-                        	    version: value.version,
-                        	    api_uid: value.api_uid,
-                        	    description: value.description,
-                        	    url: utils.fixVMwareDownloadUrl(value.api_ref_doc_url),
-                        	    type: type,
-                        	    products: utils.createProductListNoVersions(products),
+                                version: value.version,
+                                api_uid: value.api_uid,
+                                description: value.description,
+                                url: utils.fixVMwareDownloadUrl(value.api_ref_doc_url),
+                                type: type,
+                                products: utils.createProductListNoVersions(products),
                                 productDisplayString: utils.createDisplayStringForProducts(products),
                                 languages: languages,
-                            	source: source,
+                                source: source,
                                 apiGroup: apiGroup,
                                 methods: utils.createMethodList(type, value.api_ref_doc_url)
                             });
@@ -195,13 +195,13 @@
                             // if the local api did not provide an explict type, then
                             // try to figure it out from the url spec file
                             if (!value.type || 0 === value.type.length) {
-	                            if (value.url && value.url.endsWith(".json")) {
-	                                value.type = "swagger";
-	                            } else if (value.url && value.url.endsWith(".raml")) {
-	                                value.type = "raml";
-	                            } else {
-	                                value.type = "html";
-	                            }
+                                if (value.url && value.url.endsWith(".json")) {
+                                    value.type = "swagger";
+                                } else if (value.url && value.url.endsWith(".raml")) {
+                                    value.type = "raml";
+                                } else {
+                                    value.type = "html";
+                                }
                             }
 
                             // create a display string to be used in the list view
@@ -225,7 +225,7 @@
                     return deferred.promise;
                 },
                 getRemoteApiResources : function(apiId){
-                	var deferred = $q.defer();
+                    var deferred = $q.defer();
                     var result = {resources:{}};
 
                     $http({
@@ -233,21 +233,21 @@
                         url : $rootScope.settings.remoteApisEndpoint + '/apis/' + apiId + '/resources'
                     }).then(function(response) {
 
-                    	var sdks = [];
+                        var sdks = [];
                         var docs = [];
 
                         var setArray = function(resourceType, arr, value) {
-                        	if (value.resource_type == resourceType) {
+                            if (value.resource_type == resourceType) {
 
-                        	    // make the title of the item included a version if there was one provided
+                                // make the title of the item included a version if there was one provided
                                 // and the name doesn't already end with the version string
                                 var title = value.name;
-                        	    if (value.version && !title.endsWith(value.version)) {
-                        	        title = title + " " + value.version;
+                                if (value.version && !title.endsWith(value.version)) {
+                                    title = title + " " + value.version;
                                 }
 
-                        		arr.push({
-                                	title: title,
+                                arr.push({
+                                    title: title,
                                     version: value.version,
                                     webUrl: utils.fixVMwareDownloadUrl(value.web_url),
                                     downloadUrl: utils.fixVMwareDownloadUrl(value.download_url),
@@ -265,11 +265,11 @@
                         if (sdks.length || docs.length) {
                             console.log("got " + sdks.length + " sdks, " + docs.length + " docs");
                             if (sdks.length) {
-                             	result.resources.sdks = sdks;
+                                 result.resources.sdks = sdks;
                             }
-                        	if (docs.length) {
-                        		result.resources.docs = docs;
-                        	}
+                            if (docs.length) {
+                                result.resources.docs = docs;
+                            }
                         }
                     }).finally(function() {
                         deferred.resolve(result);
@@ -278,18 +278,18 @@
                     return deferred.promise;
                 },
                 getSamples : function(platform){
-                	var deferred = $q.defer();
+                    var deferred = $q.defer();
                     var result = null;
                     if (!platform) {
-                    	return;
+                        return;
                     }
                     var url = $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?';
                     angular.forEach(platform.split(","), function(value, index) {
-                    	if (index == 0) {
-                    		url = url + 'platform=' + value;
-                    	} else {
-                    		url = url + '&platform=' + value;
-                    	}
+                        if (index == 0) {
+                            url = url + 'platform=' + value;
+                        } else {
+                            url = url + '&platform=' + value;
+                        }
 
                     });
 
@@ -297,11 +297,11 @@
                         method : 'GET',
                         url : url + '&summary=true'
                     }).then(function(response) {
-                    	var samples = [];
+                        var samples = [];
 
                         angular.forEach(response.data, function(value, index) {
-                        	var tags = [];
-                        	if (value.tags) {
+                            var tags = [];
+                            if (value.tags) {
                                 if (angular.isArray(value.tags)) {
 
                                     angular.forEach(value.tags, function(tag, index) {
@@ -309,10 +309,10 @@
                                     });
                                 }
                             }
-                        	//console.log(tags);
-                        	samples.push({
-                            	title: value.name,
-                            	platform: platform,
+                            //console.log(tags);
+                            samples.push({
+                                title: value.name,
+                                platform: platform,
                                 webUrl: utils.fixVMwareDownloadUrl(value.webUrl),
                                 downloadUrl: utils.fixVMwareDownloadUrl(value.downloadUrl),
                                 contributor: value.author.communitiesUser,
@@ -326,12 +326,12 @@
                         });
 
                         if (samples.length) {
-                        	result = {data:{}};
-                        	result.data = samples;
+                            result = {data:{}};
+                            result.data = samples;
                         }
                     },function(response) {
-                    	var temp = response.data;
-                    	console.log(temp);
+                        var temp = response.data;
+                        console.log(temp);
                     }).finally(function() {
                         deferred.resolve(result);
                     });

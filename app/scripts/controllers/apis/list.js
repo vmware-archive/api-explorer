@@ -147,6 +147,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
         // Persist the current filters
         cache.put("filters", $scope.filters);
+
         $scope.filteredApis = filterFilter(apis, $scope.filters.keywords);
     };
 
@@ -155,10 +156,10 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
      */
     var setApis = function(response){
         var emptyResult = {
-    		apis : [],
+            apis : [],
             filters : {
-            	products : [],
-            	languages : [],
+                products : [],
+                languages : [],
                 types : [],
                 sources : []
             }
@@ -167,17 +168,17 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         var result = angular.merge({}, emptyResult);
 
         angular.forEach(response.apis, function(value, index) {
-        	var products = [];
+            var products = [];
             var languages = [];
 
-        	if (value.products && value.products.length > 0) {
-        		if (angular.isArray(value.products)) {
-        			angular.forEach(value.products, function(value, index) {
-        				products.push(value.replace(";", " "));
+            if (value.products && value.products.length > 0) {
+                if (angular.isArray(value.products)) {
+                    angular.forEach(value.products, function(value, index) {
+                        products.push(value.replace(";", " "));
                     });
                 }
-        	}
-        	result.filters.products.pushUnique(products, true);
+            }
+            result.filters.products.pushUnique(products, true);
             result.filters.languages.pushUnique(value.languages, true);
             result.filters.types.pushUnique(value.type);
             result.filters.sources.pushUnique(value.source);
@@ -185,7 +186,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
         });
         $scope.products = result.filters.products;
-    	$scope.languages = result.filters.languages;
+        $scope.languages = result.filters.languages;
         $scope.types = result.filters.types;
         $scope.sources = result.filters.sources;
         $scope.apis = result.apis;
@@ -271,8 +272,8 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     $scope.loading += 1;
 
     $scope.getApis = function(enableLocal, enableRemote) {
-    	if (enableLocal == true && enableRemote == true) {
-        	apis.getAllApis().then(function(response) {
+        if (enableLocal == true && enableRemote == true) {
+            apis.getAllApis().then(function(response) {
                 setApis(response);
             }).finally(function() {
                 setFilteredApis();
@@ -280,7 +281,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
                 $scope.loading -= 1;
             });
         } else if (enableLocal == false && enableRemote == true){
-        	apis.getRemoteApis().then(function(response) {
+            apis.getRemoteApis().then(function(response) {
                 setApis(response);
             }).finally(function() {
                 setFilteredApis();
@@ -288,7 +289,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
                 $scope.loading -= 1;
             });
         } else if (enableLocal == true && enableRemote == false){
-        	apis.getLocalApis().then(function(response) {
+            apis.getLocalApis().then(function(response) {
                 setApis(response);
             }).finally(function() {
                 setFilteredApis();

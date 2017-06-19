@@ -14,7 +14,7 @@ if (window && window.config) {
 
 var app = angular.module('apiExplorerApp', [ 'ngAnimate', 'ngCookies', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch', 'angular.filter', 'environment' ]).config(
 
-		function($compileProvider, $routeProvider, $httpProvider, envServiceProvider, $logProvider) {
+      function($compileProvider, $routeProvider, $httpProvider, envServiceProvider, $logProvider) {
 
           // Disable debug info
           $compileProvider.debugInfoEnabled(false);
