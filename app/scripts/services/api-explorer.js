@@ -56,10 +56,10 @@
                //     return url;
                // }
             },
-            createMethodList : function(type, _url) {
+            createMethodList : function(_type, _url) {
                 var methods = [];
                 // Add Methods for Swagger APIs
-                if(type === 'swagger'){
+                if(_type === 'swagger'){
                     $.ajax({
                         url: _url,
                         type: 'GET',  
