@@ -13,7 +13,6 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     $scope.loading = 0; // Loading when > 0
     $scope.apis = [];
     $scope.filteredApis = [];
-    $scope.filteredApiMethods = [];
     $scope.products = [];
     $scope.languages = [];
     $scope.types = [];
