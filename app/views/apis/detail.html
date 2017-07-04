@@ -202,11 +202,16 @@ table.prettytable {
                 </div>
 
                 <iframe iframe-auto-size
-                    ng-src="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
+                    local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
                 </iframe>
+
+                <!--
+                <iframe iframe-auto-size local-iframe="{{getTrustedUrl(settings.currentPath + 'raml-console.html?raml=https://vdc-download.vmware.com/raw.githubusercontent.com/vmware/nsxraml/6.1/nsxvapi.raml')}}"></iframe>
+                -->
+
             </div>
 
-            <iframe ng-switch-when="raml" ng-if="api.url" class="raml" iframe-auto-size ng-src="{{getTrustedUrl(settings.currentPath + 'raml-console.html?raml=' + api.url)}}"></iframe>
+            <iframe ng-switch-when="raml" ng-if="api.url" class="raml" iframe-auto-size  local-iframe="{{getTrustedUrl(settings.currentPath + 'raml-console.html?raml=' + api.url)}}"></iframe>
 
             <iframe ng-switch-when="html" ng-if="api.url" class="html" iframe-auto-size ng-src="{{getTrustedUrl(api.url)}}"></iframe>
 

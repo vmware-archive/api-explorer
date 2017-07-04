@@ -120,8 +120,8 @@
                               }
                           };
 
-                          if (document.location.search.indexOf('?raml=') !== -1) {
-                              $scope.ramlUrl = document.location.search.replace('?raml=', '');
+                          if (document.location.hash.indexOf('#raml=') !== -1) {
+                              $scope.ramlUrl = document.location.hash.replace('#raml=', '');
                               $scope.loadFromUrl();
                           }
                       }

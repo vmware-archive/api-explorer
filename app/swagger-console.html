@@ -182,14 +182,14 @@
                     b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
                 }
                 return b;
-            })(window.location.search.substr(1).split('&'))
+            })(window.location.hash.substr(1).split('&'))
         })(jQuery);
 
         $(function() {
 
             var qs = $.QueryString;
             if (qs.url) {
-            	$.getJSON(qs.url, function(json) {
+                $.getJSON(qs.url, function(json) {
 
                     // Override "host"
                     if (qs.host) {
@@ -261,7 +261,7 @@
 
                     window.swaggerUi.load();
                 }).fail(function(event, textStatus, error) {
-                	$("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " gives error: " + error + "</p>");
+                    $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " gives error: " + error + "</p>");
                 })
 
             }
