@@ -50,9 +50,7 @@
     "release": "./tools/package-release.sh"
   },
   "dependencies": {
-    "@webcomponents/custom-elements": "^1.0.0-alpha.3",
-    "clarity-icons": "^0.7.6",
-    "clarity-ui": "^0.7.2",
-    "mutationobserver-shim": "^0.3.2"
+    "clarity-icons": "^0.7.2",
+    "clarity-ui": "^0.7.2"
   }
 }
