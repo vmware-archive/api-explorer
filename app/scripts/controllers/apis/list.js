@@ -255,6 +255,13 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         }
     }
 
+	/**
+     * Private Function - convert json object to json string
+     */
+	$scope.getJsonStr = function(jsonObj) {
+		return angular.toJson(jsonObj, true);
+	}
+
     /**
      * Public Functions
      */
