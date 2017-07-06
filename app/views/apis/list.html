@@ -96,6 +96,79 @@ i {
     -webkit-transform: rotate(-45deg);
 }
 
+.card .card-header .filter-all {
+    text-align: left;
+}
+
+.card .card-header .filter-all input {
+    width: 90%
+}
+
+.card-block .method_info {
+	margin: 5px 0px;
+}
+
+.card-block .method_info .deprecated {
+	text-decoration: line-through;
+}
+
+.card-block .delete {
+	background-color: #f5e8e8;
+	border: 1px solid #e8c6c7;
+}
+.card-block .post {
+	background-color: #e7f6ec;
+	border: 1px solid #c3e8d1;
+}
+.card-block .get {
+	background-color: #e7f0f7;
+	border: 1px solid #c3d9ec;
+}
+.card-block .put {
+	background-color: #f9f2e9;
+	border: 1px solid #f0e0ca;
+}
+.card-block .patch {
+	background-color: #fce9e3;
+	border: 1px solid #f5d5c3;
+}
+
+.card-block .method_info .method_row {
+	padding-left: 0px;
+}
+.card-block .method_info .http_method {
+	text-transform: uppercase;
+	display: inline-block;
+	width: 50px;
+	text-align: center;
+	font-size: .7em;
+	color: #fff;
+	padding-top: 2px;
+}
+
+.card-block .delete .http_method {
+	background-color: #d14956;
+}
+.card-block .post .http_method {
+	background-color: #1ea18d;
+}
+.card-block .get .http_method {
+	background-color: #0b88b9;
+}
+.card-block .put .http_method {
+	background-color: #87538f;
+}
+.card-block .patch .http_method {
+	background-color: #d38042;
+}
+
+.card-block .method_info .path {
+	margin-left: 10px;
+}
+
+.card-block .method_info .description {
+	float: right;
+}
 </style>
 <div class="filters-trigger" ng-if="!hideFilters && hideLeftNav" ng-click="toggleFilterDisplay()">
     <i class="right"></i>
@@ -183,12 +256,11 @@ i {
 
             <div class="apis" ng-class="(hideFilters || hideLeftNav) ? 'col-md-12' : 'col-md-8 col-lg-9'">
                 <div class="card">
-                    <div class="card-header">{{apiListHeaderText}}</div>
+                    <div class="card-header row">
+                        <div class="col-md-4">{{apiListHeaderText}}</div>
+                        <div class="col-md-8 filter-all"><input type="text" ng-model="filters.keywords" ng-change="keywordsChanged()" placeholder="Search APIs/Methods..."/><clr-icon shape="search" size="12" ng-click="keywordsChanged()"></clr-icon></div>
+                    </div>
                     <div class="card-block">
-
-                        <div class="card-text">
-                            <input type="text" class="form-control" ng-model="filters.keywords" placeholder="Filter APIs..." autofocus ng-change="keywordsChanged()">
-                        </div>
 
                         <ul class="list-group">
                             <li class="api list-group-item" ng-repeat="api in filteredApis | orderBy: ['-productDisplayString', 'name']">
@@ -203,6 +275,13 @@ i {
                                     </div>
                                     <div class="col-md-6" ng-if="::api.description && api.title.indexOf(api.description) != 0">
                                         <div>{{::api.description}}</div>
+                                    </div>
+                                </div>
+                                <div class="row method_info {{::method.http_method}}" ng-repeat="method in api.methods" ng-if="filters.keywords != '' && getJsonStr(method).indexOf(filters.keywords) != -1">
+                                    <div class="col-md-12 method_row">
+                                        <div class="http_method">{{::method.http_method}}</div>
+                                        <span class="path {{::method.deprecated ? 'deprecated' : ''}}">{{::method.path}}</span>
+                                        <span class="description">{{::method.summary}}</span>
                                     </div>
                                 </div>
                             </li>

@@ -55,6 +55,32 @@
                // } else {
                //     return url;
                // }
+            },
+            // Add API methods which cached in local json data file to according products
+            // In order to support a quick search with product name/paths/summary
+            createMethodsForProduct : function(type, _url) {
+                var methods = [];
+                // Add methods for Swagger APIs
+                if(type === 'swagger'){
+                    $.ajax({
+                        url: _url,
+                        type: 'GET',
+                        dataType: 'json',
+                         async: false,
+                         success: function(data){
+                             var name = data.info.title;
+                             var version = data.info.version;
+                             $.each(data.paths, function(_k, _v){
+                                 for(var _type in _v){
+                                     // Add filter columns here in the json object if needed
+                                     methods.push({"http_method": _type, "path": _k, "name": name, "version": version, "summary": _v[_type].summary, "description": _v[_type].description, "deprecated": _v[_type].deprecated});
+                                     break;
+                                 }
+                             });
+                         }
+                     });
+                 }
+                 return methods;
             }
         };
 
@@ -191,6 +217,9 @@
                             result.filters.languages.pushUnique(value.languages, true);
                             result.filters.types.pushUnique(value.type);
                             result.filters.sources.pushUnique(value.source);
+
+                            // Add api details to search content
+                            value.methods = utils.createMethodsForProduct(value.type, value.url);
 
                             result.apis.push(value);
                         });
