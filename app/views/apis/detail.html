@@ -139,7 +139,7 @@ table.prettytable {
 <div class="card api">
     <div class="card-header">
         {{::api.name}} {{::api.version}}
-        <a href="#/apis" class="back">
+        <a href="#!/apis" class="back" target="_self">
             <strong>&lt;&lt; Back</strong>
         </a>
     </div>
@@ -202,7 +202,7 @@ table.prettytable {
                 </div>
 
                 <iframe iframe-auto-size
-                        local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
+                    local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
                 </iframe>
 
                 <!--
