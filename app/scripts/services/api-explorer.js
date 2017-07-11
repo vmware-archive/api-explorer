@@ -230,6 +230,8 @@
 
                     return deferred.promise;
                 },
+                // return a promise for an object that has "resources" map object that has "sdks", and "docs" keys
+                // to lists of sdk and docs resource objects.
                 getRemoteApiResources : function(apiId){
                 	var deferred = $q.defer();
                     var result = {resources:{}};

@@ -54,6 +54,9 @@ app.run(function($rootScope, $window) {
       if (!$rootScope.settings.currentPath.endsWith("/")) {
           $rootScope.settings.currentPath += "/";
       }
+      //console.log("$window.apiExplorer.currentPath='" + $window.apiExplorer.currentPath + "'");
+      //console.log("$window.location.pathname='" + $window.location.pathname + "'");
+      //console.log("$rootScope.settings.currentPath='" + $rootScope.settings.currentPath + "'");
 
       // Determine the "endpoint" used for loading remote APIs
       $rootScope.settings.remoteApisEndpoint =  env.remoteApiEndPoint;
