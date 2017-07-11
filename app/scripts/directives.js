@@ -57,6 +57,7 @@ app.directive('iframeAutoSize', [ function() {
     }
 } ]);
 
+
 app.directive('localIframe', ['$http', '$rootScope', '$window', function($http, $rootScope, $window) {
     return {
         restrict : 'A',
@@ -66,8 +67,13 @@ app.directive('localIframe', ['$http', '$rootScope', '$window', function($http, 
         link : function(scope, element, attrs) {
 
             if (attrs.localIframe) {
-                var url = attrs.localIframe.indexOf("/") === 0 ? ($window.location.origin + $rootScope.settings.currentPath + attrs.localIframe) : attrs.localIframe;
-                console.log(url);
+                // aaron note, currentPath ends in a trailing sep
+                var url = attrs.localIframe.indexOf("/") === 0 ? ($window.location.origin + $rootScope.settings.currentPath + attrs.localIframe.substr(1)) : attrs.localIframe;
+
+                //console.log("directive: $window.location.origin='" + $window.location.origin + "'");
+                //console.log("directive: $rootScope.settings.currentPath='" + $rootScope.settings.currentPath + "'");
+                //console.log("directive: attrs.localIframe='" + attrs.localIframe + "'");
+                //console.log("localIframe: url='" + url + "'");
 
                 $http({
                     method : 'GET',
@@ -92,3 +98,4 @@ app.directive('localIframe', ['$http', '$rootScope', '$window', function($http, 
         }
     }
 } ]);
+
