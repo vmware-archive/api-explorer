@@ -182,12 +182,26 @@
                     b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
                 }
                 return b;
-            })(window.location.hash.substr(1).split('&'))
+            })((window.location.hash || window.location.search).substr(1).split('&'))
         })(jQuery);
 
         $(function() {
 
             var qs = $.QueryString;
+
+            // Add to the parent's hash, without triggering any "hashchange" event
+            if (window.parent && window.parent.history.replaceState){
+                var split = window.parent.document.location.hash.split("?");
+
+                if (split.length > 1) {
+                    window.location.hash = decodeURIComponent(split[1]);
+                }
+
+                $(window).on("hashchange", function(){
+                    window.parent.history.replaceState('', '', split[0] + "?" + decodeURIComponent(window.location.hash.substr(1)));
+                });
+            }
+
             if (qs.url) {
                 $.getJSON(qs.url, function(json) {
 
