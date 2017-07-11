@@ -26,7 +26,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
      */
 
     // RegEx to validate if a URL is absolute
-    var absoluteUrl = new RegExp('^(?:[a-z]+:)?//', 'i');
+    const ABSOLUTE_URL_RE = new RegExp('^(?:[a-z]+:)?//', 'i');
 
     var _mergeResources = function( destMap, destMapKeyName, sourceList ) {
         // iterate all local resources and overwrite any with the same title with the local version.
@@ -275,7 +275,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                     // Load swagger's JSON definition to read the default "preferences"
                 	if ($scope.api.url) {
                 		$scope.loading += 1;
-                        var apiUrl = (absoluteUrl.test($scope.api.url) ? "" : $rootScope.settings.currentPath) + $scope.api.url;
+                        var apiUrl = (ABSOLUTE_URL_RE.test($scope.api.url) ? "" : $rootScope.settings.currentPath) + $scope.api.url;
 
                         // FIXME this is a redundant fetch of the swagger.json file (redundant with search as well as with
                         // the swagger html page fetching it as well. Figure out a way to get it once.
@@ -298,6 +298,10 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
      * Public Functions
      */
     var loadApis = function () {
+
+        //var search = $routeParams.search;
+        //console.log("routeParams.search='" + search + "'");
+
         $scope.loading += 1;
         console.log("loading APIs in details...");
         apis.getAllApis().then(function (response) {

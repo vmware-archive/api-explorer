@@ -11,6 +11,12 @@
 
     service.$inject = [ "$http", "$q", "$rootScope", "$cacheFactory", "filterFilter" ];
 
+    const SLASH_RE = new RegExp('[/ ]+', 'i');
+    const CURLY_REMOVE_RE = new RegExp('[{}]+', 'i');
+    const SWAGGER_PATH_DASH_RE = new RegExp('-', 'i');
+    const SWAGGER_PATH_WS_RE = new RegExp('[ \t]', 'i');
+    const NOT_ALNUM_RE = new RegExp('[^A-Za-z0-9]+', 'i');
+
     function service($http, $q, $rootScope, $cacheFactory, filterFilter) {
 
         var cache = $cacheFactory(serviceName);
@@ -56,14 +62,74 @@
                //     return url;
                // }
             },
-            // Add API methods which cached in local json data file to according products
-            // In order to support a quick search with product name/paths/summary
-            createMethodsForProduct : function(type, _url) {
+            /**
+             * create a swagger operation id from the method path such as /endpoints/types/extensions/{id}
+             to get_endpoints_types_extensions_id
+             */
+            swagger_path_to_operationId : function(httpMethod, swaggerOperationPath) {
+                if (!swaggerOperationPath) {
+                    return "";
+                }
+                var pathOperationId = swaggerOperationPath;
+                pathOperationId = pathOperationId.replace(CURLY_REMOVE_RE,'');
+                pathOperationId = pathOperationId.replace(SLASH_RE,'_');
+                return httpMethod + pathOperationId;
+            },
+            /**
+             *  make sure operation id is valid in case user messed it up
+             * @param operationId
+             */
+            swagger_fix_operationId : function(operationId) {
+                if (!operationId) {
+                    return "";
+                }
+                operationId = operationId.trim();
+                operationId = operationId.replace(NOT_ALNUM_RE,'_');
+                return operationId;
+            },
+            createUrlForSwaggerMethod : function(apiUrl, methodType, methodPath, tag, operationId) {
+                // I don't understand the pattern, but this is what swagger does, it puts the tag at the beginning of the method, and then
+                // puts '45' for dashes and '32' for spaces, which appears to be the decimal for the ASCII char value, odd.  I guess this is their
+                // own sort of URL encoding, albeit really stange.
+                // TODO improve this algorithm to handle other characters as well.
+                var tagOperationId = null;
+                if (tag) {
+                    tagOperationId = tag.replace(SWAGGER_PATH_DASH_RE, '45');
+                    tagOperationId = tagOperationId.replace(SWAGGER_PATH_WS_RE, '32');
+                }
+
+                if (!operationId) {
+                    operationId = utils.swagger_path_to_operationId(methodType, methodPath)
+                } else {
+                    operationId = utils.swagger_fix_operationId(operationId);
+                }
+
+                // http://localhost:8082/swagger-console.html?url=local/swagger/api-vra-network-service.json&host=&basePath=#!/data45service/post_api_catalog_providers_providerId_requests_bindingId_complete
+                // http://0.0.0.0:9000/#!/apis/10001?%2FCommands%2FCommands_BulkExecuteScheduleOsUpdate
+
+                //# http://localhost:8082/swagger-console.html?url=local/swagger/api-vra-network-service.json&host=&basePath=#!/data45service/post_api_catalog_providers_providerId_requests_bindingId_complete
+                var url = apiUrl + '?/';
+                if (tagOperationId) {
+                    url = url + tagOperationId + '/';
+                }
+                url = url + operationId;
+                return url;
+            },
+
+            /**
+             *
+             * @param type type of the ref doc, e.g. "swagger", "raml", "iframe"
+             * @param _apiRefDocUrl  the URL to the API reference doc, e.g. http://0.0.0.0:9000/local/swagger/someApi.json
+             * @param _apiUrl the user visible URL to the API itself including the API id, e.g. http://0.0.0.0:9000/#!/apis/10001
+             * @returns {Array}
+             */
+            createMethodsForProduct : function(type, _apiRefDocUrl, _apiUrl) {
                 var methods = [];
                 // Add methods for Swagger APIs
                 if(type === 'swagger'){
+                    //FIXME use a cache for these files for performance.  there is other code that fetchs the swagger.json as well and we need to do this ONCE.
                     $.ajax({
-                        url: _url,
+                        url: _apiRefDocUrl,
                         type: 'GET',
                         dataType: 'json',
                          async: false,
@@ -71,9 +137,31 @@
                              var name = data.info.title;
                              var version = data.info.version;
                              $.each(data.paths, function(_k, _v){
-                                 for(var _type in _v){
+                                 // here _v is the map of http methods, e.g. "get", "post" to swagger objects. and _k is
+                                 // the URL/path
+                                 for(var _httpMethodType in _v){
+
+                                     // there can be multiple tags, which are in theory multiple ways to get at the same
+                                     // method.  just pick the first one to create a URL with.
+                                     var tag = null;
+                                     var tagList = _v[_httpMethodType].tags;
+                                     if (tagList && tagList.length > 0) {
+                                         tag = tagList[0];
+                                     }
+                                     var operationId = _v[_httpMethodType].operationId; // may be null
+
+                                     var methodUrl = utils.createUrlForSwaggerMethod(_apiUrl, _httpMethodType, _k, tag, operationId);
+
                                      // Add filter columns here in the json object if needed
-                                     methods.push({"http_method": _type, "path": _k, "name": name, "version": version, "summary": _v[_type].summary, "description": _v[_type].description, "deprecated": _v[_type].deprecated});
+                                     methods.push({ "http_method": _httpMethodType,
+                                                    "path": _k,
+                                                    "name": name,
+                                                    "url" : methodUrl,
+                                                    "version": version,
+                                                    "summary": _v[_httpMethodType].summary,
+                                                    "description": _v[_httpMethodType].description,
+                                                    "deprecated": _v[_httpMethodType].deprecated
+                                                   });
                                      break;
                                  }
                              });
@@ -218,8 +306,10 @@
                             result.filters.types.pushUnique(value.type);
                             result.filters.sources.pushUnique(value.source);
 
+                            var apiUrl = "/#!/apis/" + value.id;
+
                             // Add api details to search content
-                            value.methods = utils.createMethodsForProduct(value.type, value.url);
+                            value.methods = utils.createMethodsForProduct(value.type, value.url, apiUrl);
 
                             result.apis.push(value);
                         });

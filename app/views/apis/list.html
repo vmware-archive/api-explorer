@@ -280,7 +280,7 @@ i {
                                 <div class="row method_info {{::method.http_method}}" ng-repeat="method in api.methods" ng-if="filters.keywords != '' && getJsonStr(method).indexOf(filters.keywords) != -1">
                                     <div class="col-md-12 method_row">
                                         <div class="http_method">{{::method.http_method}}</div>
-                                        <span class="path {{::method.deprecated ? 'deprecated' : ''}}">{{::method.path}}</span>
+                                        <a href="{{::method.url}}"><span class="path {{::method.deprecated ? 'deprecated' : ''}}">{{::method.path}}</span></a>
                                         <span class="description">{{::method.summary}}</span>
                                     </div>
                                 </div>

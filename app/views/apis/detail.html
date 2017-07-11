@@ -202,7 +202,7 @@ table.prettytable {
                 </div>
 
                 <iframe iframe-auto-size
-                    local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
+                    ng-src="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
                 </iframe>
 
                 <!--
