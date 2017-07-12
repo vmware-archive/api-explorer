@@ -28,46 +28,18 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     // RegEx to validate if a URL is absolute
     var ABSOLUTE_URL_RE = new RegExp('^(?:[a-z]+:)?//', 'i');
 
-    var _mergeResources = function( destMap, destMapKeyName, sourceList ) {
-        // iterate all local resources and overwrite any with the same title with the local version.
-        // this is probably not what we want to do long term
-        var destList = destMap.get(destMapKeyName);
-        if (destList) {
-            angular.forEach(sourceList, function (localResource, index) {
-                var found = false;
-                angular.forEach(destList, function (remoteResource, index) {
-                    //console.log("checking remote resource " + remoteResource.title)
-                    if (localResource.title == remoteResource.title) {
-                        found = true;
-                        //console.log("replacing remote resource " + localResource.title);
-                        destList[index] = localResource;
-                    }
-                });
-                if (!found) {
-                    //console.log("appending local only resource " + localResource.title);
-                    destList.push(localResource);
-                }
-            });
-        } else {
-            // there was no remote docs resource, just use local
-            destMap[destMapKeyName] = sourceList;
-        }
-    }
-
     var prepareApiResources = function(remoteResources) {
 
         // if there are no remote resources, then simply create an empty container
         if (! remoteResources ) {
             console.log("No remote resources to merge.");
-            remoteResources = {};
+            remoteResources = {docs:[],sdks:[]};
         }
 
         // we are going to swap out the local resources with the remote resources, but then for the docs
         // iterate the docs and
         var localApiResources = $scope.api.resources;
         $scope.api.resources = remoteResources; // overwrite with remote
-
-        //_mergeResources( $scope.api.resources, "docs", localApiResources.docs);
 
         if (localApiResources && localApiResources.docs && localApiResources.docs.length > 0) {
             console.log("Merging local API resource docs");
@@ -183,6 +155,8 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
             }).finally(function () {
             });
         }
+        console.log("Done loading API.");
+        $scope.api.isLoaded = true;
     }
 
     var loadOverviewHtml = function(overviewResource) {
@@ -192,7 +166,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
             $scope.loading += 1;
             apis.getOverviewBody(overviewResource.downloadUrl).then(function (response) {
                 if (response.data) {
-                    //console.log("got overview response data:");
+                    console.log("got overview HTML");
                     //console.log(response);
 
                     $scope.api.overviewHtml = response.data;
@@ -242,52 +216,68 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
 
     // Return the currently selected API (if available)
     var setSelectedApi = function(){
+
     	var selectedApi = $routeParams.id ? filterFilter($scope.apis, {id: parseInt($routeParams.id, 10)}, true)[0] : null;
+
+    	// if the hash contains a query arg, this is used for a URL to a particular method.  In this case forcibly set
+        // the active tab to the API reference.
+        if ($window.location.hash && $window.location.hash.contains("?")) {
+            console.log("hash contains query arg, forcing API reference tab active.");
+            $scope.tab = 2;
+        }
 
         if (selectedApi) {
 
             if (!$scope.api || ($scope.api && $scope.api.id !== selectedApi.id)) {
-                $scope.api = selectedApi;
+                // because we mutate the api with removing resources and merging remote resources into it possibly,
+                // we make a copy here.
+                $scope.api = angular.copy(selectedApi);
 
-                //Get selected API resources.  There are two cases, a remote API, and then a local API that
-                // specifies an api_uid string.  In the case of a local API, we use the UID to get the latest
-                // instance of the remote API and then get the resources for it.
-                if ($scope.api.url && $scope.api.source == 'remote') {
-                    console.log("fetching remote resources for remote api");
-                    loadResourcesForRemoteApi( $scope.api.id );
-                } else if ($scope.api.url && $scope.api.source == 'local') {
-                     if ( $scope.api.api_uid ) {
-                         console.log("fetching remote resources for local api_uid=" + $scope.api.api_uid);
-                         apis.getLatestRemoteApiIdForApiUid($scope.api.api_uid).then(function (response) {
-                             // response.data should have the id.  Might be null
-                             loadResourcesForRemoteApi(response.data);
-                         }).finally(function(){
-                         });
-                     } else {
-                         // response.data should have the id.  Might be null
-                         console.log("No api_uid. synchronizing local resources.");
-                         loadResourcesForRemoteApi(null);
-                     }
+                if ( true ) { //! $scope.api.isLoaded
+                    console.log("Starting load for API.");
 
-                }
+                    //Get selected API resources.  There are two cases, a remote API, and then a local API that
+                    // specifies an api_uid string.  In the case of a local API, we use the UID to get the latest
+                    // instance of the remote API and then get the resources for it.
+                    if ($scope.api.url && $scope.api.source == 'remote') {
+                        console.log("fetching remote resources for remote api");
+                        loadResourcesForRemoteApi($scope.api.id);
+                    } else if ($scope.api.url && $scope.api.source == 'local') {
+                        if ($scope.api.api_uid) {
+                            console.log("fetching remote resources for local api_uid=" + $scope.api.api_uid);
+                            apis.getLatestRemoteApiIdForApiUid($scope.api.api_uid).then(function (response) {
+                                // response.data should have the id.  Might be null
+                                loadResourcesForRemoteApi(response.data);
+                            }).finally(function () {
+                            });
+                        } else {
+                            // response.data should have the id.  Might be null
+                            console.log("No api_uid. synchronizing local resources.");
+                            loadResourcesForRemoteApi(null);
+                        }
 
-                if ($scope.api.type === "swagger") {
-                    // Load swagger's JSON definition to read the default "preferences"
-                	if ($scope.api.url) {
-                		$scope.loading += 1;
-                        var apiUrl = (ABSOLUTE_URL_RE.test($scope.api.url) ? "" : $rootScope.settings.currentPath) + $scope.api.url;
+                    }
 
-                        // FIXME this is a redundant fetch of the swagger.json file (redundant with search as well as with
-                        // the swagger html page fetching it as well. Figure out a way to get it once.
-                        $http.get(apiUrl).then(function(response){
-                            $scope.api.preferences = {
-                                host: response.data.host,
-                                basePath: response.data.basePath
-                            }
-                        }).finally(function(){
-                            $scope.loading -= 1;
-                        });
-                	}
+                    if ($scope.api.type === "swagger") {
+                        // Load swagger's JSON definition to read the default "preferences"
+                        if ($scope.api.url) {
+                            $scope.loading += 1;
+                            var apiUrl = (ABSOLUTE_URL_RE.test($scope.api.url) ? "" : $rootScope.settings.currentPath) + $scope.api.url;
+
+                            // FIXME this is a redundant fetch of the swagger.json file (redundant with search as well as with
+                            // the swagger html page fetching it as well. Figure out a way to get it once.
+                            $http.get(apiUrl).then(function (response) {
+                                $scope.api.preferences = {
+                                    host: response.data.host,
+                                    basePath: response.data.basePath
+                                }
+                            }).finally(function () {
+                                $scope.loading -= 1;
+                            });
+                        }
+                    }
+                } else {
+                    console.log("API resources are already loaded.");
                 }
             }
         }
@@ -301,6 +291,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
 
         //var search = $routeParams.search;
         //console.log("routeParams.search='" + search + "'");
+        console.log("calling loadApis, tab=" + $scope.tab); //FIXME delete this
 
         $scope.loading += 1;
         console.log("loading APIs in details...");
