@@ -11,11 +11,11 @@
 
     service.$inject = [ "$http", "$q", "$rootScope", "$cacheFactory", "filterFilter" ];
 
-    const SLASH_RE = new RegExp('[/ ]+', 'i');
-    const CURLY_REMOVE_RE = new RegExp('[{}]+', 'i');
-    const SWAGGER_PATH_DASH_RE = new RegExp('-', 'i');
-    const SWAGGER_PATH_WS_RE = new RegExp('[ \t]', 'i');
-    const NOT_ALNUM_RE = new RegExp('[^A-Za-z0-9]+', 'i');
+    var SLASH_RE = new RegExp('[/ ]+', 'i');
+    var CURLY_REMOVE_RE = new RegExp('[{}]+', 'i');
+    var SWAGGER_PATH_DASH_RE = new RegExp('-', 'i');
+    var SWAGGER_PATH_WS_RE = new RegExp('[ \t]', 'i');
+    var NOT_ALNUM_RE = new RegExp('[^A-Za-z0-9]+', 'i');
 
     function service($http, $q, $rootScope, $cacheFactory, filterFilter) {
 

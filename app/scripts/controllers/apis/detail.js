@@ -26,7 +26,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
      */
 
     // RegEx to validate if a URL is absolute
-    const ABSOLUTE_URL_RE = new RegExp('^(?:[a-z]+:)?//', 'i');
+    var ABSOLUTE_URL_RE = new RegExp('^(?:[a-z]+:)?//', 'i');
 
     var _mergeResources = function( destMap, destMapKeyName, sourceList ) {
         // iterate all local resources and overwrite any with the same title with the local version.
