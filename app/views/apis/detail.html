@@ -154,10 +154,10 @@ table.prettytable {
             <a href="javascript:void(0);" ng-click="setActiveTab(2)" role="tab" aria-controls="apiReference" class="nav-link" ng-class="{active:isTabActive(2)}">API Reference</a>
         </li>
 
-        <li ng-if="api.resources.docs" role="presentation" class="nav-item">
+        <li ng-if="api.resources.docs && (api.resources.docs.length > 0)" role="presentation" class="nav-item">
             <a href="javascript:void(0);" ng-click="setActiveTab(3)" role="tab" aria-controls="docs" class="nav-link" ng-class="{active:isTabActive(3)}">Documentation</a>
         </li>
-        <li ng-if="api.resources.sdks" role="presentation" class="nav-item">
+        <li ng-if="api.resources.sdks && (api.resources.sdks.length > 0)" role="presentation" class="nav-item">
             <a href="javascript:void(0);" ng-click="setActiveTab(4)" role="tab" aria-controls="sdks" class="nav-link" ng-class="{active:isTabActive(4)}">Related SDKs</a>
         </li>
         <li ng-if="api.resources.samples" role="presentation" class="nav-item">
@@ -202,7 +202,7 @@ table.prettytable {
                 </div>
 
                 <iframe iframe-auto-size
-                    local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
+                        local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath)}}">
                 </iframe>
 
                 <!--
@@ -227,7 +227,7 @@ table.prettytable {
         </ul>
     </section>
 
-    <section ng-if="api.resources.sdks" role="tabpanel" id="sdks" ng-show="isTabActive(4)">
+    <section ng-if="api.resources.sdks && (api.resources.sdks.length > 0)" role="tabpanel" id="sdks" ng-show="isTabActive(4)">
         <ul class="list-group list-group-flush">
             <li ng-repeat="sdk in api.resources.sdks | orderBy:'title'" class="list-group-item">
                 <div class="row">

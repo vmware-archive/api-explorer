@@ -73,7 +73,7 @@ app.directive('localIframe', ['$http', '$rootScope', '$window', function($http, 
                 //console.log("directive: $window.location.origin='" + $window.location.origin + "'");
                 //console.log("directive: $rootScope.settings.currentPath='" + $rootScope.settings.currentPath + "'");
                 //console.log("directive: attrs.localIframe='" + attrs.localIframe + "'");
-                //console.log("localIframe: url='" + url + "'");
+                console.log("localIframe: url='" + url + "'");
 
                 $http({
                     method : 'GET',

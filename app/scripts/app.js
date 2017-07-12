@@ -29,7 +29,8 @@ var app = angular.module('apiExplorerApp', [ 'ngAnimate', 'ngCookies', 'ngResour
               controller : 'ApisListCtrl'
           }).when('/apis/:id?', {
               templateUrl : 'views/apis/detail.html',
-              controller : 'ApisDetailCtrl'
+              controller : 'ApisDetailCtrl',
+              reloadOnSearch: false
           }).otherwise({
               redirectTo : '/apis'
           });
