@@ -9,7 +9,7 @@
 
     var serviceName = "apis";
 
-    service.$inject = [ "$http", "$q", "$rootScope", "$cacheFactory", "filterFilter" ];
+    service.$inject = ["$base64", "$http", "$q", "$rootScope", "$cacheFactory", "$timeout", "filterFilter" ];
 
     var SLASH_RE = new RegExp('[/ ]+', 'i');
     var CURLY_REMOVE_RE = new RegExp('[{}]+', 'i');
@@ -17,7 +17,7 @@
     var SWAGGER_PATH_WS_RE = new RegExp('[ \t]', 'i');
     var NOT_ALNUM_RE = new RegExp('[^A-Za-z0-9]+', 'i');
 
-    function service($http, $q, $rootScope, $cacheFactory, filterFilter) {
+    function service($base64, $http, $q, $rootScope, $cacheFactory, $timeout, filterFilter) {
 
         var cache = $cacheFactory(serviceName);
 
@@ -173,7 +173,51 @@
         };
 
         var definitions = {
+                // This is for vSphere only
+                login : function(username, password, authUrl) {
+                    var deferred = $q.defer();
+                    var result = angular.merge({}, emptyResult);
 
+                    var _authdata = $base64.encode(username + ':' + password);
+                    var _headers = {
+                        'Authorization': 'Basic ' + _authdata,
+                        'vmware-use-header-authn' : 'apiexplorer'
+                    };
+                    $http({
+                        method : 'POST',
+                        url : authUrl,
+                        headers: _headers
+                    }).then(function(response) {
+                        result.value = response.data.value;
+                    }).finally(function() {
+                        deferred.resolve(result);
+                    });
+
+                    return deferred.promise;
+                },
+                // This is for vSphere only
+                logout : function(sessionId, authUrl) {
+                    var deferred = $q.defer();
+                    var result = angular.merge({}, emptyResult);
+
+                    var _headers = {
+                        'vmware-api-session-id' : sessionId
+                    };
+
+                    $http({
+                        method : 'DELETE',
+                        url : authUrl,
+                        headers: _headers
+                    }).then(function(response) {
+                        result = response.data;
+                        deferred.resolve(result);
+                    }).finally(function() {
+                        console.log('Failed to logout')
+                        deferred.resolve(result);
+                    });
+
+                    return deferred.promise;
+                },
                 getAllApis : function(){
                     var cacheKey = "allApis";
                     var deferred = $q.defer();

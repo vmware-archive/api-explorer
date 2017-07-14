@@ -21,6 +21,9 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
 
     $scope.noOverviewMessage = "<i>No overview is available for this API.</i>";
 
+    $scope.sso = $rootScope.settings.ssoEnabled;
+
+
     /**
      * Private Variables
      */
@@ -281,7 +284,6 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                 }
             }
         }
-
     };
 
     /**

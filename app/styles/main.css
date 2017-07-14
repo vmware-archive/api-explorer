@@ -161,3 +161,32 @@ div.loading .spinner {
 .swagger-ui .filter input {
     width: 100%;
 }
+
+/* Login */
+.main-container header .settings .main-container .header .settings {
+    -webkit-box-flex: 1;
+    flex: 1 1 auto;
+    -webkit-box-pack: end;
+    justify-content: flex-end;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center !important;
+    height: 10;
+
+}
+
+header .settings, .header .settings {
+    padding: 15px 24px;
+}
+
+.settings ul {
+    list-style-type: none;
+}
+header .settings .nav-link, .header .settings .nav-link {
+    margin-left: 12px;
+}
+
+.fade.in {
+    opacity: 0.9 !important;
+}

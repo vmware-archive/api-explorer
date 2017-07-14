@@ -9,13 +9,13 @@
   // Whether or not to enable debug mode
   // Setting this to false will disable console output
   window.config.enableDebug = false;
-  
+
   // Whether or not to enable local APIs
   window.config.enableLocal = true;
-    
+
   // local APIs endpoint
   window.config.localApiEndPoint = "local.json";
-  
+
   // Whether or not to enable remote APIs and resources
   window.config.enableRemote = true;
 
@@ -41,8 +41,11 @@
   window.config.hideLanguageFilter = false;      // if true, the language filter is hidden
   window.config.hideSourcesFilter = false;       // if true, the sources filter is hidden
 
-  // Remote APIs endpoint.  
+  // Remote APIs endpoint.
   window.config.remoteSampleExchangeApiEndPoint = "https://apigw.vmware.com/sampleExchange/v1";
   window.config.remoteApiEndPoint = "https://vdc-repo.vmware.com/apix";
 
+  // This is for vSphere SSO only.  To enable the SSO, set the ssoEnabled = true.
+  window.config.ssoEnabled = false;
+  window.config.authApiEndPoint = "https://10.154.10.43/rest/com/vmware/cis/session";
 }(this));
