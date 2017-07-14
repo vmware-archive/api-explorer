@@ -66,7 +66,7 @@ app.directive('localIframe', ['$http', '$rootScope', '$window', function($http, 
         link : function(scope, element, attrs) {
 
             if (attrs.localIframe) {
-                var url = attrs.localIframe.indexOf("/") === 0 ? ($window.location.origin + $rootScope.settings.currentPath + attrs.localIframe) : attrs.localIframe;
+                var url = attrs.localIframe.indexOf("/") === 0 ? ($window.location.origin + attrs.localIframe) : attrs.localIframe;
                 console.log(url);
 
                 $http({

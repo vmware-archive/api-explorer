@@ -21,6 +21,9 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
 
     $scope.noOverviewMessage = "<i>No overview is available for this API.</i>";
 
+    $scope.sso = $rootScope.settings.ssoEnabled;
+
+
     /**
      * Private Variables
      */
@@ -177,6 +180,12 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
             if (!$scope.api || ($scope.api && $scope.api.id !== selectedApi.id)) {
                 $scope.api = selectedApi;
 
+                //set API preferences default
+                $scope.api.preferences = {
+                    host: '',
+                    basePath: ''
+                }
+
                 //Get selected API resources.  There are two cases, a remote API, and then a local API that
                 // specifies an api_uid string.  In the case of a local API, we use the UID to get the latest
                 // instance of the remote API and then get the resources for it.
@@ -211,7 +220,6 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                 }
             }
         }
-
     };
 
     /**

@@ -12,8 +12,7 @@ if (window && window.config) {
     env = window.config;
 }
 
-var app = angular.module('apiExplorerApp', [ 'ngAnimate', 'ngCookies', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch', 'angular.filter', 'environment' ]).config(
-
+var app = angular.module('apiExplorerApp', [ 'ngAnimate', 'ngCookies', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch', 'angular.filter', 'angularModalService', 'environment', 'base64' ]).config(
 		function($compileProvider, $routeProvider, $httpProvider, envServiceProvider, $logProvider) {
 
           // Disable debug info
@@ -79,6 +78,10 @@ app.run(function($rootScope, $window) {
 
       // text displayed above the API list
       $rootScope.settings.apiListHeaderText = env.apiListHeaderText;
+
+      // sso
+      $rootScope.settings.ssoEnabled = env.ssoEnabled;
+      $rootScope.settings.authApiEndPoint = env.authApiEndPoint;
 
   };
 

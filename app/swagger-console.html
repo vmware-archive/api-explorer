@@ -209,6 +209,9 @@
                         spec : json,
                         dom_id : "swagger-ui-container",
                         supportedSubmitMethods : [ 'get', 'post', 'put', 'delete', 'patch' ],
+                        //authorizations:{
+                        //    'vmware-api-session-id': new SwaggerClient.ApiKeyAuthorization('vmware-api-session-id', sessionStorage.getItem('vmware-api-session-id'), 'header')
+                        //},
                         onComplete : function(swaggerApi, swaggerUi) {
                             if (typeof initOAuth == "function") {
                                 initOAuth({
@@ -259,6 +262,10 @@
                         validatorUrl : null
                     });
 
+                    if (qs.sso) {
+                        addApiKeyAuthorization();
+                    }
+
                     window.swaggerUi.load();
                 }).fail(function(event, textStatus, error) {
                     $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " gives error: " + error + "</p>");
@@ -267,6 +274,15 @@
             }
 
         });
+
+        function addApiKeyAuthorization(){
+            var key = sessionStorage.getItem('vmware-api-session-id');
+            if (key && key.trim() != "") {
+                var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", key, "header");
+                window.swaggerUi.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
+                log("added key " + key);
+            }
+        }
     </script>
 
 </body>
