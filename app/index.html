@@ -32,6 +32,8 @@
             document.getElementsByTagName("head")[0].appendChild(link);
         }
     })();
+
+
 </script>
 
 <!-- build:js({.tmp,app}) scripts/head.js -->
@@ -56,6 +58,28 @@
                     <span class="title">API Explorer</span>
                 </a>
             </div>
+
+            <div class="settings" ng-if="settings.ssoEnabled">
+
+                <ul class="" ng-controller="UserSessionCtrl" >
+
+                    <li class="dropdown" ng-if="loggedIn">
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span> Welcome {{username}} </span>
+                            <span class="caret"></span>
+                        </a>
+                        <a href="#" class="nav-link" ng-click="logout()">Log Out</a>
+                    </li>
+                    <li ng-if="!loggedIn">
+                        <a href="javascript:void(0);" ng-click="login()">
+                            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                            <span class="nav-link"> Log In </span>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+
         </header>
         <div class="content-container">
             <div ng-view class="content-area ng-cloak"></div>
@@ -81,6 +105,7 @@
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
@@ -89,6 +114,8 @@
     <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/angular-environment/dist/angular-environment.js"></script>
     <script src="bower_components/angular-filter/dist/angular-filter.js"></script>
+    <script src="bower_components/angular-modal-service/dst/angular-modal-service.js"></script>
+    <script src="bower_components/angular-base64/angular-base64.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -96,6 +123,8 @@
     <script src="bower_components/jquery-sieve/dist/jquery.sieve.js"></script>
     <script src="bower_components/jquery.throttle/src/jquery-throttle.js"></script>
     <script src="scripts/app.js"></script>
+    <script src="scripts/controllers/userSession.js"></script>
+    <script src="scripts/controllers/login.js"></script>
     <script src="scripts/directives.js"></script>
     <script src="scripts/services/api-explorer.js"></script>
     <script src="scripts/controllers/apis/list.js"></script>

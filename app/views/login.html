@@ -1,0 +1,59 @@
+<div class="modal fade">
+
+<style>
+.modal-dialog.modal-lg {
+    width: 500px;
+}
+
+.form-signin .form-signin-heading, .form-signin .checkbox {
+    margin-bottom: 10px;
+}
+
+.form-signin .form-control {
+    position: relative;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.form-signin input[type="text"] {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 100%;
+}
+.error {
+    color: red;
+}
+</style>
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" ng-click="close()" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Log In</h4>
+            </div>
+            <div class="error">{{errorMsg}}</div>
+            <div class="modal-body">
+
+                <form name="loginForm" class="form-signin" novalidate>
+                    <input name="username" ng-model="user.name" type="text" class="form-control" placeholder="Username" required autofocus>
+                    <input name="password" ng-model="user.password" type="password" class="form-control" placeholder="Password" required>
+
+                    <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="loginForm.$invalid" ng-click="login()">Log in</button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
