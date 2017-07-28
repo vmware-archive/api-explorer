@@ -26,7 +26,7 @@
   // default filtering to apply to the window after the initial load is done.
   window.config.defaultFilters = {
       keywords : "",
-      products : [],
+      products : ["vSphere"],
       languages: [],
       types: [],
       sources: []
@@ -37,7 +37,7 @@
   // a defaultFilters value for it, the user will not be able to change the value. This can be used to scope to a
   // particular product for example.
   window.config.hideFilters = false;             // if true, the filter pane is not displayed at all
-  window.config.hideProductFilter = false;       // if true, the products filter is hidden
+  window.config.hideProductFilter = true;       // if true, the products filter is hidden
   window.config.hideLanguageFilter = false;      // if true, the language filter is hidden
   window.config.hideSourcesFilter = false;       // if true, the sources filter is hidden
 

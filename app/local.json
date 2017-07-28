@@ -1,14 +1,49 @@
 {
     "apis": [ {
-        "name" : "VMware {code} Sample Exchange",
-        "version" : "v1",
-        "url" : "https://apigw.vmware.com/sampleExchange/v1/swagger.json",
-        "languages" : ["Java"]
+	"api_uid": "api_cis_management", 
+        "description": "The Common Infrastructure Services API provides access to common APIs used in the VMware infrastructure",  
+        "name" : "Common Infrastructure Services API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "url" : "local/swagger/cis.json"
     }, {
-        "name" : "Box.com",
-        "version" : "v1",
-        "url" : "https://raw.githubusercontent.com/mulesoft/api-console/master/dist/examples/box.raml",
-        "products": ["Box.com"],
-        "languages" : [".NET"]
+        "api_uid": "api_content",       
+        "description": "VMware vSphere Content Library empowers vSphere Admins to effectively manage VM templates, vApps, ISO images and scripts with ease", 
+        "name" : "Content Library API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "url" : "local/swagger/content.json"
+    }, {
+	"api_uid": "api_vcenter_management",       
+        "description": "The vCenter Server Appliance is a preconfigured Linux-based virtual machine optimized for running vCenter Server and associated services", 
+        "name" : "vCenter API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "url" : "local/swagger/vcenter.json"
+    }, {
+        "api_uid": "api_vcenter_server_appliance_management",       
+        "description": "The vCenter Server Appliance is a preconfigured Linux-based virtual machine optimized for running vCenter Server and associated services", 
+	"name" : "vCenter Server Appliance API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "url" : "local/swagger/appliance.json"
+    }, {
+        "api_uid": "api_vmanagement",       
+        "description": "vAPI is an extensible API Platform for modelling and delivering APIs/SDKs/CLIs", 
+	"name" : "vSphere Extensibility API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "url" : "local/swagger/vapi.json"
+
     }]
 }
