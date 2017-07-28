@@ -276,19 +276,11 @@
                         validatorUrl : null
                     });
 
-                    window.swaggerUi.load();
-
                     if (qs.sso) {
-                        //addApiKeyAuthorization();
-                        var key = sessionStorage.getItem('vmware-api-session-id');
-                        if (key && key.trim() != "") {
-                            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", key, "header");
-                            window.swaggerUi.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
-                            log("added key " + key);
-                        }
+                        addApiKeyAuthorization();
                     }
 
-
+                    window.swaggerUi.load();
                 }).fail(function(event, textStatus, error) {
                     $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " gives error: " + error + "</p>");
                 })

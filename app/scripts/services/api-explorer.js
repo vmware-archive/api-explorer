@@ -11,12 +11,10 @@
 
     service.$inject = ["$base64", "$http", "$q", "$rootScope", "$cacheFactory", "$timeout", "filterFilter" ];
 
-    //var SLASH_RE = new RegExp('[/ ]+', 'i');
-    var SLASH_RE = new RegExp('[/ ]+', 'g');
-    var CURLY_REMOVE_RE = new RegExp('[{}]+', 'g');
+    var SLASH_RE = new RegExp('[/ ]+', 'i');
+    var CURLY_REMOVE_RE = new RegExp('[{}]+', 'i');
     var SWAGGER_PATH_DASH_RE = new RegExp('-', 'i');
     var SWAGGER_PATH_WS_RE = new RegExp('[ \t]', 'i');
-    var SWAGGER_PATH_SLASH_RE = new RegExp('/', 'i');
     var NOT_ALNUM_RE = new RegExp('[^A-Za-z0-9]+', 'i');
 
     function service($base64, $http, $q, $rootScope, $cacheFactory, $timeout, filterFilter) {
@@ -91,27 +89,26 @@
             },
             createUrlForSwaggerMethod : function(apiUrl, methodType, methodPath, tag, operationId) {
                 // I don't understand the pattern, but this is what swagger does, it puts the tag at the beginning of the method, and then
-                // puts '45' for dashes, '47' for slashes and '32' for spaces, which appears to be the decimal for the ASCII char value, odd.  I guess this is their
+                // puts '45' for dashes and '32' for spaces, which appears to be the decimal for the ASCII char value, odd.  I guess this is their
                 // own sort of URL encoding, albeit really stange.
                 // TODO improve this algorithm to handle other characters as well.
-
                 var tagOperationId = null;
                 if (tag) {
                     tagOperationId = tag.replace(SWAGGER_PATH_DASH_RE, '45');
                     tagOperationId = tagOperationId.replace(SWAGGER_PATH_WS_RE, '32');
-                    tagOperationId = tagOperationId.replace(SWAGGER_PATH_SLASH_RE, '47');
                 }
 
-                if (!operationId || operationId == "undefined") {
+                if (!operationId) {
                     operationId = utils.swagger_path_to_operationId(methodType, methodPath)
                 } else {
-                    console.log('!!!!!no operationId');
                     operationId = utils.swagger_fix_operationId(operationId);
-                    console.log('after fix, operationId=' + operationId);
                 }
 
-                var url = apiUrl + '?!/';
+                // http://localhost:8082/swagger-console.html?url=local/swagger/api-vra-network-service.json&host=&basePath=#!/data45service/post_api_catalog_providers_providerId_requests_bindingId_complete
+                // http://0.0.0.0:9000/#!/apis/10001?%2FCommands%2FCommands_BulkExecuteScheduleOsUpdate
 
+                //# http://localhost:8082/swagger-console.html?url=local/swagger/api-vra-network-service.json&host=&basePath=#!/data45service/post_api_catalog_providers_providerId_requests_bindingId_complete
+                var url = apiUrl + '?/';
                 if (tagOperationId) {
                     url = url + tagOperationId + '/';
                 }
@@ -353,7 +350,7 @@
                             result.filters.types.pushUnique(value.type);
                             result.filters.sources.pushUnique(value.source);
 
-                            var apiUrl = "#!/apis/" + value.id;
+                            var apiUrl = "/#!/apis/" + value.id;
 
                             // Add api details to search content
                             value.methods = utils.createMethodsForProduct(value.type, value.url, apiUrl);
