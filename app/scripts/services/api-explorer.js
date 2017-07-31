@@ -343,6 +343,17 @@
                             // remove version numbers from the products on the api for filter purposes
                             value.products = utils.createProductListNoVersions(value.products);
 
+                            // tags
+                            var languages = [];
+                            if (value.tags && value.tags.length > 0) {
+                                if (angular.isArray(value.tags)) {
+                                    angular.forEach(filterFilter(value.tags, {category: "programming-language"}, true), function(value, index) {
+                                        languages.push(value.name);
+                                    });
+                                }
+                            }
+                            value.languages = languages;
+
                             result.filters.products.pushUnique(value.products, true);
                             result.filters.languages.pushUnique(value.languages, true);
                             result.filters.types.pushUnique(value.type);
