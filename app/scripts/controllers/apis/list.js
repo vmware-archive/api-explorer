@@ -11,6 +11,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
      * Public Variables
      */
     $scope.loading = 0; // Loading when > 0
+    $scope.overviewHtml = "";
     $scope.apis = [];
     $scope.filteredApis = [];
     $scope.products = [];
@@ -195,19 +196,51 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     /**
      * Private Function - load the API group overview text for the default product in the config.js.
      */
-
     var loadAPIGroupOverview = function() {
+        var useLocal = false;
+
+        // try local first
+        apis.getLocalAPIGroupOverviewPath().then(function (response) {
+
+            var localOverviewPath = response.data;
+            if (localOverviewPath && typeof localOverviewPath !== 'undefined') {
+                useLocal = true;
+                console.log("load API group overview from local");
+                $scope.loading += 1;
+                apis.getOverviewBody(localOverviewPath).then(function (response) {
+                    if (response.data) {
+                        $scope.overviewHtml = response.data;
+                    }
+                }, function (response) {
+                    //error
+                    console.log(response);
+                }).finally(function () {
+                    $scope.loading -= 1;
+                });
+            }
+
+        }).finally(function () {
+            if( !useLocal) {
+                console.log("load API group overview from remote");
+                loadRemoteAPIGroupOverview();
+            }
+        });
+    }
+
+    var loadRemoteAPIGroupOverview = function() {
         if ($scope.filters.products && $scope.filters.products.length > 0) {
             var apiGroup = $scope.filters.products[0];
+            //console.log('group=' + apiGroup);
             var overviewApiId = null;
             if (apiGroup) {
                 angular.forEach($scope.apis, function(value, index) {
+                    //console.log("name=" + value.name + ", type=" + value.type);
                     if (value.type == "internal" && value.apiGroup == apiGroup.replace(" ", "-").toLowerCase()) {
                         overviewApiId = parseInt(value.id, 10);
                     }
                 });
             }
-            console.log("id=" + overviewApiId);
+            //console.log("id=" + overviewApiId);
             if (overviewApiId) {
                 $scope.loading += 1;
                 apis.getRemoteApiResources(overviewApiId).then(function (response) {
@@ -301,7 +334,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
                 setApis(response);
             }).finally(function() {
                 setFilteredApis();
-                loadAPIGroupOverview($scope.filters.products);
+                loadAPIGroupOverview();
                 $scope.loading -= 1;
             });
         } else if (enableLocal == false && enableRemote == true){
@@ -309,7 +342,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
                 setApis(response);
             }).finally(function() {
                 setFilteredApis();
-                loadAPIGroupOverview($scope.filters.products);
+                loadAPIGroupOverview();
                 $scope.loading -= 1;
             });
         } else if (enableLocal == true && enableRemote == false){

@@ -254,7 +254,6 @@
                     }).then(function(response) {
                         angular.forEach(response.data, function(value, index) {
                         	var source = "remote";
-
                             // Get type and products from tags
                             var type = "swagger";
                             var products = [];
@@ -320,7 +319,6 @@
                         method : 'GET',
                         url : $rootScope.settings.localApisEndpoint
                     }).then(function(response) {
-
                         angular.forEach(response.data.apis, function(value, index) {
                             value.id = 10000 + index;
                             value.source = "local";
@@ -527,6 +525,23 @@
                     return deferred.promise;
                 },
                 /**
+                 * Get the local API group overview path
+                 */
+                getLocalAPIGroupOverviewPath : function(){
+                    var deferred = $q.defer();
+                    var result = {data:null};
+
+                    $http({
+                        method : 'GET',
+                        url : $rootScope.settings.localApisEndpoint
+                    }).then(function(response) {
+                        result.data = response.data.overview;
+                    }).finally(function() {
+                        deferred.resolve(result);
+                    });
+                    return deferred.promise;
+                },
+                /**
                  * Get the local overview-template.html file as a string and return it as a promise.
                  * String will be present in return objects .data member when resolved.
                  */
@@ -565,7 +580,7 @@
                         deferred.resolve(result);
                     });
                     return deferred.promise;
-                }
+                },
             };
 
         return definitions;
