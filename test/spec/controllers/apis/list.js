@@ -63,6 +63,7 @@ describe('Controller: ApisListCtrl', function() {
         spyOn(apis, 'getAllApis').and.returnValue(deferred.promise);
         spyOn(apis, 'getLocalApis').and.returnValue(deferred.promise);
         spyOn(apis, 'getRemoteApis').and.returnValue(deferred.promise);
+        spyOn(apis, 'getLocalAPIGroupOverviewPath').and.returnValue(deferred.promise);
 
         ApisListCtrl = $controller('ApisListCtrl', {
         	$scope : $scope,
