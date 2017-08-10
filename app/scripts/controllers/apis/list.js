@@ -263,6 +263,23 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 	}
 
     /**
+     * Method to check to see if a given method object matches the given keywords
+     * @param jsonObj
+     * @param keywords
+     * @returns {boolean}
+     */
+    $scope.methodMatchesKeywords = function(jsonObj, keywords) {
+	    // this should exit with false if the keywords is empty as well
+        if (!keywords || !jsonOb) {
+	        return false;
+        }
+        // the method has varying case for terms in it.  Here we make it lower case when doing
+        // the comparison so that it is case independent.  keywords is forced to be lower case
+        // already.
+        return angular.toJson(jsonObj, false).toLowerCase().indexOf(keywords) != -1;
+    }
+
+    /**
      * Public Functions
      */
 
@@ -309,6 +326,10 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
 
     // When the "keywords" field has changed
     $scope.keywordsChanged = function(){
+
+        // force the keywords to lower case so that search is always case independent
+        $scope.filters.keywords = $scope.filters.keywords.toLowerCase();
+
         // Force filtering the APIs
         setFilteredApis();
     };
