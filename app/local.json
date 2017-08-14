@@ -1,4 +1,5 @@
 {
+    "overview" : "examples/api-explorer-local-apis-overview.html",
     "apis": [ {
         "api_uid": "api_sample_exchange", 
         "description": "REST API to search, download, and manage samples on VMware Sample Exchange.", 
