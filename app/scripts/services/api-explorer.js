@@ -433,21 +433,16 @@
                     	return;
                     }
                     var url = $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?';
-                    angular.forEach(platform.split(","), function(value, index) {
-                        value = encodeURIComponent(value)
-                    	if (index == 0) {
-                    		url = url + 'platform=' + value;
-                    	} else {
-                    		url = url + '&platform=' + value;
-                    	}
 
-                    });
+                    // aaron note: it seems that the apigw can only support the syntax of having a single instance of
+                    // a given query argument, so insteand of multiple platform values, pass all values comma separated.
+                    url = url + '&platform=' + encodeURIComponent(platform) + '&summary=true';
 
                     console.log("Trying to get samples " + url)
 
                     $http({
                         method : 'GET',
-                        url : url + '&summary=true'
+                        url : url
                     }).then(function(response) {
                     	var samples = [];
 
