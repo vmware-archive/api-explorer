@@ -106,7 +106,6 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                     console.log("Removing API_OVERVIEW from resource list.");
                     overviewResource = resource;
                     docList.splice(i, 1);
-                    break;
                 }
             }
             if (docList.length == 0) {
