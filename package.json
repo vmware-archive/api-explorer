@@ -18,6 +18,7 @@
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-filerev": "^2.1.2",
+    "grunt-gitinfo": "^0.1.8",
     "grunt-google-cdn": "^0.4.3",
     "grunt-jscs": "^1.8.0",
     "grunt-karma": "^2.0.0",

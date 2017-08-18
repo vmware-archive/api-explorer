@@ -12,9 +12,10 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
-  grunt.loadNpmTasks( 'grunt-war' );
+  grunt.loadNpmTasks('grunt-war');
   grunt.loadNpmTasks('grunt-string-replace');
-
+  grunt.loadNpmTasks('grunt-gitinfo');
+  
   // Automatically load required Grunt tasks
   require('jit-grunt')(grunt, {
     useminPrepare: 'grunt-usemin',
@@ -27,7 +28,8 @@ module.exports = function (grunt) {
     app: require('./bower.json').appPath || 'app',
     version: require('./bower.json').version || '1.0.0',
     builddate: new Date(),
-    dist: 'dist'
+    dist: 'dist',
+    gitinfo: null
   };
 
   // Define the configuration for all the tasks
@@ -386,9 +388,17 @@ module.exports = function (grunt) {
         options: {
             replacements: [
                 {
+	                pattern: /APIX_GIT_SHA/g,
+	                replacement: '<%= gitinfo.local.branch.current.SHA %>'
+                },    
+                {
+	                pattern: /APIX_GIT_BRANCH/g,
+	                replacement: '<%= gitinfo.local.branch.current.name %>'
+                },    
+                {
 	                pattern: /APIX_VERSION/g,
 	                replacement: '<%= yeoman.version %>'
-                },
+                },                           
                 {
 	                pattern:  /APIX_BUILD_DATE/g,
 	                replacement: '<%= yeoman.builddate %>'
@@ -443,6 +453,9 @@ module.exports = function (grunt) {
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
       }
+    },
+    gitinfo: {
+        options: {}
     },
 
     // Run some tasks in parallel to speed up the build process
@@ -520,6 +533,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'gitinfo',
     'clean:dist',
     'wiredep',
     'useminPrepare',
