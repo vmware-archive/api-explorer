@@ -1,0 +1,6 @@
+{
+    "apix_version"    : "APIX_VERSION",
+    "apix_build_date" : "APIX_BUILD_DATE",
+    "package_version" : "PACKAGE_VERSION",
+    "package_date"    : "PACKAGE_DATE"    
+}

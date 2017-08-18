@@ -13,6 +13,7 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   grunt.loadNpmTasks( 'grunt-war' );
+  grunt.loadNpmTasks('grunt-string-replace');
 
   // Automatically load required Grunt tasks
   require('jit-grunt')(grunt, {
@@ -25,6 +26,7 @@ module.exports = function (grunt) {
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
     version: require('./bower.json').version || '1.0.0',
+    builddate: new Date(),
     dist: 'dist'
   };
 
@@ -375,6 +377,27 @@ module.exports = function (grunt) {
       }
     },
 
+    // this code does a find/replace on the version.json file with APIX build info
+    'string-replace': {
+      dist: {
+        files: {
+          '<%= yeoman.dist %>/': '<%= yeoman.dist %>/version.json'
+        },
+        options: {
+            replacements: [
+                {
+	                pattern: /APIX_VERSION/g,
+	                replacement: '<%= yeoman.version %>'
+                },
+                {
+	                pattern:  /APIX_BUILD_DATE/g,
+	                replacement: '<%= yeoman.builddate %>'
+                }
+            ]
+        }
+      }
+    },
+
     // Copies remaining files to places other tasks can use
     copy: {
       dist: {
@@ -387,6 +410,8 @@ module.exports = function (grunt) {
             '*.{ico,png,txt}',
             '*.html',
             'local.json',
+            'version.json',
+            'local/{,*/}*.*',
             'config.js',
             'images/{,*/}*.{webp}',
             'styles/fonts/{,*/}*.*',
@@ -510,6 +535,7 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin',
+    'string-replace',
     'war'
   ]);
 
