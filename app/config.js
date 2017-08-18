@@ -45,7 +45,17 @@
   window.config.remoteSampleExchangeApiEndPoint = "https://apigw.vmware.com/sampleExchange/v1";
   window.config.remoteApiEndPoint = "https://vdc-repo.vmware.com/apix";
 
-  // This is for vSphere SSO only.  To enable the SSO, set the ssoEnabled = true.
-  window.config.ssoEnabled = false;
-  window.config.authApiEndPoint = "https://10.154.10.43/rest/com/vmware/cis/session";
+  // By default SSO is disabled with a value of "none" for the ssoId. To enable it, 
+  // provide a supported string for the ssoId and a valid SSO endpoint host/path for
+  // window.config.authApiEndpoint
+  window.config.ssoId = "none";
+
+  // This is for vSphere SSO only.
+  //window.config.ssoId = "vsphere_sso";
+  //window.config.authApiEndPoint = "https://10.154.10.43/rest/com/vmware/cis/session";
+
+  //vRA SSO
+  //window.config.ssoId = "vra_sso";
+  //window.config.authApiEndPoint = "https://cava-p-14-062.eng.vmware.com/identity/api/tokens";
+  
 }(this));

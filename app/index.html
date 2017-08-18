@@ -59,19 +59,39 @@
                 </a>
             </div>
 
-            <div class="settings" ng-if="settings.ssoEnabled">
+            <div class="settings" ng-if="settings.ssoId === 'vra_sso'">
 
-                <ul class="" ng-controller="UserSessionCtrl" >
+                <ul class="" ng-controller="VraUserSessionCtrl" >
 
                     <li class="dropdown" ng-if="loggedIn">
                         <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             <span> Welcome {{username}} </span>
                             <span class="caret"></span>
                         </a>
-                        <a href="#" class="nav-link" ng-click="logout()">Log Out</a>
+                        <a href="#" class="nav-link" ng-click="vralogout()">Log Out</a>
                     </li>
                     <li ng-if="!loggedIn">
-                        <a href="javascript:void(0);" ng-click="login()">
+                        <a href="javascript:void(0);" ng-click="vralogin()">
+                            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                            <span class="nav-link"> Log In </span>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="settings" ng-if="settings.ssoId === 'vsphere_sso'">
+
+                <ul class="" ng-controller="VsphereUserSessionCtrl" >
+
+                    <li class="dropdown" ng-if="loggedIn">
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span> Welcome {{username}} </span>
+                            <span class="caret"></span>
+                        </a>
+                        <a href="#" class="nav-link" ng-click="vspherelogout()">Log Out</a>
+                    </li>
+                    <li ng-if="!loggedIn">
+                        <a href="javascript:void(0);" ng-click="vspherelogin()">
                             <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
                             <span class="nav-link"> Log In </span>
                         </a>
@@ -108,8 +128,10 @@
     <script src="bower_components/jquery-sieve/dist/jquery.sieve.js"></script>
     <script src="bower_components/jquery.throttle/src/jquery-throttle.js"></script>
     <script src="scripts/app.js"></script>
-    <script src="scripts/controllers/userSession.js"></script>
-    <script src="scripts/controllers/login.js"></script>
+    <script src="scripts/controllers/vraUserSession.js"></script>
+    <script src="scripts/controllers/vralogin.js"></script>
+    <script src="scripts/controllers/vsphereUserSession.js"></script>
+    <script src="scripts/controllers/vspherelogin.js"></script>
     <script src="scripts/directives.js"></script>
     <script src="scripts/services/api-explorer.js"></script>
     <script src="scripts/controllers/apis/list.js"></script>
