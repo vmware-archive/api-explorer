@@ -172,7 +172,7 @@
 
         var definitions = {
                 // This is for vSphere only
-                login : function(username, password, authUrl) {
+                vspherelogin : function(username, password, authUrl) {
                     var deferred = $q.defer();
                     var result = angular.merge({}, emptyResult);
 
@@ -181,6 +181,7 @@
                         'Authorization': 'Basic ' + _authdata,
                         'vmware-use-header-authn' : 'apiexplorer'
                     };
+
                     $http({
                         method : 'POST',
                         url : authUrl,
@@ -193,8 +194,9 @@
 
                     return deferred.promise;
                 },
+
                 // This is for vSphere only
-                logout : function(sessionId, authUrl) {
+                vspherelogout : function(sessionId, authUrl) {
                     var deferred = $q.defer();
                     var result = angular.merge({}, emptyResult);
 
@@ -205,6 +207,77 @@
                     $http({
                         method : 'DELETE',
                         url : authUrl,
+                        headers: _headers
+                    }).then(function(response) {
+                        result = response.data;
+                        deferred.resolve(result);
+                    }).finally(function() {
+                        console.log('Failed to logout')
+                        deferred.resolve(result);
+                    });
+
+                    return deferred.promise;
+                },
+                // This is for vRA only
+                vralogin : function(username, password, tenant, authUrl) {
+                    var deferred = $q.defer();
+                    var result = angular.merge({}, emptyResult);
+
+                    //var _authdata = $base64.encode(username + ':' + password);
+                    //var _headers = {
+                    //    'Authorization': 'Basic ' + _authdata,
+                    //    'vmware-use-header-authn' : 'apiexplorer'
+                    //};
+                    // this is vRA SSO specific
+                    var _data = {
+                        "username" : username,
+                        "password" : password,
+                        "tenant"   : tenant
+                    };
+
+                    $http({
+                        method : 'POST',
+                        url : authUrl,
+                        data: _data
+                    }).then(function(response) {
+
+                        // return value looks like this:
+                        // {
+                        //    "expires": "2017-08-18T22:59:26.000Z",
+                        //    "id": "MTUwMzA2ODM2NjU2MDoxODA1OTY4OWEzODVjMTRiNjg0ZDp0ZW5hbnQ6dnNwaGVyZS5sb2NhbHVzZXJuYW1lOmFkbWluaXN0cmF0b3JAdnNwaGVyZS5sb2NhbGV4cGlyYXRpb246MTUwMzA5NzE2NjAwMDozMjQ0NzM3YTY5MzM5MmRmOGNmYmJlOTJhMjI0NTE1YjA2ZjM4ZTFmOWUyN2MxNjlkNDMwOGVlMjY5OGJiZTY2MDdkOTAwMjRjYjBjOWJmMWFkM2U5MjMyOWM1OGJlNGM4MmExYjMzNTc2N2M3YzMwYjU5ZWY4ZTdlNDFiMTg0ZA==",
+                        //    "tenant": "vsphere.local"
+                        //}
+
+                        result.value = response.data.id;
+                    }).finally(function() {
+                        deferred.resolve(result);
+                    });
+
+                    return deferred.promise;
+                },
+
+                // This is for vRA only
+                vralogout : function(sessionId, authUrl) {
+                    var deferred = $q.defer();
+                    var result = angular.merge({}, emptyResult);
+
+                    var _headers = {
+                        'Authorization': 'Token ' + sessionId,
+                    };
+
+                    var url = authUrl + "/" + sessionId;
+
+                    //var _authdata = $base64.encode(username + ':' + password);
+                    //var _headers = {
+                    //
+                    //    'vmware-use-header-authn' : 'apiexplorer'
+                    //};
+
+                     // https://{{va-fqdn}}/identity/api/tokens/{{token}}
+
+                    $http({
+                        method : 'DELETE',
+                        url : url,
                         headers: _headers
                     }).then(function(response) {
                         result = response.data;

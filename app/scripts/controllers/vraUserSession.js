@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('apiExplorerApp').controller('UserSessionCtrl', function($rootScope, $scope, $window, $http, $cookies, ModalService, $sce, apis) {
+angular.module('apiExplorerApp').controller('VraUserSessionCtrl', function($rootScope, $scope, $window, $http, $cookies, ModalService, $sce, apis) {
 
     /**
      * Public Variables
@@ -19,11 +19,11 @@ angular.module('apiExplorerApp').controller('UserSessionCtrl', function($rootSco
      * Public Functions
      */
 
-    $scope.login = function() {
+    $scope.vralogin = function() {
 
         ModalService.showModal({
-            templateUrl : 'views/login.html',
-            controller : "LoginCtrl"
+            templateUrl : 'views/vralogin.html',
+            controller : "VraLoginCtrl"
         }).then(function(modal) {
             modal.element.modal();
             modal.close.then(function(result) {
@@ -43,7 +43,7 @@ angular.module('apiExplorerApp').controller('UserSessionCtrl', function($rootSco
 
     $scope.loading += 1;
 
-    $scope.logout = function() {
+    $scope.vralogout = function() {
         apis.logout(sessionStorage.getItem('vmware-api-session-id'), $sce.trustAsResourceUrl($rootScope.settings.authApiEndPoint)).then(function(response) {
 
         }).finally(function() {

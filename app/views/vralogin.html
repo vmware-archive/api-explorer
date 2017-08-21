@@ -44,12 +44,13 @@
             </div>
             <div class="error">{{errorMsg}}</div>
             <div class="modal-body">
-
+                <span>vRealize Automation Login</span>
                 <form name="loginForm" class="form-signin" novalidate>
                     <input name="username" ng-model="user.name" type="text" class="form-control" placeholder="Username" required autofocus>
                     <input name="password" ng-model="user.password" type="password" class="form-control" placeholder="Password" required>
+                    <input name="tenant" ng-model="user.tenant" type="text" class="form-control" placeholder="Tenant" required>
 
-                    <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="loginForm.$invalid" ng-click="login()">Log in</button>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="loginForm.$invalid" ng-click="vralogin()">Log in</button>
 
                 </form>
 

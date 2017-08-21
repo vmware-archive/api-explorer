@@ -278,12 +278,16 @@
 			
                     window.swaggerUi.load();
 
-                    if (qs.sso) {
-                        //addApiKeyAuthorization();
-			var key = sessionStorage.getItem('vmware-api-session-id');
-			if (key && key.trim() != "") {
-			    var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", key, "header");
-  		            window.swaggerUi.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
+                    if (qs.ssoId) {
+                        var key = sessionStorage.getItem('vmware-api-session-id');
+                        if (key && key.trim() != "") {
+                            if (qs.ssoId == 'vra_sso') {
+                                var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("Authorization", "Bearer " + key, "header");
+                                window.swaggerUi.api.clientAuthorizations.add("Authorization", apiKeyAuth);
+                            } else if (qs.ssoId == 'vsphere_sso') {
+                                var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", key, "header");
+                                window.swaggerUi.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
+                            }
                         }
                     }
 

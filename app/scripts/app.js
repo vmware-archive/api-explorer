@@ -84,7 +84,7 @@ app.run(function($rootScope, $window) {
       $rootScope.settings.apiListHeaderText = env.apiListHeaderText;
 
       // sso
-      $rootScope.settings.ssoEnabled = env.ssoEnabled;
+      $rootScope.settings.ssoId = env.ssoId;
       $rootScope.settings.authApiEndPoint = env.authApiEndPoint;
 
   };
