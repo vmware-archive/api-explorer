@@ -44,7 +44,7 @@ angular.module('apiExplorerApp').controller('VraUserSessionCtrl', function($root
     $scope.loading += 1;
 
     $scope.vralogout = function() {
-        apis.logout(sessionStorage.getItem('vmware-api-session-id'), $sce.trustAsResourceUrl($rootScope.settings.authApiEndPoint)).then(function(response) {
+        apis.vralogout(sessionStorage.getItem('vmware-api-session-id'), $sce.trustAsResourceUrl($rootScope.settings.authApiEndPoint)).then(function(response) {
 
         }).finally(function() {
             $rootScope.loggedIn = false;
