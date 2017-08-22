@@ -50,12 +50,12 @@
   // window.config.authApiEndpoint
   window.config.ssoId = "none";
 
-  // This is for vSphere SSO only.
+  // If using vSphere SSO use this block
   //window.config.ssoId = "vsphere_sso";
-  //window.config.authApiEndPoint = "https://10.154.10.43/rest/com/vmware/cis/session";
+  //window.config.authApiEndPoint = "https://localhost/rest/com/vmware/cis/session";
 
-  //vRA SSO
+  //If using vRA SSO, use this block
   //window.config.ssoId = "vra_sso";
-  //window.config.authApiEndPoint = "https://cava-p-14-062.eng.vmware.com/identity/api/tokens";
+  //window.config.authApiEndPoint = "https://localhost/identity/api/tokens";
   
 }(this));
