@@ -279,14 +279,32 @@
                     window.swaggerUi.load();
 
                     if (qs.ssoId) {
-                        var key = sessionStorage.getItem('vmware-api-session-id');
-                        if (key && key.trim() != "") {
-                            if (qs.ssoId == 'vra_sso') {
-                                var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("Authorization", "Bearer " + key, "header");
-                                window.swaggerUi.api.clientAuthorizations.add("Authorization", apiKeyAuth);
-                            } else if (qs.ssoId == 'vsphere_sso') {
-                                var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", key, "header");
-                                window.swaggerUi.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
+
+                        if (qs.ssoId == 'basic') {
+                            var username = sessionStorage.getItem('basic-username');
+                            var password = sessionStorage.getItem('basic-password');
+                            if (username && password) {
+                                var swaggerAuthName = sessionStorage.getItem('swagger-auth-name');
+                                if (!swaggerAuthName) {
+                                    swaggerAuthName = "BasicAuth";
+                                }
+                                console.log("Setting swagger basic username='" + username + "' password='" + password + "'");
+                                var basicAuth = new SwaggerClient.PasswordAuthorization(username, password);
+                                window.swaggerUi.api.clientAuthorizations.add(swaggerAuthName, basicAuth);
+                            } else {
+                                console.log("No basic auth credentials for swagger.");
+                            }
+                        } else {
+                            // api key of some kind.
+                            var key = sessionStorage.getItem('vmware-api-session-id');
+                            if (key && key.trim() != "") {
+                                if (qs.ssoId == 'vra_sso') {
+                                    var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("Authorization", "Bearer " + key, "header");
+                                    window.swaggerUi.api.clientAuthorizations.add("Authorization", apiKeyAuth);
+                                } else if (qs.ssoId == 'vsphere_sso') {
+                                    var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", key, "header");
+                                    window.swaggerUi.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
+                                }
                             }
                         }
                     }
