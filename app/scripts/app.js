@@ -86,6 +86,7 @@ app.run(function($rootScope, $window) {
       // sso
       $rootScope.settings.ssoId = env.ssoId;
       $rootScope.settings.authApiEndPoint = env.authApiEndPoint;
+      $rootScope.settings.swaggerAuthName = env.swaggerAuthName;
 
   };
 

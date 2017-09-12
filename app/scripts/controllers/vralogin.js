@@ -12,10 +12,7 @@ angular.module('apiExplorerApp').controller('VraLoginCtrl', function($rootScope,
             apis.vralogin($scope.user.name, $scope.user.password, $scope.user.tenant, $sce.trustAsUrl($rootScope.settings.authApiEndPoint)).then(function(response) {
                 if (response.value) {
                     console.log('have response, value=' + response.value);
-                    $scope.loggedInUser = {
-                        name: $scope.user.name,
-                        sessionId: response.value
-                    }
+
 
                     $scope.close();
                 } else {

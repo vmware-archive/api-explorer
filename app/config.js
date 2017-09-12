@@ -50,6 +50,11 @@
   // window.config.authApiEndpoint
   window.config.ssoId = "none";
 
+  //If you can use basic auth for all contained APIs, you can use this block.  The resulting auth
+  // credentials will then be passed to Swagger to use on all APIs.
+  //window.config.ssoId = "basic";
+  //window.config.swaggerAuthName = "BasicAuth";
+
   // If using vSphere SSO use this block
   //window.config.ssoId = "vsphere_sso";
   //window.config.authApiEndPoint = "https://localhost/rest/com/vmware/cis/session";

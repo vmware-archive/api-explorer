@@ -256,7 +256,7 @@
                     return deferred.promise;
                 },
 
-                // This is for vRA only
+                // This is for basic auth only.
                 vralogout : function(sessionId, authUrl) {
                     var deferred = $q.defer();
                     var result = angular.merge({}, emptyResult);
