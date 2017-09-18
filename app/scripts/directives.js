@@ -65,32 +65,41 @@ app.directive('localIframe', ['$http', '$rootScope', '$window', function($http, 
             localIframe: '@localIframe'
         },
         link : function(scope, element, attrs) {
+            var refreshMe = function () {
+                if (attrs.localIframe) {
+                    // aaron note, currentPath ends in a trailing sep
+                    var url = attrs.localIframe.indexOf("/") === 0 ? ($window.location.origin + attrs.localIframe) : attrs.localIframe;
+                    console.log("localIframe: url='" + url + "'");
 
-            if (attrs.localIframe) {
-                // aaron note, currentPath ends in a trailing sep
-                var url = attrs.localIframe.indexOf("/") === 0 ? ($window.location.origin + attrs.localIframe) : attrs.localIframe;
-                console.log("localIframe: url='" + url + "'");
+                    $http({
+                        method : 'GET',
+                        url : url
+                    }).then(function(response) {
+                        setTimeout(function(){
+                            var iframeDocument = element[0].contentWindow.document;
+                            var content = response.data;
+                            iframeDocument.open('text/html');
+                            iframeDocument.write(content);
+                            iframeDocument.close();
 
-                $http({
-                    method : 'GET',
-                    url : url
-                }).then(function(response) {
-                    setTimeout(function(){
-                        var iframeDocument = element[0].contentWindow.document;
-                        var content = response.data;
-                        iframeDocument.open('text/html');
-                        iframeDocument.write(content);
-                        iframeDocument.close();
+                            // Add the queryString parameters of the original URL as a hash to the new iframe
+                            var split = url.split("?");
+                            if (split.length > 1) {
+                                iframeDocument.location.hash = split[1];
+                            }
 
-                        // Add the queryString parameters of the original URL as a hash to the new iframe
-                        var split = url.split("?");
-                        if (split.length > 1) {
-                            iframeDocument.location.hash = split[1];
-                        }
+                        }, 0);
+                    });
+                }
+            };
 
-                    }, 0);
-                });
-            }
+            scope.$watch('localIframe', function(newValue, oldValue) {
+                if (scope.localIframe) {
+                    scope.localIframe = false;
+                    refreshMe();
+                }
+            }, true);
+
         }
     }
 } ]);
