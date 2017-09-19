@@ -195,7 +195,8 @@
 
                 if (split.length > 1) {
                     window.location.hash = decodeURIComponent(split[1]);
-                }
+                } else if (split.length  == 1)
+                    window.location.hash = decodeURIComponent(split[0]);
 
                 $(window).on("hashchange", function(){
                     window.parent.history.replaceState('', '', split[0] + "?" + decodeURIComponent(window.location.hash.substr(1)));
@@ -275,7 +276,7 @@
                         showRequestHeaders : false,
                         validatorUrl : null
                     });
-			
+
                     window.swaggerUi.load();
 
                     if (qs.ssoId) {
