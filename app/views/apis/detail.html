@@ -9,6 +9,26 @@
 </div>
 
 <style type="text/css">
+@media (min-width: 768px) {
+    .api iframe {
+       height: 55vh !important;
+    }
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width:992px) {
+    .api iframe {
+       height: 65vh !important;
+    }
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .api iframe {
+       height: 65vh !important;
+    }
+}
+
 .api iframe {
     border: none;
     width: 100%;
@@ -201,7 +221,7 @@ table.prettytable {
                     </div>
                 </div>
 
-                <iframe iframe-auto-size
+                <iframe
                     local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath + '&ssoId=' + ssoId)}}">
                 </iframe>
 

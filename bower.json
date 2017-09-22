@@ -1,6 +1,6 @@
 {
   "name": "api-explorer",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "dependencies": {
     "jquery": "2.x",
     "jquery.throttle": "^1.0.0",
