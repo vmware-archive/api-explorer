@@ -1,6 +1,6 @@
 {
   "name": "api-explorer",
-  "version": "0.0.38",
+  "version": "1.0.0",
   "dependencies": {
     "jquery": "2.x",
     "jquery.throttle": "^1.0.0",
@@ -17,7 +17,6 @@
     "angular-filter": "^0.5.11",
     "angular-modal-service": "0.6.10",
     "angular-base64": "2.0.5",
-    "api-console": "2.x",
     "crypto-js": "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/crypto-js/CryptoJS%20v3.1.2.zip",
     "swagger-ui": "2.x"
 
