@@ -1,0 +1,28 @@
+<div class="login-wrapper">
+    <form class="login">
+        <label class="title">
+            VSX Marketplace
+        </label>
+        <div class="login-group">
+            <div class="auth-source select">
+                <select id="login-auth-source-1" disabled>
+                    <option>My VMware</option>
+                    <option>Partner Central</option>
+                </select>
+            </div>
+            <input [(ngModel)]="user.email" class="username" type="text" name="email" placeholder="Email Address" required>
+            <input [(ngModel)]="user.password" class="password" type="password" name="password" placeholder="Password" required>
+            <clr-checkbox name="rememberme" [(ngModel)]="rememberme">
+                Remember me
+            </clr-checkbox>
+            <div class="error" [ngClass]="{active: errorMessage}">
+                {{errorMessage}}
+            </div>
+            <button type="submit" class="btn btn-primary" (click)="login()">LOG IN</button>
+            <a href="https://my.vmware.com/web/vmware/registration" class="signup">Sign up for an account</a>
+            <a *ngIf="this.appService.isInternalNetwork()" href="#" [routerLink]="['/saml/new']" class="signup">Employee Login</a>
+        </div>
+    </form>
+</div>
+
+

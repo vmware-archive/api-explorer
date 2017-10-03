@@ -1,0 +1,30 @@
+<clr-main-container>
+  <clr-header class="header-6" *ngIf="showHeader()">
+    <div class="branding">
+      <a href [routerLink]="['/']"  class="nav-link">
+        <clr-icon shape="vm-bug"></clr-icon>
+        <span class="title">API Explorer</span>
+      </a>
+    </div>
+
+    <div *ngIf="isLoggedIn()" class="header-actions">
+      <clr-dropdown class="dropdown bottom-right">
+        <button class="nav-text" clrDropdownToggle>
+          <span>{{getUser()}}</span>
+          <clr-icon shape="caret down"></clr-icon>
+        </button>
+        <div class="dropdown-menu">
+
+          <button (click)="logout()" clrDropdownItem>Log out</button>
+        </div>
+      </clr-dropdown>
+    </div>
+  </clr-header>
+
+  <div class="content-container">
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+</clr-main-container>

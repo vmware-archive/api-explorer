@@ -1,0 +1,141 @@
+/*.card .list-unstyled {
+    margin-top:15px;
+}
+*/
+
+.card .card-text {
+    font-size: 14px;
+    margin-left: 20px;
+}
+
+.btn {
+    margin: 6px 12px 6px 12px;
+}
+.api iframe {
+    border: none;
+    width: 100%;
+    height: 75vh;
+}
+
+.api .back {
+    float: right;
+}
+
+/*
+.api>#tabs {
+  padding: 0 18px;
+}
+
+.api .card-title {
+    margin-bottom: 0;
+}
+*/
+
+.api .swagger-ui .api-name {
+    display: none;
+}
+
+.api .swagger>.card {
+    margin-bottom: 15px;
+}
+
+.api .swagger [swagger-ui] {
+    margin: 15px;
+}
+
+.api .download {
+    margin-bottom: 14px;
+    width:80%;
+}
+
+.resource-results .categories small {
+    color: #539C00;
+}
+
+.api .sample .author {
+    margin-bottom: 8px;
+}
+
+.api .sample .snippet {
+    color: #666666;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.api .tags a:hover {
+    text-decoration: underline;
+}
+
+.api .sample .secondary-column p {
+    margin-bottom: 7px;
+}
+
+.api .secondary-column i {
+    display: inline-block;
+    width: 20px;
+}
+
+.api .sample .favorites-count i,
+.api .sample .comments-count i {
+    color: #0099cc;
+}
+
+
+.api .api-overview{
+    padding: 0 20px;
+}
+
+.api-overview h2 {
+    color: #0c8d63;
+    font-size: 22px;
+    margin: 16px 0 16px;
+    line-height: 20px;
+    font-weight: normal;
+}
+
+.api-overview h3 {
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 4px 0 0 0;
+}
+
+.api-overview h4 {
+    color: #0c8d63;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 2px 0 0 0;
+}
+
+.api-overview p {
+    display: inline;
+}
+
+.api-overview code {
+    padding: .2rem .4rem;
+    padding-top: 0.2rem;
+    padding-right: 0.4rem;
+    padding-bottom: 0.2rem;
+    padding-left: 0.4rem;
+
+    color: black;
+    background-color: #f0f0f0;
+}
+
+.api-overview pre {
+    background-color: #f8f8f8;
+}
+
+.api-overview pre code {
+    background-color: transparent;
+}
+
+.api-overview tr {
+    border-bottom: 1px solid grey;
+}
+
+
+table.prettytable {
+    border-collapse: collapse;
+}

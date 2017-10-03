@@ -1,0 +1,85 @@
+
+
+<div class="apis">
+  <div class="col-md-12">
+    <div class="filters-trigger" *ngIf="!hideFilters && hideLeftNav" (click)="toggleFilterDisplay()">
+        <i class="right"></i>
+    </div>
+    <clr-tabs>
+        <clr-tab-link [clrTabLinkActive]="isActiveTab(1)">Overview</clr-tab-link>
+        <clr-tab-link [clrTabLinkActive]="isActiveTab(2)">APIs</clr-tab-link>
+
+        <clr-tab-content *ngIf="overviewHtml" [clrTabContentActive]="isActiveTab(1)">
+            <div class="overview" [innerHTML]="overviewHtml"></div>
+        </clr-tab-content>
+        <clr-tab-content *ngIf="apis">
+            <div class="row">
+                <div class="filters col-md-2" *ngIf="!hideFilters && !hideLeftNav" >
+                    <div class="card">
+                        <div class="card-header">Filters
+                            <a class="hide" (click)="toggleFilterDisplay()" href="javascript:void(0)">Hide</a>
+                        </div>
+                        <div class="card-block">
+                            <div *ngIf="(!hideProductFilter) &&  products.length && products.length > 1">
+                                <h3 class="card-title">Products</h3>
+                                <ul class="list-unstyled">
+                                    <li *ngFor="let product of products | sort">
+                                        <label>
+                                            <input  type="checkbox" name="filterProducts[]" [checked]="filters.products.indexOf(product) > -1" (click)="toggleFilterSelection(product, filters.products)"/> &nbsp; {{product}}
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="card-divider"></div>
+                            </div>
+                            <div *ngIf="(!hideLanguageFilter) &&  languages.length && languages.length > 1">
+                                <h3 class="card-title">Language Bindings</h3>
+                                <ul class="list-unstyled">
+                                    <li *ngFor="let language of languages | sort">
+                                        <label>
+                                            <input  type="checkbox" name="filterLanguages[]" [checked]="filters.languages.indexOf(language) > -1" (click)="toggleFilterSelection(language, filters.languages)"/> &nbsp; {{language}}
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="card-divider"></div>
+                            </div>
+                            <div *ngIf="(!hideSourceFilter) &&  sources.length && sources.length > 1">
+                                <h3 class="card-title">Sources</h3>
+                                <ul class="list-unstyled">
+                                    <li *ngFor="let source of sources | sort">
+                                        <label>
+                                            <input  type="checkbox" name="filterSources[]" [checked]="filters.sources.indexOf(source) > -1" (click)="toggleFilterSelection(source, filters.sources)"/> &nbsp; {{source}}
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="card-divider"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container col-md-10">
+                    <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
+                        <clr-dg-column [clrDgField]="'name'" style="width: 25%">API Name</clr-dg-column>
+                        <clr-dg-column style="width: 20%">Product Release</clr-dg-column>
+                        <clr-dg-column>Description</clr-dg-column>
+
+
+                        <!--<ng-container *ngFor="let api of filteredApis | orderBy: 'name'">-->
+                        <ng-container *ngFor="let api of filteredApis | orderBy: ['-productDisplayString', 'name']">
+                            <clr-dg-row>
+                                <clr-dg-cell class="ellipsis-datagrid">
+                                    <a [routerLink]="['/apis', api.id]">{{api.name}}</a>
+
+                                </clr-dg-cell>
+                                <clr-dg-cell class="ellipsis-datagrid">{{api.productDisplayString}}</clr-dg-cell>
+                                <clr-dg-cell class="ellipsis-datagrid">{{api.description}}</clr-dg-cell>
+
+                            </clr-dg-row>
+                        </ng-container>
+                    </clr-datagrid>
+                </div><!-- container -->
+            </div> <!-- row -->
+        </clr-tab-content>
+    </clr-tabs>
+  </div>
+</div>
