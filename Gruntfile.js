@@ -421,6 +421,7 @@ module.exports = function (grunt) {
             '*.html',
             'local.json',
             'version.json',
+            'open_source_licenses.txt',
             'local/{,*/}*.*',
             'config.js',
             'images/{,*/}*.{webp}',
