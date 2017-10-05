@@ -7,7 +7,7 @@ component has minimal dependencies and can be embedded in any product that has a
 If you wish to see an instance of this project in action, check out the [VMware Platypus Project](http://github.com/vmware/platypus/), 
 which is a package of this API Explorer in a convenient Docker container.
 
-###Features
+### Features
 * Support for Swagger, RAML, or generic HTML API documentation
 * Swagger and RAML components can make API calls using the client browsers network connectivity.
 * API Metadata can be statically embedded locally with the component OR
