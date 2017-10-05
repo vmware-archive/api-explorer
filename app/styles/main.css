@@ -180,6 +180,21 @@ header .settings, .header .settings {
     padding: 15px 24px;
 }
 
+.footer {
+    background-color: #006A91;
+    margin: auto;
+    width: 100%;
+    text-align: center;
+}
+
+.footer-nav span {
+    font-size: 10px;
+    color: #fafafa;
+    font-weight: 200;
+    margin: 10px;
+
+}
+
 .settings ul {
     list-style-type: none;
 }
