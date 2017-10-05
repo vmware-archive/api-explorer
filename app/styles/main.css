@@ -190,3 +190,7 @@ header .settings .nav-link, .header .settings .nav-link {
 .fade.in {
     opacity: 0.9 !important;
 }
+
+div.branding.footer {
+    width: 38%;
+}
