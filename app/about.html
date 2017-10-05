@@ -1,0 +1,60 @@
+<!doctype html>
+<!--
+  ~ Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+  -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>About API Explorer</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width">
+
+<!-- endbuild -->
+<!-- build:css({.tmp,app,.}) styles/main.css -->
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="node_modules/clarity-ui/clarity-ui.min.css">
+<link rel="stylesheet" href="node_modules/clarity-icons/clarity-icons.min.css">
+<link rel="stylesheet" href="styles/clarity-mod.css">
+<!-- endbuild -->
+
+<script type="text/javascript">
+    (function() {
+        // Load external theme... if applicable
+        var theme = window.location.search.match(/theme=([^&]+)/);
+        if (theme && theme.length > 1) {
+            var link = document.createElement("link");
+            link.href = theme[1];
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            link.media = "screen,print";
+            document.getElementsByTagName("head")[0].appendChild(link);
+        }
+    })();
+
+
+</script>
+
+<!-- build:js({.tmp,app}) scripts/head.js -->
+<script src="scripts/polyfill.js"></script>
+<!-- endbuild -->
+
+<script src="config.js"></script>
+
+</head>
+
+<body>
+    
+<b>VMware API Explorer, copyright 2017 VMware, Inc.</b>
+
+<p>
+API Explorer includes a number of components with separate copyright notices and license terms.  You can find a listing of all open source components and license terms in <a href="open_source_licenses.txt">open_source_licenses.txt</a>.
+</p>
+
+<p>
+Source code for components that require explicit disclosure by their license terms can be found in the 
+<a href="https://vdc-download.vmware.com/vmwb-repository/dcr-public/831058b3-918f-4e40-8a63-7db97c065428/42eb4125-d6ce-4275-af02-c6099ec06b54/VMware-api-explorer-1.0.0-ODP.tar.gz">VMware API Explorer Open Source Disclosure Package</a>. 
+</p>
+</body>
+</html>
