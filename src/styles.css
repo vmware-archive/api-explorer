@@ -31,20 +31,6 @@ clr-tree>clr-tree-node>clr-checkbox.checkbox+.clr-treenode-content {
 .clr-treenode-children {
   margin-left: -30px!important;
 }
-.datagrid .datagrid-column .datagrid-filter {
-  left: auto;
-  right: 0;
-}
-.datagrid .datagrid-column:first-child .datagrid-filter {
-  left: 0;
-  right: auto;
-}
-.ellipsis-datagrid {
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 /*  From existing api-explorer main.css */
 html {

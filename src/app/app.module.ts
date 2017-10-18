@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * This software is released under MIT license.
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Injector } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -21,23 +27,14 @@ import { SafePipe } from './pipes/safe.pipe';
 
 import { AppService } from './app.service';
 import { UserService } from './services/user.service';
-import { LoginCheck } from './login/login.check';
 
-//import { PermissionCheck } from './services/permission.check';
-import { PublisherHttp } from './services/publisher.http';
+import { ApixHttp } from './services/apix.http';
 
 import { environment } from '../environments/environment';
 
-//import { jqxDateTimeInputComponent } from '../../node_modules/jqwidgets-framework/jqwidgets-ts/angular_jqxdatetimeinput';
-//import { SelectSearchPipe } from './pipes/select-serach.pipe';
-//import { StateFilter } from './filter/stateFilter';
-//import { MyDateRangePickerModule } from '../../node_modules/mydaterangepicker';
-//import { DateRangeFilter } from './filter/dateRangeFilter';
-
-export function getPublisherHttp(xhrBackend: XHRBackend, requestOptions: RequestOptions, injector: Injector) {
-    return new PublisherHttp(xhrBackend, requestOptions, injector);
+export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptions, injector: Injector) {
+    return new ApixHttp(xhrBackend, requestOptions, injector);
 }
-
 
 @NgModule({
     declarations: [
@@ -50,8 +47,6 @@ export function getPublisherHttp(xhrBackend: XHRBackend, requestOptions: Request
         OrderByPipe,
         SafePipe,
         FilterTagPipe
-
-        //jqxDateTimeInputComponent, DropdownPage, SelectSearchPipe, StateFilter, DateRangeFilter, ScrollDirective,
     ],
     imports: [
         BrowserModule,
@@ -61,16 +56,15 @@ export function getPublisherHttp(xhrBackend: XHRBackend, requestOptions: Request
         ROUTING,
         SelectModule,
         PopoverModule
-
     ],
     providers: [
         {
             provide: Http,
-            useFactory: getPublisherHttp,
+            useFactory: getApixHttp,
             deps: [XHRBackend, RequestOptions, Injector]
         },
 
-        AppService, UserService, LoginCheck, AppService],
+        AppService, UserService, AppService],
     bootstrap: [AppComponent]
 })
 

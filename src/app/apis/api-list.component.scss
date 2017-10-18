@@ -1,7 +1,8 @@
-// Copyright (c) 2016 VMware, Inc. All Rights Reserved.
-// This software is released under MIT license.
-// The full license information can be found in LICENSE in the root directory of this project.
-
+/*
+ * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * This software is released under MIT license.
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
 
 .show-child {
     margin: 0 0 0 0;
@@ -91,6 +92,7 @@
     border-radius: 0 5px 5px 0;
     opacity: 0.5;
     cursor: pointer;
+    z-index: 10;
 }
 
 i {
@@ -105,7 +107,10 @@ i {
     -webkit-transform: rotate(-45deg);
 }
 
-
+.card .card-header, .card .card-block {
+    border-bottom: 1px solid #eee;
+    margin: 10px;
+}
 
 .card .card-header .filter-all {
     text-align: left;

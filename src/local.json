@@ -1,38 +1,38 @@
 {
     "overview" : "examples/api-explorer-local-apis-overview.html",
-    "apis": [ {
-        "api_uid": "api_sample_exchange", 
-        "description": "REST API to search, download, and manage samples on VMware Sample Exchange.", 
+    "apis": [
+    {
+        "api_uid": "api_sample_exchange",
+        "description": "REST API to search, download, and manage samples on VMware Sample Exchange.",
         "name" : "VMware Sample Exchange REST API",
         "products": [
             "VMware {code} Sample Exchange;1.0"
-        ], 
+        ],
         "resources": {
         "docs": [
             {
             "categories": [
                 "API_OVERVIEW"
-            ], 
-            "downloadUrl": "examples/sx-api-overview.html", 
-            "title": "API Overview", 
+            ],
+            "downloadUrl": "examples/sx-api-overview.html",
+            "title": "API Overview",
             "webUrl": "examples/sx-api-overview.html"
             }
         ]
-        }, 
-        "type": "swagger", 
+        },
+        "type": "swagger",
         "version" : "v1",
         "url" : "https://apigw.vmware.com/sampleExchange/v1/swagger.json",
         "languages" : ["Java","Python"]
 
     }, {
         "name" : "Box.com",
-        "description": "Box.com rest API as maintained at https://github.com/box/box-openapi", 
+        "description": "Box.com rest API as maintained at https://github.com/box/box-openapi",
         "version" : "v1",
         "url" : "https://raw.githubusercontent.com/box/box-openapi/master/v2.0/openapi-v2.json",
         "products": ["Box.com"],
-        "type": "swagger", 
+        "type": "raml",
         "languages" : [".NET"]
-    }
-    
-    ]
+    }]
+
 }

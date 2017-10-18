@@ -10,15 +10,20 @@ import { Http } from '@angular/http';
 import { OnInit } from '@angular/core';
 
 import { environment } from '../environments/environment';
+import { config } from './app.config';
 
 @Injectable()
 export class AppUtils {
-  private SLASH_RE = new RegExp('[/ ]+', 'g');
-  private CURLY_REMOVE_RE = new RegExp('[{}]+', 'g');
-  private SWAGGER_PATH_DASH_RE = new RegExp('-', 'i');
-  private SWAGGER_PATH_WS_RE = new RegExp('[ \t]', 'i');
-  private SWAGGER_PATH_SLASH_RE = new RegExp('/', 'i');
-  private NOT_ALNUM_RE = new RegExp('[^A-Za-z0-9]+', 'i');
+
+  public static APIS_STORAGE_KEY = 'apis';
+  public static PRODUCTS_STORAGE_KEY = 'products';
+  public static LANGUAGES_STORAGE_KEY = 'languages';
+  public static TYPES_STORAGE_KEY = 'types';
+  public static SOURCES_STORAGE_KEY = 'sources';
+  public static OVERVIEW_PATH_STORAGE_KEY = 'overview-path';
+  public static APIS_TAB_KEY = 'apis-tab';
+  public static FILTER_STORAGE_KEY = 'api-filter';
+  public static SWAGGER_PREFERENCES_KEY = 'swagger-preferences';
 
   private isInternalNetwork0: boolean = false;
 
@@ -53,56 +58,6 @@ export class AppUtils {
     return environment.remoteSampleExchangeUrl;
   }
 
-  public static getDefaultKeywordsFilter(): string {
-    return environment.defaultKeywordsFilter;
-  }
-
-  public static getDefaultProductsFilter(): string[] {
-    return environment.defaultProductsFilter;
-  }
-
-  public static getDefautLanguagesFilter(): string[] {
-    return environment.defaultLanguagesFilter;
-  }
-
-  public static getDefaultTypesFilter(): string[] {
-    return environment.defaultTypesFilter;
-  }
-
-  public static getDefaultSourcesFilter(): string[] {
-    return environment.defaultSourcesFilter;
-  }
-
-  public static isHideFilters(): boolean {
-    return environment.hideFilters;
-  }
-
-  public static isHideProductFilter(): boolean {
-    return environment.hideProductFilter;
-  }
-
-  public static isHideLanguageFilter(): boolean {
-    return environment.hideLanguageFilter;
-  }
-
-  public static isHideSourceFilter(): boolean {
-    return environment.hideSourceFilter;
-  }
-
-  public static getAuthApiUrl(): string {
-    return environment.authApiUrl;
-  }
-
-  public static enableLocal(): boolean {
-    return environment.enableLocal;
-  }
-
-  public static enableRemote(): boolean {
-    return environment.enableRemote;
-  }
-
-
-
   public isInternalNetwork(): boolean {
     return this.isInternalNetwork0;
   }
@@ -125,6 +80,50 @@ export class AppUtils {
     return productListNoVersions;
   }
 
+  public static formatLocalApis(apis: any[]): any[] {
+    var result: any[] = [];
+    if (apis) {
+        for (var i=0; i<apis.length; i++) {
+            var api = apis[i];
+            api.id = 10000 + i;
+            api.source = "local";
+            if (!api.type || 0 === api.type.length) {
+                if (api.url && api.url.endsWith(".json")) {
+                    api.type = "swagger";
+                } else if (api.url && api.url.endsWith(".raml")) {
+                    api.type = "raml";
+                } else {
+                    api.type = "html";
+                }
+            }
+            // create a display string to be used in the list view
+            api.productDisplayString = AppUtils.createDisplayStringForProducts(api.products);
+
+            // remove version numbers from the products on the api for filter purposes
+            api.products = AppUtils.createProductListNoVersions(api.products);
+
+            // tags
+            var languages = [];
+            if (api.tags && api.tags.length > 0) {
+                for (let tag of api.tags) {
+                    if (tag.category === 'programming-language') {
+                        languages.push(tag.name);
+                    }
+                }
+            }
+            api.languages = languages;
+
+            var apiUrl = "#!/apis/" + api.id;
+
+            // Add api details to search content
+            //api.methods = AppUtils.createMethodsForProduct(value.type, value.url, apiUrl);
+
+            result.push(api);
+        }
+    }
+    return result;
+  }
+
   /**
    * This utility function is to work around an issue with insecure certificates on vdc-download.vmware.com.
    * As it turns on we figured out that in fact the certificate is OK, but this is a bug in many webkit browsers
@@ -139,116 +138,4 @@ export class AppUtils {
     //     return url;
     // }
   }
-
-  /**
-   * create a swagger operation id from the method path such as /endpoints/types/extensions/{id}
-   * to get_endpoints_types_extensions_id
-   */
-  public swagger_path_to_operationId(httpMethod, swaggerOperationPath): string {
-    if (!swaggerOperationPath) {
-      return "";
-    }
-    var pathOperationId = swaggerOperationPath;
-    pathOperationId = pathOperationId.replace(this.CURLY_REMOVE_RE,'');
-    pathOperationId = pathOperationId.replace(this.SLASH_RE,'_');
-    return httpMethod + pathOperationId;
-  }
-
-
-  /**
-   *  make sure operation id is valid in case user messed it up
-   *  @param operationId
-  */
-  public swagger_fix_operationId (operationId) : string {
-    if (!operationId) {
-      return "";
-    }
-    operationId = operationId.trim();
-    operationId = operationId.replace(this.NOT_ALNUM_RE,'_');
-    return operationId;
-  }
-
-  public createUrlForSwaggerMethod (apiUrl, methodType, methodPath, tag, operationId) : string {
-    // I don't understand the pattern, but this is what swagger does, it puts the tag at the beginning of the method, and then
-    // puts '45' for dashes, '47' for slashes and '32' for spaces, which appears to be the decimal for the ASCII char value, odd.  I guess this is their
-    // own sort of URL encoding, albeit really stange.
-    // TODO improve this algorithm to handle other characters as well.
-    var tagOperationId = null;
-    if (tag) {
-      tagOperationId = tag.replace(this.SWAGGER_PATH_DASH_RE, '45');
-      tagOperationId = tagOperationId.replace(this.SWAGGER_PATH_WS_RE, '32');
-      tagOperationId = tagOperationId.replace(this.SWAGGER_PATH_SLASH_RE, '47');
-    }
-
-		if (!operationId || operationId == "undefined") {
-        operationId = this.swagger_path_to_operationId(methodType, methodPath);
-    } else {
-        operationId = this.swagger_fix_operationId(operationId);
-    }
-
-    var url = apiUrl + '?!/';
-    if (tagOperationId) {
-      url = url + tagOperationId + '/';
-    }
-    url = url + operationId;
-    return url;
-  }
-
-  /**
-   *
-   * @param type type of the ref doc, e.g. "swagger", "raml", "iframe"
-   * @param _apiRefDocUrl  the URL to the API reference doc, e.g. http://0.0.0.0:9000/local/swagger/someApi.json
-   * @param _apiUrl the user visible URL to the API itself including the API id, e.g. http://0.0.0.0:9000/#!/apis/10001
-   * @returns {Array}
-  */
-  public createMethodsForProduct(type, _apiRefDocUrl, _apiUrl) : string[] {
-    var methods = [];
-    // Add methods for Swagger APIs
-    if(type === 'swagger'){
-      //FIXME use a cache for these files for performance.  there is other code that fetchs the swagger.json as well and we need to do this ONCE.
-      /*
-      $.ajax({
-                        url: _apiRefDocUrl,
-                        type: 'GET',
-                        dataType: 'json',
-                         async: false,
-                         success: function(data){
-                             var name = data.info.title;
-                             var version = data.info.version;
-                             $.each(data.paths, function(_k, _v){
-                                 // here _v is the map of http methods, e.g. "get", "post" to swagger objects. and _k is
-                                 // the URL/path
-                                 for(var _httpMethodType in _v){
-
-                                     // there can be multiple tags, which are in theory multiple ways to get at the same
-                                     // method.  just pick the first one to create a URL with.
-                                     var tag = null;
-                                     var tagList = _v[_httpMethodType].tags;
-                                     if (tagList && tagList.length > 0) {
-                                         tag = tagList[0];
-                                     }
-                                     var operationId = _v[_httpMethodType].operationId; // may be null
-
-                                     var methodUrl = utils.createUrlForSwaggerMethod(_apiUrl, _httpMethodType, _k, tag, operationId);
-
-                                     // Add filter columns here in the json object if needed
-                                     methods.push({ "http_method": _httpMethodType,
-                                                    "path": _k,
-                                                    "name": name,
-                                                    "url" : methodUrl,
-                                                    "version": version,
-                                                    "summary": _v[_httpMethodType].summary,
-                                                    "description": _v[_httpMethodType].description,
-                                                    "deprecated": _v[_httpMethodType].deprecated
-                                                   });
-                                     break;
-                                 }
-                             });
-                         }
-                     }); */
-    }
-    return methods;
-
-  }
-
 }

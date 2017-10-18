@@ -9,15 +9,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { ApiListComponent } from './apis/api-list.component';
 import { ApiDetailComponent } from './apis/api-detail.component';
 import { LoginComponent } from './login/login.component';
-import { LoginCheck } from './login/login.check';
-
 
 export const ROUTES: Routes = [
-    {path: '', redirectTo: 'home', pathMatch: 'full'},
-    {path: 'home', component: ApiListComponent, data: {title: 'Home'}},
+    {path: '', redirectTo: 'apis', pathMatch: 'full'},
+    {path: 'apis', component: ApiListComponent, data: {title: 'Home'}},
     {path: 'login', component: LoginComponent, data: {title: 'Login'}},
     {path: 'apis/:id', component: ApiDetailComponent, data: {title: 'API Detail'}}
-
 ];
 
 export const ROUTING: ModuleWithProviders = RouterModule.forRoot(ROUTES);

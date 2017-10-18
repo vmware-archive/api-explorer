@@ -6,11 +6,11 @@ import { Api } from '../model/api';
 
 @Component({
   selector: 'local-iframe',
+
   template: `
     <iframe #iframe width="100%" height="700" frameBorder="0" allowfullscreen></iframe>
   `,
   styles: [`
-
   `]
 })
 
@@ -23,9 +23,11 @@ export class LocalIframeComponent implements AfterViewInit {
     infoMessage: string = '';
     errorMessage: string = '';
 
+
   @Input() set src(value: string) {
     this.url = value;
-    this.localIframe = 'swagger-console.html?url=' + this.url;;
+    this.localIframe = 'swagger-console.html?url=' + this.url;
+    this.loadContent();
   }
 
   constructor(
@@ -37,28 +39,14 @@ export class LocalIframeComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.loadContent();
+    //this.loadContent();
   }
 
-  /*
-  getCurrentPath(): string {
-    // Determine the "path" used for loading "external" but local resources (by default current index.html path)
-
-    var currentPath = window.location.pathname.slice(0, window.location.pathname.lastIndexOf("/"));
-
-          // Add the trailing forward slash to the "current path", if needed
-          if (!currentPath.endsWith("/")) {
-              currentPath += "/";
-          }
-
-          currentPath =  currentPath + 'swagger-console.html?url=' + this.url;
-          console.log(currentPath);
-          return currentPath;
-  }*/
-
   loadContent() {
+    //console.log('load iframe content');
     if (this.localIframe) {
       this.loading += 1;
+
       this.appService.getSwaggerConsoleHTML(this.localIframe).then(response => {
           this.loading -= 1;
           var content = response._body;

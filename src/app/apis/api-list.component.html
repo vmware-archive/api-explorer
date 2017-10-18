@@ -1,4 +1,8 @@
-
+<!--
+  ~ Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+  -->
 
 <div class="apis">
   <div class="col-md-12">
@@ -6,13 +10,13 @@
         <i class="right"></i>
     </div>
     <clr-tabs>
-        <clr-tab-link [clrTabLinkActive]="isActiveTab(1)">Overview</clr-tab-link>
+        <clr-tab-link *ngIf="overviewHtml" [clrTabLinkActive]="isActiveTab(1)">Overview</clr-tab-link>
         <clr-tab-link [clrTabLinkActive]="isActiveTab(2)">APIs</clr-tab-link>
 
         <clr-tab-content *ngIf="overviewHtml" [clrTabContentActive]="isActiveTab(1)">
             <div class="overview" [innerHTML]="overviewHtml"></div>
         </clr-tab-content>
-        <clr-tab-content *ngIf="apis">
+        <clr-tab-content *ngIf="apis" [clrTabContentActive]="isActiveTab(2)">
             <div class="row">
                 <div class="filters col-md-2" *ngIf="!hideFilters && !hideLeftNav" >
                     <div class="card">
@@ -57,26 +61,47 @@
                     </div>
                 </div>
 
-                <div class="container col-md-10">
-                    <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
-                        <clr-dg-column [clrDgField]="'name'" style="width: 25%">API Name</clr-dg-column>
-                        <clr-dg-column style="width: 20%">Product Release</clr-dg-column>
-                        <clr-dg-column>Description</clr-dg-column>
+                <div class="container col-md-10" [ngClass]="(hideFilters || hideLeftNav) ? 'col-md-12' : 'col-md-10'">
+                    <div class="card">
+                        <div class="card-header row">
+                            <div class="col-md-4">{{apiListHeaderText}}</div>
+			                <div class="col-md-4"></div>
+                            <div class="col-md-4 filter-all"><input type="text" name="filter" [(ngModel)]="filters.keywords" (ngModelChange)="keywordsChanged()" placeholder="Search APIs/Methods..."/>
+                                <clr-icon shape="search" size="12" (click)="keywordsChanged()"></clr-icon>
+                            </div>
+                        </div>
+                        <div class="card-block">
+                            <ul class="list-group">
+                                <li class="api list-group-item"  *ngFor="let api of filteredApis | orderBy: ['-productDisplayString', 'name']">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <a [routerLink]="['/apis', api.id]">{{api.name}}</a>
+                                            &nbsp;
+                                            <span *ngIf="api.source=='local'" class="badge badge-light-blue">local</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <span>{{api.productDisplayString}}</span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div>{{api.description}}</div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="showMethod()">
+                                    <div class="row method_info {{method.http_method}}" *ngFor="let method of api.methods">
+                                        <div class="col-md-12 method_row" >
+                                            <div class="http_method">{{method.http_method}}</div>
 
+                                            <a [routerLink]="['/apis', api.id]" [queryParams]="{path:method.url}" ><span class="path {{method.deprecated ? 'deprecated' : ''}}">{{method.path}}</span></a>
+                                            <!--<a href="{{method.url}}"><span class="path {{method.deprecated ? 'deprecated' : ''}}">{{method.path}}</span></a>-->
 
-                        <!--<ng-container *ngFor="let api of filteredApis | orderBy: 'name'">-->
-                        <ng-container *ngFor="let api of filteredApis | orderBy: ['-productDisplayString', 'name']">
-                            <clr-dg-row>
-                                <clr-dg-cell class="ellipsis-datagrid">
-                                    <a [routerLink]="['/apis', api.id]">{{api.name}}</a>
-
-                                </clr-dg-cell>
-                                <clr-dg-cell class="ellipsis-datagrid">{{api.productDisplayString}}</clr-dg-cell>
-                                <clr-dg-cell class="ellipsis-datagrid">{{api.description}}</clr-dg-cell>
-
-                            </clr-dg-row>
-                        </ng-container>
-                    </clr-datagrid>
+                                            <span class="description">{{method.summary}}</span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div><!-- container -->
             </div> <!-- row -->
         </clr-tab-content>

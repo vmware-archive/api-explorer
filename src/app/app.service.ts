@@ -9,15 +9,8 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
-//import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-//import 'rxjs/add/operator/catch';
-//import 'rxjs/add/operator/map';
-//import 'rxjs/add/observable/of';
-//import 'rxjs/add/observable/throw';
-
-
-
 import 'rxjs/add/operator/toPromise';
+
 import * as _ from 'lodash';
 
 import { UserService } from './services/user.service';
@@ -48,13 +41,6 @@ export class AppService {
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError);
-    }
-
-    getLocalApi(id: number): Promise<any> {
-        return this.http.get(`${this.localApiUrl}/apis/${id}`)
-               .toPromise()
-               .then(response => response.json())
-               .catch(this.handleError);
     }
 
     getRemoteApi(id: number): Promise<any> {
@@ -134,19 +120,5 @@ export class AppService {
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
-    }
-
-    private handleErrors(res: any) {
-        const statusCode = res.status;
-        if (statusCode > 400) {
-            const routeOpts = {
-                skipLocationChange: true,
-                queryParams: {
-                    statusText: res.statusText
-                }
-            };
-            this.router.navigate(['/error', `${statusCode}`], routeOpts);
-        }
-        return Observable.throw(res.statusText || res || 'API server error');
     }
 }

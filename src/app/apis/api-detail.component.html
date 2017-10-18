@@ -1,8 +1,14 @@
+<!--
+  ~ Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+  -->
+
 <div *ngIf="loading" class="loading"></div>
 <div  class="card api">
     <div class="card-header">
         {{api?.name}}
-        <a href="#!/apis" class="back" target="_self">
+        <a [routerLink]="['/apis']" (click)="setHomePageTab()" class="back" target="_self">
             <strong>&lt;&lt; Back</strong>
         </a>
     </div>
@@ -18,10 +24,10 @@
             <clr-tab-content *ngIf="overviewHtml" >
                 <div class="api-overview" [innerHTML]="overviewHtml"></div>
             </clr-tab-content>
-            <clr-tab-content>
-                <div [ngSwitch]="type">
+            <clr-tab-content *ngIf="api">
+                <div [ngSwitch]="api.type">
 
-                    <div *ngIf="url === null">
+                    <div *ngIf="api.url === null">
                         <p>Oops! The API documentation is missing.</p>
                     </div>
                     <div *ngSwitchCase="'swagger'" class="swagger">
@@ -51,11 +57,11 @@
 
                         </div>
 
-                        <local-iframe [src]="url"></local-iframe>
+                        <local-iframe [src]="api.url + '&host=' + swaggerPreferences?.host + '&basePath=' + swaggerPreferences?.basePath"></local-iframe>
 
                     </div>
                     <div *ngSwitchCase="'html'">
-                        <iframe  class="html" width="100%" height="75vh" allowfullscreen [src]="url | safe"></iframe>
+                        <iframe  class="html" width="100%" height="75vh" allowfullscreen [src]="api.url | safe"></iframe>
                     </div>
                 </div>
             </clr-tab-content>

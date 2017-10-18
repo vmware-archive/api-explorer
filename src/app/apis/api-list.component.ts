@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2016 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
+
 import { Component, Input, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -19,14 +20,20 @@ import { AppUtils } from '../app.utils';
 import { UserService } from "../services/user.service";
 import { AppService } from '../app.service';
 
-import { APP_TITLE } from '../app.config';
-import { API_LIST_HEADER_TEXT } from '../app.config';
+import { config } from '../app.config';
 
 @Component({
     styleUrls: ['./api-list.component.scss'],
     templateUrl: './api-list.component.html',
 })
 export class ApiListComponent implements OnInit {
+    private SLASH_RE = new RegExp('[/ ]+', 'g');
+    private CURLY_REMOVE_RE = new RegExp('[{}]+', 'g');
+    private SWAGGER_PATH_DASH_RE = new RegExp('-', 'i');
+    private SWAGGER_PATH_WS_RE = new RegExp('[ \t]', 'i');
+    private SWAGGER_PATH_SLASH_RE = new RegExp('/', 'i');
+    private NOT_ALNUM_RE = new RegExp('[^A-Za-z0-9]+', 'i');
+
     apis: any[] = [];
     filteredApis: any[] = [];
     products: any[] = [];
@@ -42,27 +49,24 @@ export class ApiListComponent implements OnInit {
         sources: []
     };
 
-    apiListHeaderText = '';
-    hideFilters: boolean = AppUtils.isHideFilters();
-    hideProductFilter: boolean = AppUtils.isHideProductFilter();
-    hideLanguageFilter: boolean = AppUtils.isHideLanguageFilter();
-    hideSourcesFilter: boolean = AppUtils.isHideSourceFilter();
+    apiListHeaderText = config.apiListHeaderText;
+    hideFilters: boolean = config.hideFilters;
+    hideProductFilter: boolean = config.hideProductFilter;
+    hideLanguageFilter: boolean = config.hideLanguageFilter;
+    hideSourcesFilter: boolean = config.hideSourceFilter;
 
     initDefaultFilters: boolean = false;
+
     overviewHtml: string = '';
     tab: number = 1;
     hideLeftNav: boolean = false;
 
     selectedApi;
-    //opened: boolean = false;
-    //childOpen: boolean = false;
     loading: number = 0;
     errorMessage: string = '';
     infoMessage: string = '';
 
-    tableState: State;
-
-    private STORAGE_KEY = 'api-filter';
+    //ableState: State;
 
     constructor(private router: Router,
             private route: ActivatedRoute,
@@ -70,16 +74,80 @@ export class ApiListComponent implements OnInit {
             private appService: AppService
     ) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        /* Read form cache
 
-    refresh(state: State) {
-        this.tableState = state;
-        //let params = this.appService.buildQueryParams(state);
+        var apis = localStorage.getItem(AppUtils.APIS_STORAGE_KEY);
+        var products = localStorage.getItem(AppUtils.PRODUCTS_STORAGE_KEY);
+        var languages = localStorage.getItem(AppUtils.LANGUAGES_STORAGE_KEY);
+        var sources = localStorage.getItem(AppUtils.SOURCES_STORAGE_KEY);
+        var overviewHtmlPath = localStorage.getItem(AppUtils.OVERVIEW_PATH_STORAGE_KEY);
+
+        //console.log(this.apis);
+        if (apis == null || products == null || languages == null || sources == null || overviewHtmlPath == null) {
+            console.log('call service');
+            this.getApis();
+        } else {
+            console.log('from cache');
+            this.apis = JSON.parse(apis);
+            this.products = JSON.parse(products);
+            this.languages = JSON.parse(languages);
+            this.sources = JSON.parse(sources);
+        }
+        console.log(this.apis);
+        this.setFilteredApis();
+        this.loadAPIGroupOverview(overviewHtmlPath);
+        */
         this.getApis();
+        if (localStorage.getItem(AppUtils.APIS_TAB_KEY) == 'apis') {
+            this.setActiveTab(2);
+            localStorage.removeItem(AppUtils.APIS_TAB_KEY);
+        }
+    }
+
+    // When any "checkbox" field has changed
+    toggleFilterSelection (value, filter) {
+        var idx = filter.indexOf(value);
+        if (idx > -1) {
+            filter.splice(idx, 1);
+        } else {
+            filter.push(value);
+        }
+
+        // Force filtering the APIs
+        this.setFilteredApis();
+    }
+
+    // Sets the active tab
+    setActiveTab (newTab) {
+        this.tab = newTab;
+    }
+
+    // Checks if a tab is active
+    isActiveTab (tabNum) {
+        return this.tab === tabNum;
+    }
+
+    toggleFilterDisplay () {
+        this.hideLeftNav = !this.hideLeftNav;
+    }
+
+    keywordsChanged () {
+        // force the keywords to lower case so that search is always case independent
+        this.filters.keywords = this.filters.keywords.toLowerCase();
+
+        // Force filtering the APIs
+        this.setFilteredApis();
+    }
+
+    showMethod () {
+        if (this.filters.keywords == null || this.filters.keywords == '' || this.filters.keywords == 'undefined')
+            return false;
+        return true;
     }
 
     private getApis(): void {
-        if (AppUtils.enableLocal() == true && AppUtils.enableRemote() == true) {
+        if (config.enableLocal == true && config.enableRemote == true) {
             this.loading++;
             Promise.all([
                 this.appService.getRemoteApis(),
@@ -90,45 +158,54 @@ export class ApiListComponent implements OnInit {
                 var localOverviewPath = null;
                 if (values[0])
                     results = this.formatRemoteApis(values[0]);
+
                 if (values[1]) {
                     results = results.concat(this.formatLocalApis(values[1].apis));
                     localOverviewPath = values[1].overview;
+                    if (localOverviewPath && typeof localOverviewPath !== 'undefined')
+                        localStorage.setItem(AppUtils.OVERVIEW_PATH_STORAGE_KEY, localOverviewPath);
                 }
-                this.setApis(results);
-                this.setFilteredApis();
-                this.loadAPIGroupOverview(localOverviewPath);
-            }).catch (error => {
+                this.handleResponse(results, localOverviewPath);
+             }).catch (error => {
                 this.loading--;
                 this.errorMessage = error.text() || error.statusText;
             });
-        } else if (AppUtils.enableLocal() == false && AppUtils.enableRemote() == true) {
+        } else if (config.enableLocal == false && config.enableRemote == true) {
             this.loading++;
-            this.appService.getRemoteApis().then(result => {
+            this.appService.getRemoteApis().then(res => {
                 this.loading--;
-                this.setApis(result);
-                this.setFilteredApis();
-            }).catch(response => {
+                var results: any[];
+                results = this.formatRemoteApis(res);
+                this.handleResponse(results, null);
+            }).catch(error => {
                 this.loading--;
-                if (response instanceof Response)
-                    this.errorMessage = response.text() ? response.text() : response.statusText;
-                else
-                    this.errorMessage = response;
+                this.handleError(error);
             });
-        } else if (AppUtils.enableLocal() == true && AppUtils.enableRemote() == false) {
+        } else if (config.enableLocal == true && config.enableRemote == false) {
             this.loading++;
-            this.appService.getLocalApis().then(result => {
+            this.appService.getLocalApis().then(res => {
                 this.loading--;
-                this.setApis(result);
-                this.setFilteredApis();
-            }).catch(response => {
+                var results: any[];
+                results = results.concat(this.formatLocalApis(res.apis));
+                this.handleResponse(results, res.overview);
+            }).catch(error => {
                 this.loading--;
-                if (response instanceof Response)
-                    this.errorMessage = response.text() ? response.text() : response.statusText;
-                else
-                    this.errorMessage = response;
+                this.handleError(error);
             });
-
         }
+    }
+
+    private handleResponse(results: any[], overviewPath: string) {
+        this.setApis(results);
+        this.setFilteredApis();
+        this.loadAPIGroupOverview(overviewPath);
+    }
+
+    private handleError(response: any) {
+        if (response instanceof Response)
+            this.errorMessage = response.text() ? response.text() : response.statusText;
+        else
+            this.errorMessage = response;
     }
 
     private formatLocalApis(apis: any[]): any[] {
@@ -164,11 +241,15 @@ export class ApiListComponent implements OnInit {
                 }
                 api.languages = languages;
 
-                var apiUrl = "#!/apis/" + api.id;
+                // set api.url from app base
+                if (!api.url.startsWith("http")) {
+                    api.url = '/' + api.url;
+                }
+
+                var apiUrl = "/apis/" + api.id;
 
                 // Add api details to search content
-                //api.methods = AppUtils.createMethodsForProduct(value.type, value.url, apiUrl);
-
+                api.methods = this.createMethodsForProduct(api.type, api.url, apiUrl);
                 result.push(api);
             }
         }
@@ -193,9 +274,7 @@ export class ApiListComponent implements OnInit {
                             apiGroup = tag.name;
                         } else if (tag.category === 'product') {
                             products.push(tag.name);
-                            //this.pushUnique(result.filters.products, tag.name.replace(";", " "));
-                            //this.pushUnique(products, tag.name); //.replace(";", " "));
-                        } else if (tag.category === 'programming-language') {
+                         } else if (tag.category === 'programming-language') {
                             languages.push(tag.name);
                         }
                     }
@@ -220,7 +299,6 @@ export class ApiListComponent implements OnInit {
                     source: source,
                     apiGroup: apiGroup
                 });
-
             }
         }
         return result;
@@ -230,7 +308,6 @@ export class ApiListComponent implements OnInit {
      * Private Functions - set the apis for the default products.
      */
     private setApis(response) : void {
-        console.log()
         var emptyResult = {
     		apis : [],
             filters : {
@@ -245,46 +322,46 @@ export class ApiListComponent implements OnInit {
         for (let api of response) {
             this.pushUnique(result.filters.products, api.products);
             this.pushUnique(result.filters.languages, api.languages);
-            this.pushUnique(result.filters.types, [api.type]);
             this.pushUnique(result.filters.sources, [api.source]);
             result.apis.push(api);
         }
 
         this.products = result.filters.products;
     	this.languages = result.filters.languages;
-        this.types = result.filters.types;
         this.sources = result.filters.sources;
         this.apis = result.apis;
+
+        // save to the cache
+        /*
+        localStorage.setItem(AppUtils.PRODUCTS_STORAGE_KEY, JSON.stringify(this.products));
+        localStorage.setItem(AppUtils.LANGUAGES_STORAGE_KEY, JSON.stringify(this.languages));
+        localStorage.setItem(AppUtils.SOURCES_STORAGE_KEY, JSON.stringify(this.sources));
+        */
+        localStorage.setItem(AppUtils.APIS_STORAGE_KEY, JSON.stringify(this.apis));
     }
 
     private setDefaultFilters(): void {
         if (this.initDefaultFilters) {
             this.initDefaultFilters = false;
         }
-        if (AppUtils.getDefaultKeywordsFilter()) {
-            this.filters.keywords = AppUtils.getDefaultKeywordsFilter();
+        if (config.defaultKeywordsFilter) {
+            this.filters.keywords = config.defaultKeywordsFilter;
         }
 
-        if (AppUtils.getDefaultProductsFilter()) {
-            for (let product of AppUtils.getDefaultProductsFilter()) {
+        if (config.defaultProductsFilter) {
+            for (let product of config.defaultProductsFilter) {
                 this.filters.products.push(product);
             }
         }
 
-        if (AppUtils.getDefautLanguagesFilter()) {
-            for (let lan of AppUtils.getDefautLanguagesFilter()) {
+        if (config.defaultLanguagesFilter) {
+            for (let lan of config.defaultLanguagesFilter) {
                 this.filters.languages.push(lan);
             }
         }
 
-        if (AppUtils.getDefaultTypesFilter()) {
-            for (let type of AppUtils.getDefaultTypesFilter()) {
-                this.filters.types.push(type);
-            }
-        }
-
-        if (AppUtils.getDefaultSourcesFilter()) {
-            for (let source of AppUtils.getDefaultSourcesFilter()) {
+        if (config.defaultSourcesFilter) {
+            for (let source of config.defaultSourcesFilter) {
                 this.filters.sources.push(source);
             }
         }
@@ -302,7 +379,6 @@ export class ApiListComponent implements OnInit {
             if (add && this.filters.products.length) {
                 if (api.products && api.products.length) {
                     for (let product of api.products) {
-
                         if (this.filters.products.indexOf(product) === -1) {
                             add = false;
                         } else {
@@ -336,24 +412,37 @@ export class ApiListComponent implements OnInit {
             if (add && api.type == "internal") {
                 add = false;
             }
-            if (add && this.filters.types.length && this.filters.types.indexOf(api.type) === -1) {
-                add = false;
-            }
 
             // Process sources filter
             if (add && this.filters.sources.length && this.filters.sources.indexOf(api.source) === -1) {
                 add = false;
             }
 
-            if (add) {
+            if (add)
                 apis.push(api);
-            }
         }
 
         // Persist the current filters
-        //localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.filters));
+        localStorage.setItem("filters", JSON.stringify(this.filters));
 
-        this.filteredApis = apis; //apis.filter(this.filters.keywords);
+        this.filteredApis = this.filterByKeywords(apis);
+    }
+
+    private filterByKeywords (apis: any) {
+        if (this.filters.keywords == null || this.filters.keywords == '' || this.filters.keywords == 'undefined')
+            return apis;
+        else {
+            var result = [];
+            for (let api of apis) {
+                if (JSON.stringify(api).toLowerCase().indexOf(this.filters.keywords.toLowerCase()) > -1) {
+                    if (api.source === 'local' && api.type === 'swagger') {
+                        api.methods = api.methods.filter(method => JSON.stringify(method).indexOf(this.filters.keywords) > -1);
+                    }
+                    result.push(api);
+                }
+            }
+            return result;
+        }
     }
 
     private pushUnique(arr, vals) {
@@ -372,12 +461,11 @@ export class ApiListComponent implements OnInit {
 
         if (localOverviewPath && typeof localOverviewPath !== 'undefined') {
             useLocal = true;
-            console.log("load API group overview from local");
+            console.log("load API group overview from local, " + localOverviewPath);
             this.loading++;
             this.appService.getHTMLResponse(localOverviewPath).then(result => {
                 this.loading--;
                 this.overviewHtml = result._body;
-                //console.log(this.overviewHtml);
             }).catch(response => {
                 this.loading--;
                 if (response instanceof Response)
@@ -389,64 +477,177 @@ export class ApiListComponent implements OnInit {
 
         if( !useLocal) {
             console.log("load API group overview from remote");
-            //this.loadRemoteAPIGroupOverview();
+            this.loadRemoteAPIGroupOverview();
         }
 
     }
 
-    // When any "checkbox" field has changed
-    toggleFilterSelection (value, filter) {
-        var idx = filter.indexOf(value);
-        if (idx > -1) {
-            filter.splice(idx, 1);
+    private loadRemoteAPIGroupOverview() {
+        if (this.filters.products && this.filters.products.length > 0) {
+            var apiGroup = this.filters.products[0];
+            console.log(apiGroup);
+            var overviewApiId = null;
+            if (apiGroup) {
+                var result: any[] = this.apis.filter(api => api.type == 'internal' && api.apiGroup == apiGroup.replace(" ", "-").toLowerCase());
+                if (result && result.length > 0) {
+                    overviewApiId = parseInt(result[0].id, 10);
+                    console.log("id=" + overviewApiId);
+                }
+
+                if (overviewApiId) {
+                    this.loading++;
+                    this.appService.getRemoteApiResources(overviewApiId).then(result => {
+                        this.loading--;
+                        var docList = result.resources.docs;
+                        var overviewResource = null;
+                        if (docList) {
+                            for (var i = docList.length - 1; i >= 0; --i) {
+                                var resource = docList[i];
+                                if (resource.categories && (resource.categories.length > 0) && (resource.categories[0] == 'API_OVERVIEW')) {
+                                    overviewResource = resource;
+                                    docList.splice(i, 1);
+                                    break;
+                                }
+                            }
+                        }
+                        if (overviewResource) {
+                            this.loading++;
+                            this.appService.getHTMLResponse(overviewResource.downloadUrl).then(result => {
+                                this.loading--;
+                                this.overviewHtml = result._body;
+                            }).catch(response => {
+                                this.loading--;
+                                if (response instanceof Response)
+                                    this.errorMessage = response.text() ? response.text() : response.statusText;
+                                else
+                                    this.errorMessage = response;
+                            });
+                        }
+                    }).catch(response => {
+                        this.loading--;
+                        if (response instanceof Response)
+                            this.errorMessage = response.text() ? response.text() : response.statusText;
+                        else
+                            this.errorMessage = response;
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * create a swagger operation id from the method path such as /endpoints/types/extensions/{id}
+     * to get_endpoints_types_extensions_id
+     */
+    private swagger_path_to_operationId(httpMethod, swaggerOperationPath): string {
+        if (!swaggerOperationPath) {
+            return "";
+        }
+        var pathOperationId = swaggerOperationPath;
+        pathOperationId = pathOperationId.replace(this.CURLY_REMOVE_RE,'');
+        pathOperationId = pathOperationId.replace(this.SLASH_RE,'_');
+        return httpMethod + pathOperationId;
+    }
+
+    /**
+     *  make sure operation id is valid in case user messed it up
+     *  @param operationId
+     */
+    private swagger_fix_operationId (operationId) : string {
+        if (!operationId) {
+            return "";
+        }
+        operationId = operationId.trim();
+        operationId = operationId.replace(this.NOT_ALNUM_RE,'_');
+        return operationId;
+    }
+
+    // Swagger pattern: it puts the tag at the beginning of the method, and then puts '45' for dashes, '47' for slashes
+    // and '32' for spaces, which appears to be the decimal for the ASCII char value, odd.  I guess this is their
+    // own sort of URL encoding, albeit really stange.
+    // TODO improve this algorithm to handle other characters as well.
+    private createUrlForSwaggerMethod (apiUrl, methodType, methodPath, tag, operationId) : string {
+        var tagOperationId = null;
+        if (tag) {
+            tagOperationId = tag.replace(this.SWAGGER_PATH_DASH_RE, '45');
+            tagOperationId = tagOperationId.replace(this.SWAGGER_PATH_WS_RE, '32');
+            tagOperationId = tagOperationId.replace(this.SWAGGER_PATH_SLASH_RE, '47');
+        }
+
+		if (!operationId || operationId == "undefined") {
+            operationId = this.swagger_path_to_operationId(methodType, methodPath);
         } else {
-            filter.push(value);
+            operationId = this.swagger_fix_operationId(operationId);
         }
 
-        // Force filtering the APIs
-        this.setFilteredApis();
+        var url = '#!/';
+        if (tagOperationId) {
+            url = url + tagOperationId + '/';
+        }
+        url = url + operationId;
+        return url;
     }
 
+    /**
+     *
+     * @param type type of the ref doc, e.g. "swagger", "raml", "iframe"
+     * @param _apiRefDocUrl  the URL to the API reference doc, e.g. http://0.0.0.0:9000/local/swagger/someApi.json
+     * @param _apiUrl the user visible URL to the API itself including the API id, e.g. http://0.0.0.0:9000/#!/apis/10001
+     * @returns {Array}
+     */
+    private createMethodsForProduct(type, _apiRefDocUrl, _apiUrl) : string[] {
+        var methods = [];
+        // Add methods for Swagger APIs
+        if(type === 'swagger') {
+            //FIXME use a cache for these files for performance.  there is other code that fetchs the swagger.json as well and we need to do this ONCE.
+            if (_apiRefDocUrl) {
+                // fetch swagger.json
+                this.loading++;
+                this.appService.getJSONResponse(_apiRefDocUrl).then(result => {
+                    this.loading--;
+                    var name = result.info.title;
+                    var version = result.info.version;
 
-    // Sets the active tab
-    setActiveTab (newTab) {
-        this.tab = newTab;
+                    for (var k in result.paths) {
+                        var v = result.paths[k];
+
+                        for (var m in v) {
+                            var tag = null;
+                            var tagList = v[m].tags;
+                            if (tagList && tagList.length > 0) {
+                                tag = tagList[0];
+                            }
+                            var operationId = v[m].operationId; // may be null
+
+                            var methodUrl = this.createUrlForSwaggerMethod(_apiUrl, m, k, tag, operationId);
+
+                            // Add filter columns here in the json object if needed
+                            methods.push({  "http_method": m,
+                                            "path": k,
+                                            "name": name,
+                                            "url" : methodUrl,
+                                            "version": version,
+                                            "summary": v[m].summary,
+                                            "description": v[m].description,
+                                            "deprecated": v[m].deprecated
+                            });
+
+                            break;
+                        }
+                    }
+                }).catch(response => {
+                    this.loading--;
+                    if (response instanceof Response)
+                        this.errorMessage = response.text() ? response.text() : response.statusText;
+                    else
+                        this.errorMessage = response;
+                });
+            }
+        }
+
+        return methods;
     }
 
-    // Checks if a tab is active
-    isActiveTab (tabNum) {
-        return this.tab === tabNum;
-    }
-
-    toggleFilterDisplay () {
-        console.log('togle');
-        this.hideLeftNav = !this.hideLeftNav;
-    }
-
-    /*
-    openChildModal(api) {
-        this.selectedApi = api;
-        this.childOpen = true;
-    }*/
-
-    //showChild(api) {
-        //api.showChild = true;
-        /*if (!api.childApp) {
-            this.clearMessage();
-            this.appService.getApi(api.childId).then(child => {
-                api.childApp = child;
-            }).catch(response => this.errorMessage = response.text() || response.statusText)
-        }*/
-    //}
-
-    /*hideChild(api) {
-      api.showChild = false;
-    }
-
-    goToChild(id) {
-        this.router.navigate(['/app-preview', id]);
-    }
-*/
     private clearMessage() {
         this.errorMessage = this.infoMessage = '';
     }

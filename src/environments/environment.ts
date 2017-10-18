@@ -11,14 +11,14 @@ export const environment = {
   enableLocal: true,
   enableRemote: true,
   ssoId: 'none',
-  authApiUrl: '',
+  authApiUrl: 'http://mp-test-app1.eng.vmware.com:8080/api/v1',
   defaultKeywordsFilter: '',
-  defaultProductsFilter: [],
+  defaultProductsFilter: ['vSphere'],
   defaultLanguagesFilter: [],
-  defaultTypesFilter: [],
   defaultSourcesFilter: [],
   hideFilters: false,
   hideProductFilter: false,
   hideLanguageFilter: false,
-  hideSourceFilter: false
+  hideSourceFilter: false,
+  apiListHeaderText: 'Available APIs'
 };

@@ -1,28 +1,60 @@
-<div class="login-wrapper">
-    <form class="login">
-        <label class="title">
-            VSX Marketplace
-        </label>
-        <div class="login-group">
-            <div class="auth-source select">
-                <select id="login-auth-source-1" disabled>
-                    <option>My VMware</option>
-                    <option>Partner Central</option>
-                </select>
-            </div>
-            <input [(ngModel)]="user.email" class="username" type="text" name="email" placeholder="Email Address" required>
-            <input [(ngModel)]="user.password" class="password" type="password" name="password" placeholder="Password" required>
-            <clr-checkbox name="rememberme" [(ngModel)]="rememberme">
-                Remember me
-            </clr-checkbox>
-            <div class="error" [ngClass]="{active: errorMessage}">
-                {{errorMessage}}
-            </div>
-            <button type="submit" class="btn btn-primary" (click)="login()">LOG IN</button>
-            <a href="https://my.vmware.com/web/vmware/registration" class="signup">Sign up for an account</a>
-            <a *ngIf="this.appService.isInternalNetwork()" href="#" [routerLink]="['/saml/new']" class="signup">Employee Login</a>
+<!--
+  ~ Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+-->
+
+<div *ngIf="!isLoggedIn()">
+    <a href="javascript:void(0)" class="nav-link" (click)="openLogin();">
+        <span class="nav-text">Sign In</span>
+    </a>
+</div>
+<div *ngIf="isLoggedIn()" class="header-actions header-nav">
+    <clr-dropdown class="dropdown bottom-right">
+        <button class="nav-text" clrDropdownToggle>
+          <span>{{getUser()}}</span> &nbsp;
+          <clr-icon shape="caret down"></clr-icon>
+        </button>
+        <div class="dropdown-menu">
+          <button (click)="logout()" clrDropdownItem>Log out</button>
         </div>
-    </form>
+    </clr-dropdown>
 </div>
 
+<clr-modal [(clrModalOpen)]="opened">
+    <h3 class="modal-title">API Explorer Authentication</h3>
+    <div class="modal-body">
+        <p>Please select the auth schema and login.</p>
+        <form>
+            <section class="form-block">
+                <div class="form-group row">
+                    <div *ngIf="authSchemas.length>1" class="col-md-12 auth-source select">
+                        <select name="auth-source" [(ngModel)] = "selectedAuthId" (change)="selectedAuthChanged()">
+                            <option *ngFor="let s of authSchemas" value={{s.id}}>{{s.displayName}}</option>
+                        </select>
+                    </div>
+                    <div *ngIf="authSchemas.length == 1" class="col-md-12 auth-source select">
+                        <select name="auth-source" disabled>
+                            <option *ngFor="let s of authSchemas" value={{s.id}}>{{s.displayName}}</option>
+                        </select>
+                    </div>
 
+                    <div class="col-md-12">
+                        <input type="text" [(ngModel)]="user.username" name="username" placeholder="User Name" class="form-control btn-block">
+                    </div>
+                    <div class="col-md-12">
+                        <input type="password" [(ngModel)]="user.password" name="password" placeholder="Password" class="password btn-block">
+                    </div>
+
+                    <div class="col-md-12" *ngIf="showMore">
+                        <input type="text" [(ngModel)]="user.tenant" id="tenant" name="tenant" placeholder="Tenant" required class="form-control btn-block">
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="opened=false;">Cancel</button>
+        <button type="button" class="btn btn-primary" [disabled]="!user.username || !user.password || (selectedAuthId == 'vra_sso' && !user.tenant)" (click)="login()">Login</button>
+    </div>
+</clr-modal>

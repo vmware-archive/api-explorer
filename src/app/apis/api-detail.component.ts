@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2016 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
-import { Component, Input, OnInit, AfterViewInit } from "@angular/core";
+
+import { Component, ViewChild, Input, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { Response } from '@angular/http';
@@ -20,69 +21,93 @@ import { AppUtils } from '../app.utils';
 import { UserService } from "../services/user.service";
 import { AppService } from '../app.service';
 
-import { API_LIST_HEADER_TEXT } from '../app.config';
-
 @Component({
     selector: 'api-details',
     styleUrls: ['./api-detail.component.scss'],
     templateUrl: './api-detail.component.html',
 })
-export class ApiDetailComponent implements OnInit, AfterViewInit {
+export class ApiDetailComponent implements OnInit, OnDestroy {
+    id: number;
+    path: string;
     api: Api;
-    url: string;
-    type: string;
     overviewHtml: string = '';
     resources: ApiResources;
-    source: string = 'remote';
     preferences: ApiPreferences;
+    swaggerPreferences: ApiPreferences;
     showPreferences: boolean = false;
 
     loading: number = 0;
     tab: number = 1;
 
-
     errorMessage: string = '';
     infoMessage: string = '';
 
+    private sub: any;
+    private timer: any;
+
     constructor(private route: ActivatedRoute,
-            private location: Location,
-            private appService: AppService
+        private location: Location,
+        private appService: AppService
     ) {}
 
     ngOnInit() :void {
-        this.getApi();
-    }
-
-    ngAfterViewInit(): void {
-    }
-
-    getCurrentPath(): string {
-        // Determine the "path" used for loading "external" but local resources (by default current index.html path)
-
-        var currentPath = window.location.pathname.slice(0, window.location.pathname.lastIndexOf("/"));
-
-              // Add the trailing forward slash to the "current path", if needed
-              if (!currentPath.endsWith("/")) {
-                  currentPath += "/";
-              }
-
-              currentPath =  currentPath + 'swagger-console.html?url=' + this.url;
-              console.log(currentPath);
-              return currentPath;
-    }
-
-    isEmpty(value: string): boolean {
-        // We are using this function because the data has inconsistencies, like an empty tag, e.g. <p></p>, and we want to know what is empty
-        // after rendering. Once the data is fixed we can remove this function and change for a boolean test.
-        if (value) {
-          const el = document.createElement('div');
-          el.innerHTML = value;
-          return el.textContent.trim() === '';
+        this.path = this.route.snapshot.queryParams['path'];
+        if (this.path) {
+            this.location.replaceState(window.location.pathname + this.path);
         }
-        return true;
+        this.sub = this.route.params.subscribe(params => {
+            this.id = +params['id'];
+            this.getApi();
+        });
+    }
+
+    ngOnDestroy() {
+        this.sub.unsubscribe();
+    }
+
+    setHomePageTab() {
+        localStorage.setItem(AppUtils.APIS_TAB_KEY, 'apis');
     }
 
     private getApi() {
+        var apis = JSON.parse(localStorage.getItem(AppUtils.APIS_STORAGE_KEY));
+        var result = [];
+        if (apis) {
+            result = apis.filter(api => api.id === this.id);
+            if (result) {
+                this.api = result[0];
+                this.setSelectedApi();
+            }
+        } else {
+            // FIXME
+            var localApis = this.getLocalApis();
+            result = localApis.filter(api => api.id === this.id);
+            if (result) {
+                this.api = result[0];
+                this.setSelectedApi();
+            }
+            else
+                this.getRemoteApi();
+        }
+    }
+
+    private getLocalApis() : any {
+        this.loading++;
+        this.appService.getLocalApis().then(res => {
+            this.loading--;
+            var results = AppUtils.formatLocalApis(res.apis);
+            localStorage.setItem(AppUtils.APIS_STORAGE_KEY, JSON.stringify(results));
+            return results;
+        }).catch(response => {
+            this.loading--;
+            if (response instanceof Response)
+                this.errorMessage = response.text() ? response.text() : response.statusText;
+            else
+                this.errorMessage = response;
+        });
+    }
+
+    private getRemoteApi() {
         this.loading++;
 
         this.route.params
@@ -90,17 +115,22 @@ export class ApiDetailComponent implements OnInit, AfterViewInit {
             .subscribe(
                 api => {
                     this.loading--;
-                    this.api = api;
-
+                    this.api =  new Api();
+                    this.api.id = api.id;
+                    this.api.name = api.name;
+                    this.api.version = api.version;
+                    this.api.description = api.description;
+                    this.api.api_uid = api.api_uid;
+                    //this.api_ref_doc_artifact_id = api.api_ref_doc_artifact_id;
                     if (api.tags) {
                         var type = api.tags.find(i => i.category === 'display').name;
                         // Clean the type
                         if (type == "iframe-documentation" || (api.api_ref_doc_url && api.api_ref_doc_url.endsWith(".html"))) {
                             type = "html";
                         }
-                        this.type = type;
+                        this.api.type = type;
                     }
-                    this.url = AppUtils.fixVMwareDownloadUrl(api.api_ref_doc_url);
+                    this.api.url = AppUtils.fixVMwareDownloadUrl(api.api_ref_doc_url);
                     this.setSelectedApi();
             },
             (response) => {
@@ -121,10 +151,10 @@ export class ApiDetailComponent implements OnInit, AfterViewInit {
             // Get selected API resources.  There are two cases, a remote API, and then a local API that
             // specifies an api_uid string.  In the case of a local API, we use the UID to get the latest
             // instance of the remote API and then get the resources for it.
-            if (this.url && this.source == 'remote') {
+            if (this.api.url && this.api.source == 'remote') {
                 console.log("fetching remote resources for remote api");
                 this.loadResourcesForRemoteApi(this.api.id);
-            } else if (this.url && this.source == 'local') {
+            } else if (this.api.url && this.api.source == 'local') {
                 if (this.api.api_uid) {
                     console.log("fetching remote resources for local api_uid=" + this.api.api_uid);
                     /*
@@ -140,25 +170,29 @@ export class ApiDetailComponent implements OnInit, AfterViewInit {
                 }
             }
 
-            if (this.type === "swagger") {
+            if (this.api.type === "swagger") {
                 // Load swagger's JSON definition to read the default "preferences"
-                var preferences = JSON.parse(localStorage.getItem('apiPreferences'));
+                var value = localStorage.getItem(AppUtils.SWAGGER_PREFERENCES_KEY + this.api.id);
 
-                if (preferences) {
+                if (value) {
                     console.log('found preferences in cache');
+                    var preferences = JSON.parse(value);
                     this.preferences = new ApiPreferences();
                     this.preferences.host = preferences.host;
                     this.preferences.basePath = preferences.basePath;
-                    localStorage.setItem('apiPreferences', JSON.stringify({ host: preferences.host, basePath: preferences.basePath }));
+                    this.swaggerPreferences = Object.assign({}, this.preferences);
                 } else {
-                    if (this.url) {
+                    if (this.api.url) {
                         // fetch swagger.json
+                        console.log('fetch swagger.json to load preferences, ' + this.api.url);
                         this.loading++;
-                        this.appService.getJSONResponse(this.url).then(result => {
+                        this.appService.getJSONResponse(this.api.url).then(result => {
                             this.loading--;
                             this.preferences = new ApiPreferences();
                             this.preferences.host = result.host;
                             this.preferences.basePath = result.basePath;
+                            this.swaggerPreferences = Object.assign({}, this.preferences);
+                            localStorage.setItem(AppUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
                         }).catch(response => {
                             this.loading--;
                             if (response instanceof Response)
@@ -168,10 +202,7 @@ export class ApiDetailComponent implements OnInit, AfterViewInit {
                         });
                     }
                 }
-
-            } else {
-                console.log("API resources are already loaded.");
-            }
+             }
         }
     }
 
@@ -189,7 +220,6 @@ export class ApiDetailComponent implements OnInit, AfterViewInit {
             this.loading += 1;
             this.appService.getRemoteApiResources(apiId).then(res => {
                 this.loading -= 1;
-                //console.log(res);
                 var sdks = [];
                 var docs = [];
                 for (let resource of res) {
@@ -359,27 +389,23 @@ export class ApiDetailComponent implements OnInit, AfterViewInit {
         }
     }
 
-
     // Updates the API preferences
     updatePreferences (type){
         this.loading += 1;
-        /*
-        $scope.api[type + "Preferences"] =  angular.copy($scope.api.preferences);
-        $timeout(function(){
-            $scope.loading -= 1;
-        }, 500);*/
+        this.swaggerPreferences = Object.assign({}, this.preferences);
+        localStorage.setItem(AppUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
+
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            this.loading -= 1;
+        }, 500);
+
     };
 
     // Toggles the detail view preferences
     togglePreferences () {
-        console.log('toggle preferences');
-        this.showPreferences = !this.showPreferences;
+       this.showPreferences = !this.showPreferences;
     };
-
-    // Convert URLs to trusted URLs (XSS related)
-    /*getTrustedUrl (url) {
-        //return $sce.trustAsResourceUrl(url);
-    };*/
 
     // Sets the active tab
     setActiveTab (newTab) {
@@ -395,6 +421,4 @@ export class ApiDetailComponent implements OnInit, AfterViewInit {
     filterTag (tag) {
     	return (tag.category === 'platform' || tag.category === 'programming-language');
     }
-
-
 }

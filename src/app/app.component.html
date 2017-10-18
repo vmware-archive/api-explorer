@@ -1,23 +1,19 @@
+<!--
+  ~ Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+  -->
+
 <clr-main-container>
-  <clr-header class="header-6" *ngIf="showHeader()">
+  <clr-header class="header-6">
     <div class="branding">
       <a href [routerLink]="['/']"  class="nav-link">
         <clr-icon shape="vm-bug"></clr-icon>
         <span class="title">API Explorer</span>
       </a>
     </div>
-
-    <div *ngIf="isLoggedIn()" class="header-actions">
-      <clr-dropdown class="dropdown bottom-right">
-        <button class="nav-text" clrDropdownToggle>
-          <span>{{getUser()}}</span>
-          <clr-icon shape="caret down"></clr-icon>
-        </button>
-        <div class="dropdown-menu">
-
-          <button (click)="logout()" clrDropdownItem>Log out</button>
-        </div>
-      </clr-dropdown>
+    <div class="header-actions header-nav">
+        <app-login></app-login>
     </div>
   </clr-header>
 
