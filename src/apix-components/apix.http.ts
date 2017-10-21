@@ -9,12 +9,12 @@ import { ConnectionBackend, Request, RequestOptions, RequestOptionsArgs, Respons
 import { Router } from '@angular/router';
 import {Observable} from "rxjs/Rx";
 
-import { UserService } from './user.service';
+import { ApixApiService } from './apix-api.service';
 
 @Injectable()
 export class ApixHttp extends Http {
-    userService: UserService;
     router: Router;
+    apixApiService: ApixApiService;
 
     constructor(backend: ConnectionBackend, defaultOptions: RequestOptions, private injector: Injector) {
         super(backend, defaultOptions);
@@ -32,12 +32,12 @@ export class ApixHttp extends Http {
                     (message.lastIndexOf('The user session is no longer valid') === 0
                      || message.lastIndexOf('The user session has expired'))) {
                     // Post injection for services
-                    if (!this.userService)
-                        this.userService = this.injector.get(UserService);
+                    if (!this.apixApiService)
+                        this.apixApiService = this.injector.get(ApixApiService);
                     if (!this.router)
                         this.router = this.injector.get(Router);
                     // Redirect to login page;
-                    this.userService.clearSession();
+                    this.apixApiService.clearSession();
                     this.router.navigate(['/login']);
                 }
             }

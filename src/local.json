@@ -1,38 +1,77 @@
 {
-    "overview" : "examples/api-explorer-local-apis-overview.html",
-    "apis": [
-    {
-        "api_uid": "api_sample_exchange",
-        "description": "REST API to search, download, and manage samples on VMware Sample Exchange.",
-        "name" : "VMware Sample Exchange REST API",
+    "apis": [ {
+	"api_uid": "api_cis_management",
+        "description": "The Common Infrastructure Services API provides access to common APIs used in the VMware infrastructure",
+        "name" : "Common Infrastructure Services API",
+        "version" : "(vSphere 6.5)",
         "products": [
-            "VMware {code} Sample Exchange;1.0"
+                "vSphere;6.5"
         ],
-        "resources": {
-        "docs": [
-            {
-            "categories": [
-                "API_OVERVIEW"
-            ],
-            "downloadUrl": "examples/sx-api-overview.html",
-            "title": "API Overview",
-            "webUrl": "examples/sx-api-overview.html"
-            }
-        ]
-        },
-        "type": "swagger",
-        "version" : "v1",
-        "url" : "https://apigw.vmware.com/sampleExchange/v1/swagger.json",
-        "languages" : ["Java","Python"]
-
+        "url" : "local/swagger/cis.json"
     }, {
-        "name" : "Box.com",
-        "description": "Box.com rest API as maintained at https://github.com/box/box-openapi",
-        "version" : "v1",
-        "url" : "https://raw.githubusercontent.com/box/box-openapi/master/v2.0/openapi-v2.json",
-        "products": ["Box.com"],
-        "type": "raml",
-        "languages" : [".NET"]
-    }]
+        "api_uid": "api_content",
+        "description": "VMware vSphere Content Library empowers vSphere Admins to effectively manage VM templates, vApps, ISO images and scripts with ease",
+        "name" : "Content Library API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "url" : "local/swagger/content.json"
+    }, {
+	"api_uid": "api_vcenter_management",
+        "description": "The vCenter Server Appliance is a preconfigured Linux-based virtual machine optimized for running vCenter Server and associated services",
+        "name" : "vCenter API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "tags":
+        [
+            {
+                "category": "programming-language",
+                "name": "Java"
+            },
+            {
+                "category": "programming-language",
+                "name": "Python"
+            },
+            {
+                "category": "programming-language",
+                "name": ".NET"
+            },
+            {
+                "category": "programming-language",
+                "name": "Perl"
+            },
+            {
+                "category": "programming-language",
+                "name": "Ruby"
+            },
+            {
+                "category": "programming-language",
+                "name": "REST"
+            }
+        ],
 
+        "url" : "local/swagger/vcenter.json"
+    }, {
+        "api_uid": "api_vcenter_server_appliance_management",
+        "description": "The vCenter Server Appliance is a preconfigured Linux-based virtual machine optimized for running vCenter Server and associated services",
+	"name" : "vCenter Server Appliance API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "url" : "local/swagger/appliance.json"
+    }, {
+        "api_uid": "api_vmanagement",
+        "description": "vAPI is an extensible API Platform for modelling and delivering APIs/SDKs/CLIs",
+	"name" : "vSphere Extensibility API",
+        "version" : "(vSphere 6.5)",
+        "products": [
+                "vSphere;6.5"
+        ],
+        "url" : "local/swagger/vapi.json"
+
+    }]
 }

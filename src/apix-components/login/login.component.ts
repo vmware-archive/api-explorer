@@ -7,13 +7,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
-import { UserService } from "../services/user.service";
-import { AppService } from '../app.service';
-import { Auth } from '../model/auth';
-import { config } from '../app.config';
+import { ApixApiService } from '../apix-api.service';
+import { Auth } from '../apix.model';
+import { config } from '../apix.config';
 
 @Component({
-    selector: 'app-login',
+    selector: 'apix-login',
     templateUrl: './login.component.html'
 })
 
@@ -34,8 +33,7 @@ export class LoginComponent implements OnInit{
 
     constructor(private route: ActivatedRoute,
         private router: Router,
-        private userService: UserService,
-        private appService: AppService)
+        private apixApiService: ApixApiService)
     {}
 
     ngOnInit() {
@@ -58,20 +56,20 @@ export class LoginComponent implements OnInit{
         this.clearMessage();
         this.selectedAuth = this.getAuthById();
         if (this.selectedAuthId == 'vcenter_sso') {
-            this.userService.vcenterLogin(this.user.username, this.user.password, this.selectedAuth).then(() => {
+            this.apixApiService.vcenterLogin(this.user.username, this.user.password, this.selectedAuth).then(() => {
                 //this.router.navigate([this.returnUrl]);
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'vra_sso') {
-            this.userService.vraLogin(this.user.username, this.user.password, this.user.tenant, this.selectedAuth).then(() => {
+            this.apixApiService.vraLogin(this.user.username, this.user.password, this.user.tenant, this.selectedAuth).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'basic') {
-            this.userService.basicLogin(this.user.username, this.user.password, this.selectedAuth);
+            this.apixApiService.basicLogin(this.user.username, this.user.password, this.selectedAuth);
         } else {
-            this.userService.login(this.user.username, this.user.password, this.selectedAuth.authUrl).then(() => {
+            this.apixApiService.login(this.user.username, this.user.password, this.selectedAuth.authUrl).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
@@ -91,14 +89,14 @@ export class LoginComponent implements OnInit{
     }
 
     isLoggedIn() : boolean {
-        if (this.userService.isLoggedIn()) {
+        if (this.apixApiService.isLoggedIn()) {
             return true;
         }
         return false;
     }
 
     getUser(): string {
-        return this.userService.getCurrentUser().username;
+        return this.apixApiService.getCurrentUser().username;
     }
 
     openLogin() : void {
@@ -107,22 +105,22 @@ export class LoginComponent implements OnInit{
     }
 
     logout() : void {
-        var sessionId = sessionStorage.getItem(this.userService.SESSION_KEY);
+        var sessionId = sessionStorage.getItem(this.apixApiService.SESSION_KEY);
 
         if (this.selectedAuthId == 'vcenter_sso') {
-            this.userService.vcenterLogout(sessionId, this.selectedAuth.authUrl).then(() => {
+            this.apixApiService.vcenterLogout(sessionId, this.selectedAuth.authUrl).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'vra_sso') {
-            this.userService.vraLogout(sessionId, this.selectedAuth.authUrl).then(() => {
+            this.apixApiService.vraLogout(sessionId, this.selectedAuth.authUrl).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'basic') {
-            this.userService.clearSession();
+            this.apixApiService.clearSession();
         } else {
-            this.userService.logout(this.selectedAuth.authUrl).then(() => {
+            this.apixApiService.logout(this.selectedAuth.authUrl).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );

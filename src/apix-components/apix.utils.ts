@@ -9,11 +9,10 @@ import { DOCUMENT } from '@angular/platform-browser';
 import { Http } from '@angular/http';
 import { OnInit } from '@angular/core';
 
-import { environment } from '../environments/environment';
-import { config } from './app.config';
+import { config } from './apix.config';
 
 @Injectable()
-export class AppUtils {
+export class ApixUtils {
 
   public static APIS_STORAGE_KEY = 'apis';
   public static PRODUCTS_STORAGE_KEY = 'products';
@@ -47,15 +46,15 @@ export class AppUtils {
   }
 
   public static getRemoteApiUrl(): string {
-    return environment.remoteApiUrl;
+    return config.remoteApiUrl;
   }
 
   public static getLocalApiUrl(): string {
-    return environment.localApiUrl;
+    return config.localApiUrl;
   }
 
   public static getRemoteSampleExchangeApiUrl(): string {
-    return environment.remoteSampleExchangeUrl;
+    return config.remoteSampleExchangeUrl;
   }
 
   public isInternalNetwork(): boolean {
@@ -97,10 +96,10 @@ export class AppUtils {
                 }
             }
             // create a display string to be used in the list view
-            api.productDisplayString = AppUtils.createDisplayStringForProducts(api.products);
+            api.productDisplayString = this.createDisplayStringForProducts(api.products);
 
             // remove version numbers from the products on the api for filter purposes
-            api.products = AppUtils.createProductListNoVersions(api.products);
+            api.products = ApixUtils.createProductListNoVersions(api.products);
 
             // tags
             var languages = [];

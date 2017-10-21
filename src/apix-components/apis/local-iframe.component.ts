@@ -1,8 +1,8 @@
 import { Component, ViewChild, ElementRef, Renderer, Input, OnInit, AfterViewInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { AppService } from '../app.service';
-import { Api } from '../model/api';
+import { ApixApiService } from '../apix-api.service';
+import { Api } from '../apix.model';
 
 @Component({
   selector: 'local-iframe',
@@ -32,7 +32,7 @@ export class LocalIframeComponent implements AfterViewInit {
 
   constructor(
     private renderer: Renderer,
-    private appService: AppService
+    private apixApiService: ApixApiService
   ) {}
 
   ngOnInit() :void {
@@ -47,7 +47,7 @@ export class LocalIframeComponent implements AfterViewInit {
     if (this.localIframe) {
       this.loading += 1;
 
-      this.appService.getSwaggerConsoleHTML(this.localIframe).then(response => {
+      this.apixApiService.getSwaggerConsoleHTML(this.localIframe).then(response => {
           this.loading -= 1;
           var content = response._body;
           var doc =  this.iframe.nativeElement.contentDocument;

@@ -13,13 +13,9 @@ import * as _ from 'lodash';
 
 import { Observable } from 'rxjs/Observable';
 
-import { Api } from '../model/api';
-import { ApiResources } from '../model/apiResources';
-import { ApiPreferences } from '../model/apiPreferences';
-
-import { AppUtils } from '../app.utils';
-import { UserService } from "../services/user.service";
-import { AppService } from '../app.service';
+import { Api, ApiResources, ApiPreferences } from '../apix.model';
+import { ApixUtils } from '../apix.utils';
+import { ApixApiService } from '../apix-api.service';
 
 @Component({
     selector: 'api-details',
@@ -42,15 +38,17 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     errorMessage: string = '';
     infoMessage: string = '';
 
+    showDetail = false;
     private sub: any;
     private timer: any;
 
     constructor(private route: ActivatedRoute,
         private location: Location,
-        private appService: AppService
+        private apixApiService: ApixApiService
     ) {}
 
     ngOnInit() :void {
+
         this.path = this.route.snapshot.queryParams['path'];
         if (this.path) {
             this.location.replaceState(window.location.pathname + this.path);
@@ -66,11 +64,11 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     }
 
     setHomePageTab() {
-        localStorage.setItem(AppUtils.APIS_TAB_KEY, 'apis');
+        localStorage.setItem(ApixUtils.APIS_TAB_KEY, 'apis');
     }
 
     private getApi() {
-        var apis = JSON.parse(localStorage.getItem(AppUtils.APIS_STORAGE_KEY));
+        var apis = JSON.parse(localStorage.getItem(ApixUtils.APIS_STORAGE_KEY));
         var result = [];
         if (apis) {
             result = apis.filter(api => api.id === this.id);
@@ -93,10 +91,10 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
 
     private getLocalApis() : any {
         this.loading++;
-        this.appService.getLocalApis().then(res => {
+        this.apixApiService.getLocalApis().then(res => {
             this.loading--;
-            var results = AppUtils.formatLocalApis(res.apis);
-            localStorage.setItem(AppUtils.APIS_STORAGE_KEY, JSON.stringify(results));
+            var results = ApixUtils.formatLocalApis(res.apis);
+            localStorage.setItem(ApixUtils.APIS_STORAGE_KEY, JSON.stringify(results));
             return results;
         }).catch(response => {
             this.loading--;
@@ -111,7 +109,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         this.loading++;
 
         this.route.params
-            .switchMap((params: Params) => this.appService.getRemoteApi(+params['id']))
+            .switchMap((params: Params) => this.apixApiService.getRemoteApi(+params['id']))
             .subscribe(
                 api => {
                     this.loading--;
@@ -130,7 +128,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                         }
                         this.api.type = type;
                     }
-                    this.api.url = AppUtils.fixVMwareDownloadUrl(api.api_ref_doc_url);
+                    this.api.url = ApixUtils.fixVMwareDownloadUrl(api.api_ref_doc_url);
                     this.setSelectedApi();
             },
             (response) => {
@@ -158,7 +156,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                 if (this.api.api_uid) {
                     console.log("fetching remote resources for local api_uid=" + this.api.api_uid);
                     /*
-                    this.appService.getLatestRemoteApiIdForApiUid(this.api.api_uid).then(function (response) {
+                    this.apixApiService.getLatestRemoteApiIdForApiUid(this.api.api_uid).then(function (response) {
                         // response.data should have the id.  Might be null
                         this.loadResourcesForRemoteApi(response.data);
                     }).finally(function () {
@@ -172,7 +170,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
 
             if (this.api.type === "swagger") {
                 // Load swagger's JSON definition to read the default "preferences"
-                var value = localStorage.getItem(AppUtils.SWAGGER_PREFERENCES_KEY + this.api.id);
+                var value = localStorage.getItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id);
 
                 if (value) {
                     console.log('found preferences in cache');
@@ -186,13 +184,13 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                         // fetch swagger.json
                         console.log('fetch swagger.json to load preferences, ' + this.api.url);
                         this.loading++;
-                        this.appService.getJSONResponse(this.api.url).then(result => {
+                        this.apixApiService.getJSONResponse(this.api.url).then(result => {
                             this.loading--;
                             this.preferences = new ApiPreferences();
                             this.preferences.host = result.host;
                             this.preferences.basePath = result.basePath;
                             this.swaggerPreferences = Object.assign({}, this.preferences);
-                            localStorage.setItem(AppUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
+                            localStorage.setItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
                         }).catch(response => {
                             this.loading--;
                             if (response instanceof Response)
@@ -218,7 +216,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         if (apiId) {
             console.log("fetching resources for api id=" + apiId );
             this.loading += 1;
-            this.appService.getRemoteApiResources(apiId).then(res => {
+            this.apixApiService.getRemoteApiResources(apiId).then(res => {
                 this.loading -= 1;
                 var sdks = [];
                 var docs = [];
@@ -262,8 +260,8 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             arr.push({
                 title: title,
                 version: value.version,
-                webUrl: AppUtils.fixVMwareDownloadUrl(value.web_url),
-                downloadUrl: AppUtils.fixVMwareDownloadUrl(value.download_url),
+                webUrl: ApixUtils.fixVMwareDownloadUrl(value.web_url),
+                downloadUrl: ApixUtils.fixVMwareDownloadUrl(value.download_url),
                 categories: value.categories,
                 tags: value.tags
             });
@@ -330,7 +328,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         if (categories) {
             // asynchronously fetch samples
             this.loading++;
-            this.appService.getSamples(categories).then(result => {
+            this.apixApiService.getSamples(categories).then(result => {
                 this.loading--;
                 var samples = [];
                 for (let sample of result) {
@@ -343,8 +341,8 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                     samples.push({
                         title: sample.name,
                         platform: categories,
-                        webUrl: AppUtils.fixVMwareDownloadUrl(sample.webUrl),
-                        downloadUrl: AppUtils.fixVMwareDownloadUrl(sample.downloadUrl),
+                        webUrl: ApixUtils.fixVMwareDownloadUrl(sample.webUrl),
+                        downloadUrl: ApixUtils.fixVMwareDownloadUrl(sample.downloadUrl),
                         contributor: sample.author.communitiesUser,
                         createdDate: sample.created,
                         lastUpdated: sample.lastUpdated,
@@ -371,7 +369,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             // and set it as the overview body
             //console.log(overviewResource);
             this.loading += 1;
-            this.appService.getHTMLResponse(overviewResource.downloadUrl).then(result => {
+            this.apixApiService.getHTMLResponse(overviewResource.downloadUrl).then(result => {
                 this.loading -= 1;
                 this.overviewHtml = result._body;
             }).catch(response => {
@@ -393,7 +391,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     updatePreferences (type){
         this.loading += 1;
         this.swaggerPreferences = Object.assign({}, this.preferences);
-        localStorage.setItem(AppUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
+        localStorage.setItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
 
         clearTimeout(this.timer);
         this.timer = setTimeout(() => {

@@ -73,6 +73,7 @@
                         <div class="card-block">
                             <ul class="list-group">
                                 <li class="api list-group-item"  *ngFor="let api of filteredApis | orderBy: ['-productDisplayString', 'name']">
+                                    <!--<api-details [apiId]="api.id" (hrefClick)="apiHrefClick($event)"></api-details>-->
                                     <div class="row">
                                         <div class="col-md-4">
                                             <a [routerLink]="['/apis', api.id]">{{api.name}}</a>
@@ -92,8 +93,6 @@
                                             <div class="http_method">{{method.http_method}}</div>
 
                                             <a [routerLink]="['/apis', api.id]" [queryParams]="{path:method.url}" ><span class="path {{method.deprecated ? 'deprecated' : ''}}">{{method.path}}</span></a>
-                                            <!--<a href="{{method.url}}"><span class="path {{method.deprecated ? 'deprecated' : ''}}">{{method.path}}</span></a>-->
-
                                             <span class="description">{{method.summary}}</span>
                                         </div>
                                     </div>

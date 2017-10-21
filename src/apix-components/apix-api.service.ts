@@ -4,25 +4,115 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { Inject, Injectable } from '@angular/core';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { Router } from '@angular/router';
 
-import { environment } from '../../environments/environment';
-import { AppService } from '../app.service';
-import { AppUtils } from '../app.utils';
-import { Auth } from '../model/auth';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/toPromise';
+import * as _ from 'lodash';
+
+import { ApixUtils } from './apix.utils';
+import { Auth } from './apix.model';
 
 @Injectable()
-export class UserService {
+export class ApixApiService {
 
     public USER_KEY: string = 'apix-user';
     public SESSION_KEY: string = 'apix-session-id';
     public SSO_KEY = "apix-sso";
 
-    private auth: Auth;
+    private remoteApiUrl;
+    private localApiUrl;
+    private remoteSXApiUrl;
 
-    constructor(private http: Http) {
-        //this.authUrl = AppUtils.getAuthApiUrl();
+    private apixHostLocal = "http://localhost:4200";
+
+    constructor(private http: Http, private router: Router) {
+        this.remoteApiUrl = ApixUtils.getRemoteApiUrl();
+        this.localApiUrl = ApixUtils.getLocalApiUrl();
+        this.remoteSXApiUrl = ApixUtils.getRemoteSampleExchangeApiUrl();
+    }
+
+    getRemoteApis() {
+        return this.http.get(`${this.remoteApiUrl}/apis`)
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
+    }
+
+    getLocalApis() {
+        return this.http.get(`${this.localApiUrl}`)
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
+    }
+
+    getRemoteApi(id: number): Promise<any> {
+        return this.http.get(`${this.remoteApiUrl}/apis/${id}`)
+               .toPromise()
+               .then(response => response.json())
+               .catch(this.handleError);
+    }
+
+    getLatestRemoteApiIdForApiUid (api_uid: string) {
+        return this.http.get(`${this.remoteApiUrl}/apis/uids/${api_uid}`)
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
+
+    }
+
+    getRemoteApiResources (apiId: number) {
+        return this.http.get(`${this.remoteApiUrl}/apis/${apiId}/resources`)
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
+    }
+
+    getHTMLResponse (url: string) {
+        return this.http.get(`${url}`)
+            .toPromise()
+            .then(response => response)
+            .catch(this.handleError);
+    }
+
+    getJSONResponse (url: string) {
+        return this.http.get(`${url}`)
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
+    }
+
+    getSwaggerConsoleHTML (url: string) {
+        return this.http.get(`${url}`)
+            .toPromise()
+            .then(response => response)
+            .catch(this.handleError);
+    }
+
+    getSamples (platform: string) {
+        if (!platform) {
+            return;
+        }
+
+        // aaron note: it seems that the apigw can only support the syntax of having a single instance of
+        // a given query argument, so insteand of multiple platform values, pass all values comma separated.
+        var url = this.remoteSXApiUrl + '/search/samples?platform=' + encodeURIComponent(platform) + '&summary=true';
+        return this.http.get(url)
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
+    }
+
+    /**
+     * Get the local API group overview path
+     */
+    getLocalAPIGroupOverviewPath (path: string) {
+        return this.http.get(`${this.localApiUrl}/${path}`)
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
     }
 
     login(username: string, password: string, authUrl: string) : Promise<any> {
@@ -71,7 +161,6 @@ export class UserService {
     }
 
     basicLogin(username: string, password: string, auth: Auth) {
-        console.log(auth);
         var _user = {"username" : username, "password" : password};
         this.addUserToStorage(_user);
         this.addAuthToStorage(auth);
@@ -126,10 +215,6 @@ export class UserService {
         return null;
     }
 
-    /*updateCurrentUser(user): void {
-        sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
-    }*/
-
     getAuthHeader() {
         let  user = this.getCurrentUser();
         if (user) {
@@ -164,4 +249,16 @@ export class UserService {
         sessionStorage.removeItem(this.SSO_KEY);
     }
 
+    private jwt() {
+        let  user = this.getCurrentUser();
+        if (user) {
+            let headers = new Headers({'Authorization': 'Bearer ' + user.jwt});
+            return new RequestOptions({headers: headers});
+        }
+    }
+
+    private handleError(error: any): Promise<any> {
+        return Promise.reject(error.message || error);
+    }
 }
+

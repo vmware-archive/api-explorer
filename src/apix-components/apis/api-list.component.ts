@@ -4,25 +4,23 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Response } from '@angular/http';
 
 import * as _ from 'lodash';
 
-import { State } from 'clarity-angular';
-
-import { Api } from '../model/api';
+import { Api } from '../apix.model';
 import { ArraySortPipe } from '../pipes/sort.pipe';
 import { OrderByPipe } from '../pipes/orderBy.pipe';
-import { AppUtils } from '../app.utils';
-import { UserService } from "../services/user.service";
-import { AppService } from '../app.service';
+import { ApixUtils } from '../apix.utils';
+import { ApixApiService } from '../apix-api.service';
 
-import { config } from '../app.config';
+import { config } from '../apix.config';
 
 @Component({
+    selector: "api-list",
     styleUrls: ['./api-list.component.scss'],
     templateUrl: './api-list.component.html',
 })
@@ -49,11 +47,12 @@ export class ApiListComponent implements OnInit {
         sources: []
     };
 
-    apiListHeaderText = config.apiListHeaderText;
-    hideFilters: boolean = config.hideFilters;
-    hideProductFilter: boolean = config.hideProductFilter;
-    hideLanguageFilter: boolean = config.hideLanguageFilter;
-    hideSourcesFilter: boolean = config.hideSourceFilter;
+    @Input() hideFilters: boolean = config.hideFilters;
+    @Input() apiListHeaderText: string = config.apiListHeaderText;
+    @Input() hideProductFilter: boolean = config.hideProductFilter;
+    @Input() hideLanguageFilter: boolean = config.hideLanguageFilter;
+    @Input() hideSourcesFilter: boolean = config.hideSourceFilter;
+    @Input() defaultProductsFilter: any[] = config.defaultProductsFilter;
 
     initDefaultFilters: boolean = false;
 
@@ -61,27 +60,24 @@ export class ApiListComponent implements OnInit {
     tab: number = 1;
     hideLeftNav: boolean = false;
 
-    selectedApi;
+    selectedApiId: string = null;
     loading: number = 0;
     errorMessage: string = '';
     infoMessage: string = '';
 
-    //ableState: State;
-
     constructor(private router: Router,
-            private route: ActivatedRoute,
-            private userService: UserService,
-            private appService: AppService
+        private route: ActivatedRoute,
+        private apixApiService: ApixApiService
     ) {}
 
     ngOnInit(): void {
         /* Read form cache
 
-        var apis = localStorage.getItem(AppUtils.APIS_STORAGE_KEY);
-        var products = localStorage.getItem(AppUtils.PRODUCTS_STORAGE_KEY);
-        var languages = localStorage.getItem(AppUtils.LANGUAGES_STORAGE_KEY);
-        var sources = localStorage.getItem(AppUtils.SOURCES_STORAGE_KEY);
-        var overviewHtmlPath = localStorage.getItem(AppUtils.OVERVIEW_PATH_STORAGE_KEY);
+        var apis = localStorage.getItem(ApixUtils.APIS_STORAGE_KEY);
+        var products = localStorage.getItem(ApixUtils.PRODUCTS_STORAGE_KEY);
+        var languages = localStorage.getItem(ApixUtils.LANGUAGES_STORAGE_KEY);
+        var sources = localStorage.getItem(ApixUtils.SOURCES_STORAGE_KEY);
+        var overviewHtmlPath = localStorage.getItem(ApixUtils.OVERVIEW_PATH_STORAGE_KEY);
 
         //console.log(this.apis);
         if (apis == null || products == null || languages == null || sources == null || overviewHtmlPath == null) {
@@ -99,9 +95,9 @@ export class ApiListComponent implements OnInit {
         this.loadAPIGroupOverview(overviewHtmlPath);
         */
         this.getApis();
-        if (localStorage.getItem(AppUtils.APIS_TAB_KEY) == 'apis') {
+        if (localStorage.getItem(ApixUtils.APIS_TAB_KEY) == 'apis') {
             this.setActiveTab(2);
-            localStorage.removeItem(AppUtils.APIS_TAB_KEY);
+            localStorage.removeItem(ApixUtils.APIS_TAB_KEY);
         }
     }
 
@@ -150,8 +146,8 @@ export class ApiListComponent implements OnInit {
         if (config.enableLocal == true && config.enableRemote == true) {
             this.loading++;
             Promise.all([
-                this.appService.getRemoteApis(),
-                this.appService.getLocalApis()
+                this.apixApiService.getRemoteApis(),
+                this.apixApiService.getLocalApis()
             ]).then(values => {
                 this.loading--;
                 var results: any[];
@@ -163,7 +159,7 @@ export class ApiListComponent implements OnInit {
                     results = results.concat(this.formatLocalApis(values[1].apis));
                     localOverviewPath = values[1].overview;
                     if (localOverviewPath && typeof localOverviewPath !== 'undefined')
-                        localStorage.setItem(AppUtils.OVERVIEW_PATH_STORAGE_KEY, localOverviewPath);
+                        localStorage.setItem(ApixUtils.OVERVIEW_PATH_STORAGE_KEY, localOverviewPath);
                 }
                 this.handleResponse(results, localOverviewPath);
              }).catch (error => {
@@ -172,7 +168,7 @@ export class ApiListComponent implements OnInit {
             });
         } else if (config.enableLocal == false && config.enableRemote == true) {
             this.loading++;
-            this.appService.getRemoteApis().then(res => {
+            this.apixApiService.getRemoteApis().then(res => {
                 this.loading--;
                 var results: any[];
                 results = this.formatRemoteApis(res);
@@ -183,7 +179,7 @@ export class ApiListComponent implements OnInit {
             });
         } else if (config.enableLocal == true && config.enableRemote == false) {
             this.loading++;
-            this.appService.getLocalApis().then(res => {
+            this.apixApiService.getLocalApis().then(res => {
                 this.loading--;
                 var results: any[];
                 results = results.concat(this.formatLocalApis(res.apis));
@@ -225,10 +221,10 @@ export class ApiListComponent implements OnInit {
                     }
                 }
                 // create a display string to be used in the list view
-                api.productDisplayString = AppUtils.createDisplayStringForProducts(api.products);
+                api.productDisplayString = ApixUtils.createDisplayStringForProducts(api.products);
 
                 // remove version numbers from the products on the api for filter purposes
-                api.products = AppUtils.createProductListNoVersions(api.products);
+                api.products = ApixUtils.createProductListNoVersions(api.products);
 
                 // tags
                 var languages = [];
@@ -291,10 +287,10 @@ export class ApiListComponent implements OnInit {
                     version: api.version,
                     api_uid: api.api_uid,
                     description: api.description,
-                    url: AppUtils.fixVMwareDownloadUrl(api.api_ref_doc_url),
+                    url: ApixUtils.fixVMwareDownloadUrl(api.api_ref_doc_url),
                     type: type,
-                    products: AppUtils.createProductListNoVersions(products),
-                    productDisplayString: AppUtils.createDisplayStringForProducts(products),
+                    products: ApixUtils.createProductListNoVersions(products),
+                    productDisplayString: ApixUtils.createDisplayStringForProducts(products),
                     languages: languages,
                     source: source,
                     apiGroup: apiGroup
@@ -333,11 +329,11 @@ export class ApiListComponent implements OnInit {
 
         // save to the cache
         /*
-        localStorage.setItem(AppUtils.PRODUCTS_STORAGE_KEY, JSON.stringify(this.products));
-        localStorage.setItem(AppUtils.LANGUAGES_STORAGE_KEY, JSON.stringify(this.languages));
-        localStorage.setItem(AppUtils.SOURCES_STORAGE_KEY, JSON.stringify(this.sources));
+        localStorage.setItem(ApixUtils.PRODUCTS_STORAGE_KEY, JSON.stringify(this.products));
+        localStorage.setItem(ApixUtils.LANGUAGES_STORAGE_KEY, JSON.stringify(this.languages));
+        localStorage.setItem(ApixUtils.SOURCES_STORAGE_KEY, JSON.stringify(this.sources));
         */
-        localStorage.setItem(AppUtils.APIS_STORAGE_KEY, JSON.stringify(this.apis));
+        localStorage.setItem(ApixUtils.APIS_STORAGE_KEY, JSON.stringify(this.apis));
     }
 
     private setDefaultFilters(): void {
@@ -348,8 +344,8 @@ export class ApiListComponent implements OnInit {
             this.filters.keywords = config.defaultKeywordsFilter;
         }
 
-        if (config.defaultProductsFilter) {
-            for (let product of config.defaultProductsFilter) {
+        if (this.defaultProductsFilter) {
+            for (let product of this.defaultProductsFilter) {
                 this.filters.products.push(product);
             }
         }
@@ -463,7 +459,7 @@ export class ApiListComponent implements OnInit {
             useLocal = true;
             console.log("load API group overview from local, " + localOverviewPath);
             this.loading++;
-            this.appService.getHTMLResponse(localOverviewPath).then(result => {
+            this.apixApiService.getHTMLResponse(localOverviewPath).then(result => {
                 this.loading--;
                 this.overviewHtml = result._body;
             }).catch(response => {
@@ -496,7 +492,7 @@ export class ApiListComponent implements OnInit {
 
                 if (overviewApiId) {
                     this.loading++;
-                    this.appService.getRemoteApiResources(overviewApiId).then(result => {
+                    this.apixApiService.getRemoteApiResources(overviewApiId).then(result => {
                         this.loading--;
                         var docList = result.resources.docs;
                         var overviewResource = null;
@@ -512,7 +508,7 @@ export class ApiListComponent implements OnInit {
                         }
                         if (overviewResource) {
                             this.loading++;
-                            this.appService.getHTMLResponse(overviewResource.downloadUrl).then(result => {
+                            this.apixApiService.getHTMLResponse(overviewResource.downloadUrl).then(result => {
                                 this.loading--;
                                 this.overviewHtml = result._body;
                             }).catch(response => {
@@ -603,7 +599,7 @@ export class ApiListComponent implements OnInit {
             if (_apiRefDocUrl) {
                 // fetch swagger.json
                 this.loading++;
-                this.appService.getJSONResponse(_apiRefDocUrl).then(result => {
+                this.apixApiService.getJSONResponse(_apiRefDocUrl).then(result => {
                     this.loading--;
                     var name = result.info.title;
                     var version = result.info.version;
