@@ -14,6 +14,7 @@ import * as _ from 'lodash';
 
 import { ApixUtils } from './apix.utils';
 import { Auth } from './apix.model';
+import { config } from './apix.config';
 
 @Injectable()
 export class ApixApiService {
@@ -21,7 +22,9 @@ export class ApixApiService {
     public USER_KEY: string = 'apix-user';
     public SESSION_KEY: string = 'apix-session-id';
     public SSO_KEY = "apix-sso";
+    public CONFIG_KEY = "apix-config";
 
+    private baseUrl;
     private remoteApiUrl;
     private localApiUrl;
     private remoteSXApiUrl;
@@ -29,9 +32,24 @@ export class ApixApiService {
     private apixHostLocal = "http://localhost:4200";
 
     constructor(private http: Http, private router: Router) {
-        this.remoteApiUrl = ApixUtils.getRemoteApiUrl();
-        this.localApiUrl = ApixUtils.getLocalApiUrl();
-        this.remoteSXApiUrl = ApixUtils.getRemoteSampleExchangeApiUrl();
+        if (!this.remoteApiUrl) {
+            let configStored = localStorage.getItem(this.CONFIG_KEY);
+            if (configStored) {
+                let config = JSON.parse(configStored);
+                this.baseUrl = config.baseUrl;
+                this.remoteApiUrl = config.remoteApiUrl;
+                this.localApiUrl = config.localApiurl;
+                this.remoteSXApiUrl = config.remoteSXApiUrl;
+            }
+        }
+    }
+
+    setEnvironment (baseUrl: string, remoteApiUrl: string, localApiurl: string, sxApiUrl: string) {
+        this.baseUrl = baseUrl;
+        this.remoteApiUrl = remoteApiUrl;
+        this.localApiUrl = localApiurl;
+        this.remoteSXApiUrl = sxApiUrl;
+        this.addConfigOptionToStorage();
     }
 
     getRemoteApis() {
@@ -130,12 +148,12 @@ export class ApixApiService {
         headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
         headers.append('vmware-use-header-authn', 'apiexplorer');
 
-        return this.http.post(auth.authUrl + '/login', {headers: headers})
+        return this.http.post(auth.authUrl, null, new RequestOptions({headers: headers}))
                .toPromise()
                .then(response => {
                    let value = response.json().value;
-                   console.log(value);
-                   let user = {username: value.name};
+                   //console.log(value);
+                   let user = {username: username};
                    this.addUserToStorage(user)
                    this.addAuthToStorage(auth);
                    this.addSessionIdStorage(value.sessionId);
@@ -148,7 +166,7 @@ export class ApixApiService {
             "password" : password,
             "tenant"   : tenant
         }
-        return this.http.post(auth.authUrl + '/login', _data)
+        return this.http.post(auth.authUrl, _data)
                .toPromise()
                .then(response => {
                    let value = response.json();
@@ -180,7 +198,7 @@ export class ApixApiService {
     vraLogout(sessionId: string, authUrl: string) : Promise<any> {
         let headers = new Headers({'Authorization': 'Token ' + sessionId});
 
-        return this.http.delete(`${authUrl}/logout`, new RequestOptions({headers: headers}))
+        return this.http.delete(`${authUrl}`, new RequestOptions({headers: headers}))
                 .toPromise().then(() => {
                     this.clearSession();
                 }).catch(response => {
@@ -191,7 +209,7 @@ export class ApixApiService {
     vcenterLogout(sessionId: string, authUrl: string) : Promise<any> {
         let headers = new Headers({'vmware-api-session-id': sessionId});
 
-        return this.http.post(`${authUrl}/logout`, null, new RequestOptions({headers: headers}))
+        return this.http.post(`${authUrl}`, null, new RequestOptions({headers: headers}))
                 .toPromise().then(() => {
                     this.clearSession();
                 }).catch(response => {
@@ -241,6 +259,11 @@ export class ApixApiService {
         if (user)
             return true;
         return false;
+    }
+
+    public addConfigOptionToStorage() {
+        let config = {baseUrl: this.baseUrl, localApiUrl: this.localApiUrl, remoteApiUrl: this.remoteApiUrl, remoteSXApiUrl: this.remoteSXApiUrl};
+        localStorage.setItem(this.CONFIG_KEY, JSON.stringify(config));
     }
 
     clearSession(): void {

@@ -3,15 +3,15 @@
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
-export const APP_TITLE = 'VMware API Explorer Component';
+export const APP_TITLE = 'VMware API Explorer';
 
-export const config = {
-    baseRoute: "/",
+export const apixConfig = {
+    baseRoute: "/", /* /apix/ */
     apiListHeaderText: "Available APIs",
     remoteApiUrl: 'https://vdc-repo.vmware.com/apix',
     remoteSampleExchangeUrl: 'https://apigw.vmware.com/sampleExchange/v1',
     localApiUrl: 'local.json',
-    enableLocal: true,
+    enableLocal: false,
     enableRemote: true,
     defaultKeywordsFilter: '',
     defaultProductsFilter: [],
@@ -25,12 +25,12 @@ export const config = {
         {   "id": "basic",
             "swaggerAuthName": "BasicAuth",
             "displayName": "BasicAuth",
-            "authUrl": "http://localhost"
+            "authUrl": "http://mp-test-app1.eng.vmware.com:8080/api/v1"
         },
         {   "id": "vcenter_sso",
             "swaggerAuthName": "ApiKeyAuth",
             "displayName": "vCenter SSO",
-            "authUrl": "http://localhost"
+            "authUrl": "https://10.154.10.43/rest/com/vmware/cis/session"
         },
         {   "id": "vra_sso",
             "swaggerAuthName": "ApiKeyAuth",

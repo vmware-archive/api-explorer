@@ -8,11 +8,9 @@
             "outDir": "dist",
             "assets": [
                 "images",
-                "bower_components",
-                "clarity-ui",
                 "favicon.ico",
+                "apix-components",
                 "local.json",
-                "swagger-console.html",
                 "local",
                 "examples"
             ],

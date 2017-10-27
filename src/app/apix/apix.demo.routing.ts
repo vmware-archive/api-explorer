@@ -3,10 +3,7 @@ import {Routes, RouterModule} from "@angular/router";
 import {ApixDemo} from "./apix.demo";
 
 const ROUTES: Routes = [
-    {
-        path: "",
-        component: ApixDemo,
-    }
+    {path: "", component: ApixDemo}
 ];
 
 export const ROUTING: ModuleWithProviders = RouterModule.forChild(ROUTES);

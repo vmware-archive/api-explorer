@@ -45,18 +45,6 @@ export class ApixUtils {
             }).catch(response => response);
   }
 
-  public static getRemoteApiUrl(): string {
-    return config.remoteApiUrl;
-  }
-
-  public static getLocalApiUrl(): string {
-    return config.localApiUrl;
-  }
-
-  public static getRemoteSampleExchangeApiUrl(): string {
-    return config.remoteSampleExchangeUrl;
-  }
-
   public isInternalNetwork(): boolean {
     return this.isInternalNetwork0;
   }

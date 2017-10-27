@@ -4,7 +4,7 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
 import { ApixApiService } from '../apix-api.service';
@@ -19,14 +19,14 @@ import { config } from '../apix.config';
 @Injectable()
 export class LoginComponent implements OnInit{
     user = {username: '', password: '', tenant: ''};
-    authSchemas: any[];
+
+    @Input() authSchemas: any[] = config.sso;
+
     selectedAuthId : string = 'basic';
-    selectedAuth : Auth; //= {id: '', swaggerAuthName: '', displayName: '', authUrl: ''};
+    selectedAuth : Auth;
 
     showMore: boolean = false;
-    //apiKey = {name: '', value: ''};
-
-    returnUrl : string;
+    //returnUrl : string;
     errorMessage : string = '';
     opened: boolean = false;
     childOpen: boolean = false;
@@ -38,8 +38,8 @@ export class LoginComponent implements OnInit{
 
     ngOnInit() {
         //this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-        this.authSchemas = config.sso;
         if (this.authSchemas.length == 1) {
+            //console.log(this.authSchemas);
             this.selectedAuthId = this.authSchemas[0].id;
             this.selectedAuthChanged();
         }

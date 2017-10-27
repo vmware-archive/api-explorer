@@ -47,12 +47,21 @@ export class ApiListComponent implements OnInit {
         sources: []
     };
 
+    @Input() baseRoute: string = config.baseRoute;
+    @Input() localApiUrl: string = config.localApiUrl;
+    @Input() remoteApiUrl: string = config.remoteApiUrl;
+    @Input() remoteSampleExchangeUrl: string = config.remoteSampleExchangeUrl;
     @Input() hideFilters: boolean = config.hideFilters;
     @Input() apiListHeaderText: string = config.apiListHeaderText;
     @Input() hideProductFilter: boolean = config.hideProductFilter;
     @Input() hideLanguageFilter: boolean = config.hideLanguageFilter;
     @Input() hideSourcesFilter: boolean = config.hideSourceFilter;
     @Input() defaultProductsFilter: any[] = config.defaultProductsFilter;
+    @Input() defaultLanguagesFilter: any[] = config.defaultLanguagesFilter;
+    @Input() defaultSourcesFilter: any[] = config.defaultSourcesFilter;
+    @Input() defaultKeywordsFilter: string = config.defaultKeywordsFilter;
+    @Input() enableLocal: boolean = config.enableLocal;
+    @Input() enableRemote: boolean = config.enableRemote;
 
     initDefaultFilters: boolean = false;
 
@@ -94,6 +103,7 @@ export class ApiListComponent implements OnInit {
         this.setFilteredApis();
         this.loadAPIGroupOverview(overviewHtmlPath);
         */
+        this.apixApiService.setEnvironment(this.baseRoute, this.remoteApiUrl, this.localApiUrl, this.remoteSampleExchangeUrl);
         this.getApis();
         if (localStorage.getItem(ApixUtils.APIS_TAB_KEY) == 'apis') {
             this.setActiveTab(2);
@@ -143,7 +153,7 @@ export class ApiListComponent implements OnInit {
     }
 
     private getApis(): void {
-        if (config.enableLocal == true && config.enableRemote == true) {
+        if (this.enableLocal == true && this.enableRemote == true) {
             this.loading++;
             Promise.all([
                 this.apixApiService.getRemoteApis(),
@@ -152,6 +162,7 @@ export class ApiListComponent implements OnInit {
                 this.loading--;
                 var results: any[];
                 var localOverviewPath = null;
+
                 if (values[0])
                     results = this.formatRemoteApis(values[0]);
 
@@ -161,28 +172,28 @@ export class ApiListComponent implements OnInit {
                     if (localOverviewPath && typeof localOverviewPath !== 'undefined')
                         localStorage.setItem(ApixUtils.OVERVIEW_PATH_STORAGE_KEY, localOverviewPath);
                 }
+
                 this.handleResponse(results, localOverviewPath);
              }).catch (error => {
                 this.loading--;
-                this.errorMessage = error.text() || error.statusText;
+                this.handleError(error);
+                //this.errorMessage = error.text() || error.statusText;
             });
-        } else if (config.enableLocal == false && config.enableRemote == true) {
+        } else if (this.enableLocal == false && this.enableRemote == true) {
             this.loading++;
             this.apixApiService.getRemoteApis().then(res => {
                 this.loading--;
-                var results: any[];
-                results = this.formatRemoteApis(res);
+                var results: any[] = this.formatRemoteApis(res);
                 this.handleResponse(results, null);
             }).catch(error => {
                 this.loading--;
                 this.handleError(error);
             });
-        } else if (config.enableLocal == true && config.enableRemote == false) {
+        } else if (this.enableLocal == true && this.enableRemote == false) {
             this.loading++;
             this.apixApiService.getLocalApis().then(res => {
                 this.loading--;
-                var results: any[];
-                results = results.concat(this.formatLocalApis(res.apis));
+                var results: any[] = this.formatLocalApis(res.apis);
                 this.handleResponse(results, res.overview);
             }).catch(error => {
                 this.loading--;
@@ -202,6 +213,7 @@ export class ApiListComponent implements OnInit {
             this.errorMessage = response.text() ? response.text() : response.statusText;
         else
             this.errorMessage = response;
+        console.log(this.errorMessage);
     }
 
     private formatLocalApis(apis: any[]): any[] {
@@ -239,7 +251,7 @@ export class ApiListComponent implements OnInit {
 
                 // set api.url from app base
                 if (!api.url.startsWith("http")) {
-                    api.url = '/' + api.url;
+                    api.url = this.baseRoute + api.url;
                 }
 
                 var apiUrl = "/apis/" + api.id;
@@ -340,8 +352,8 @@ export class ApiListComponent implements OnInit {
         if (this.initDefaultFilters) {
             this.initDefaultFilters = false;
         }
-        if (config.defaultKeywordsFilter) {
-            this.filters.keywords = config.defaultKeywordsFilter;
+        if (this.defaultKeywordsFilter) {
+            this.filters.keywords = this.defaultKeywordsFilter;
         }
 
         if (this.defaultProductsFilter) {
@@ -350,14 +362,14 @@ export class ApiListComponent implements OnInit {
             }
         }
 
-        if (config.defaultLanguagesFilter) {
-            for (let lan of config.defaultLanguagesFilter) {
+        if (this.defaultLanguagesFilter) {
+            for (let lan of this.defaultLanguagesFilter) {
                 this.filters.languages.push(lan);
             }
         }
 
-        if (config.defaultSourcesFilter) {
-            for (let source of config.defaultSourcesFilter) {
+        if (this.defaultSourcesFilter) {
+            for (let source of this.defaultSourcesFilter) {
                 this.filters.sources.push(source);
             }
         }
@@ -481,7 +493,7 @@ export class ApiListComponent implements OnInit {
     private loadRemoteAPIGroupOverview() {
         if (this.filters.products && this.filters.products.length > 0) {
             var apiGroup = this.filters.products[0];
-            console.log(apiGroup);
+            //console.log(apiGroup);
             var overviewApiId = null;
             if (apiGroup) {
                 var result: any[] = this.apis.filter(api => api.type == 'internal' && api.apiGroup == apiGroup.replace(" ", "-").toLowerCase());

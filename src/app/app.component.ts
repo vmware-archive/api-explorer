@@ -9,15 +9,19 @@ import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { APP_TITLE } from './app.config';
+import { APP_TITLE } from './apix.config';
+import { apixConfig } from './apix.config';
 
 @Component({
     selector: 'my-app',
+    moduleId: module.id,
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
     webappVersion: string = '';
+
+    private apixAuth: any[] = apixConfig.sso;
 
     constructor(public router: Router, private route: ActivatedRoute, private title : Title) {
         this.router.events

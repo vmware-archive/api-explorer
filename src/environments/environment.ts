@@ -5,6 +5,5 @@
 
 export const environment = {
   production: true,
-  remoteApiUrl: 'https://vdc-repo.vmware.com/apix',
-  remoteSampleExchangeUrl: 'https://apigw.vmware.com/sampleExchange/v1',
+
 };

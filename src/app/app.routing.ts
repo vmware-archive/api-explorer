@@ -9,7 +9,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 const appRoutes: Routes = [
     {path: '', redirectTo: 'apis', pathMatch: 'full'},
-    //{ path: 'apis',   redirectTo: '/apis', pathMatch: 'full' }
+    //{path: 'apis',   redirectTo: '/apis', pathMatch: 'full' },
     {path: "apis", loadChildren: "app/apix/apix.demo.module", data: {title: 'Apix'} }
 ];
 
@@ -17,7 +17,7 @@ const appRoutes: Routes = [
     imports: [
       RouterModule.forRoot(
         appRoutes,
-        { enableTracing: true }
+        { enableTracing: false }
       )
       // other imports here
     ],

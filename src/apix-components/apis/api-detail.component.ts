@@ -26,7 +26,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     id: number;
     path: string;
     api: Api;
-    overviewHtml: string = '';
+    overviewHtml: string = null;
     resources: ApiResources;
     preferences: ApiPreferences;
     swaggerPreferences: ApiPreferences;
@@ -48,15 +48,16 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() :void {
-
         this.path = this.route.snapshot.queryParams['path'];
-        if (this.path) {
-            this.location.replaceState(window.location.pathname + this.path);
-        }
+
         this.sub = this.route.params.subscribe(params => {
             this.id = +params['id'];
             this.getApi();
         });
+
+        if (this.path) {
+            this.location.replaceState("/apis/" + this.id + this.path);
+        }
     }
 
     ngOnDestroy() {
@@ -155,12 +156,19 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             } else if (this.api.url && this.api.source == 'local') {
                 if (this.api.api_uid) {
                     console.log("fetching remote resources for local api_uid=" + this.api.api_uid);
-                    /*
-                    this.apixApiService.getLatestRemoteApiIdForApiUid(this.api.api_uid).then(function (response) {
-                        // response.data should have the id.  Might be null
-                        this.loadResourcesForRemoteApi(response.data);
-                    }).finally(function () {
-                    }); */
+                    this.loading++;
+                    this.apixApiService.getLatestRemoteApiIdForApiUid(this.api.api_uid).then(result => {
+                        this.loading--;
+                        let remoteId: number = +result[0].id;
+                        this.loadResourcesForRemoteApi(remoteId);
+                    }).catch(response => {
+                        this.loading--;
+                        if (response instanceof Response)
+                            this.errorMessage = response.text() ? response.text() : response.statusText;
+                        else
+                            this.errorMessage = response;
+                    });
+
                 } else {
                     // response.data should have the id.  Might be null
                     console.log("No api_uid. synchronizing local resources.");

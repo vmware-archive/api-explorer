@@ -11,9 +11,9 @@
 
     <!-- build:css({.tmp,app,.}) styles/swagger-console.css -->
 
-    <link href='../bower_components/swagger-ui/dist/css/screen.css' media='screen' rel='stylesheet'/>
-    <link rel="stylesheet" href="../clarity-ui/clarity-ui.min.css">
-    <link rel="stylesheet" href="../clarity-ui/clarity-icons.min.css">
+    <link href='../apix-components/bower_components/swagger-ui/dist/css/screen.css' media='screen' rel='stylesheet'/>
+    <link rel="stylesheet" href="../apix-components/clarity-ui/clarity-ui.min.css">
+    <link rel="stylesheet" href="../apix-components/clarity-ui/clarity-icons.min.css">
 
     <!-- endbuild -->
 
@@ -156,21 +156,21 @@
 
     <!-- build:js({.tmp,app,.}) scripts/swagger-console.js -->
 
-    <script src='../bower_components/swagger-ui/dist/lib/object-assign-pollyfill.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/jquery-1.8.0.min.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/jquery.slideto.min.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/jquery.wiggle.min.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/jquery.ba-bbq.min.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/handlebars-4.0.5.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/lodash.min.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/backbone-min.js'></script>
-    <script src='../bower_components/swagger-ui/dist/swagger-ui.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/highlight.9.1.0.pack.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/highlight.9.1.0.pack_extended.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/jsoneditor.min.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/marked.js'></script>
-    <script src='../bower_components/swagger-ui/dist/lib/swagger-oauth.js'></script>
-    <script src="../bower_components/jquery-sieve/dist/jquery.sieve.js"></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/object-assign-pollyfill.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/jquery-1.8.0.min.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/jquery.slideto.min.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/jquery.wiggle.min.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/jquery.ba-bbq.min.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/handlebars-4.0.5.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/lodash.min.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/backbone-min.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/swagger-ui.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/highlight.9.1.0.pack.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/highlight.9.1.0.pack_extended.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/jsoneditor.min.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/marked.js'></script>
+    <script src='../apix-components/bower_components/swagger-ui/dist/lib/swagger-oauth.js'></script>
+    <script src="../apix-components/bower_components/jquery-sieve/dist/jquery.sieve.js"></script>
 
     <!-- endbuild -->
 
@@ -192,6 +192,7 @@
 
         $(function() {
             var qs = $.QueryString;
+            //console.log(qs);
 
             // Add to the parent's hash, without triggering any "hashchange" event
             if (window.parent && window.parent.history.replaceState){

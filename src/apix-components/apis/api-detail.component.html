@@ -17,7 +17,7 @@
     <div class="col-md-12">
         <clr-tabs>
             <clr-tab-link *ngIf="overviewHtml">Overview</clr-tab-link>
-            <clr-tab-link >API Reference</clr-tab-link>
+            <clr-tab-link *ngIf="api">API Reference</clr-tab-link>
             <clr-tab-link *ngIf="resources && resources.docs && resources.docs.length > 0" >Documentation</clr-tab-link>
             <clr-tab-link *ngIf="resources && resources.sdks && resources.sdks.length > 0" >Related SDKs</clr-tab-link>
             <clr-tab-link *ngIf="resources && resources.samples && resources.samples.length > 0" >Related Code Samples</clr-tab-link>
@@ -81,7 +81,7 @@
                         <div class="row">
                             <div class="col-md-9">
                                 <a [href]="sdk.webUrl" target="_blank">{{sdk.title}}</a>
-                                <div>
+                                <div *ngIf="sdk.tags && sdk.tags.length">
                                     <span *ngFor="let tag of sdk.tags | filterTag " class="badge badge-light-blue">{{tag.name}}</span>
                                 </div>
                             </div>
