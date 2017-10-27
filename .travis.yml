@@ -3,11 +3,9 @@ node_js:
   - "4"
 
 before_script:
-  - npm install grunt-cli -g
+  - npm install @angular/cli -g
   - npm install -g karma
   - npm install -g gulp
-  - npm install -g bower
-  - bower install
   - npm install
 
 notifications:

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -44,6 +44,7 @@ export class ApixUtils {
                 console.log("internal network");
             }).catch(response => response);
   }
+
 
   public isInternalNetwork(): boolean {
     return this.isInternalNetwork0;
@@ -109,20 +110,5 @@ export class ApixUtils {
         }
     }
     return result;
-  }
-
-  /**
-   * This utility function is to work around an issue with insecure certificates on vdc-download.vmware.com.
-   * As it turns on we figured out that in fact the certificate is OK, but this is a bug in many webkit browsers
-   * including Chrome.  For Chrome browsers version 57 or later is needed (63 has the issue).  It seems that it
-   * is also an issue for Safari.
-   */
-  public static fixVMwareDownloadUrl (url): string {
-    return url;
-    // if (url) {
-    //     return url.replace("vdc-download", "vdc-repo");
-    // } else {
-    //     return url;
-    // }
   }
 }

@@ -1,9 +1,12 @@
 /*
- * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
+ /**
+  * Api model class that reflects the values returned from the APIX services.
+  */
 export class Api {
     id: number;
     name: string;
@@ -19,23 +22,35 @@ export class Api {
     apiGroup: string;
 }
 
+/**
+ * Swagger API preferences class.
+ */
 export class ApiPreferences {
     host: string;
     basePath: string;
 }
 
+/**
+ * ApiResources model class that reflects the values returned from the APIX services.
+ */
 export class ApiResources {
     docs: any[];
     sdks: any[];
     samples: any[];
 }
 
+/**
+ * User model class.
+ */
 export class User {
     username: string;
     password: string;
     tenant: string;
 }
 
+/**
+ * Auth model class.
+ */
 export class Auth {
     id: string;
     swaggerAuthName: string;

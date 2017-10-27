@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -9,12 +9,15 @@ import { ConnectionBackend, Request, RequestOptions, RequestOptionsArgs, Respons
 import { Router } from '@angular/router';
 import {Observable} from "rxjs/Rx";
 
-import { ApixApiService } from './apix-api.service';
+import { ApixAuthService } from './apix-auth.service';
 
+/**
+ * This class extends the Angular Http class to handle the network and 401 errors.
+ */
 @Injectable()
 export class ApixHttp extends Http {
     router: Router;
-    apixApiService: ApixApiService;
+    apixAuthService: ApixAuthService;
 
     constructor(backend: ConnectionBackend, defaultOptions: RequestOptions, private injector: Injector) {
         super(backend, defaultOptions);
@@ -32,12 +35,12 @@ export class ApixHttp extends Http {
                     (message.lastIndexOf('The user session is no longer valid') === 0
                      || message.lastIndexOf('The user session has expired'))) {
                     // Post injection for services
-                    if (!this.apixApiService)
-                        this.apixApiService = this.injector.get(ApixApiService);
+                    if (!this.apixAuthService)
+                        this.apixAuthService = this.injector.get(ApixAuthService);
                     if (!this.router)
                         this.router = this.injector.get(Router);
                     // Redirect to login page;
-                    this.apixApiService.clearSession();
+                    this.apixAuthService.clearSession();
                     this.router.navigate(['/login']);
                 }
             }

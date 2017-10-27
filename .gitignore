@@ -9,3 +9,4 @@ dist/
 .pydevproject
 .DS_Store
 .Gruntfile.js.swp
+.settings

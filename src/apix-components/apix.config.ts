@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -25,17 +25,17 @@ export const config = {
         {   "id": "basic",
             "swaggerAuthName": "BasicAuth",
             "displayName": "BasicAuth",
-            "authUrl": "http://localhost"
+            "authUrl": "/api/v1"
         },
         {   "id": "vcenter_sso",
             "swaggerAuthName": "ApiKeyAuth",
             "displayName": "vCenter SSO",
-            "authUrl": "http://localhost"
+            "authUrl": "/api/v1"
         },
         {   "id": "vra_sso",
             "swaggerAuthName": "ApiKeyAuth",
             "displayName": "vRealize Automation SSO",
-            "authUrl": "http://localhost"
+            "authUrl": "/api/v1"
         }
         ]
 

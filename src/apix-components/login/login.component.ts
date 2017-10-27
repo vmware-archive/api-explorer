@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -7,7 +7,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
-import { ApixApiService } from '../apix-api.service';
+import { ApixAuthService } from '../apix-auth.service';
 import { Auth } from '../apix.model';
 import { config } from '../apix.config';
 
@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit{
 
     constructor(private route: ActivatedRoute,
         private router: Router,
-        private apixApiService: ApixApiService)
+        private apixAuthService: ApixAuthService)
     {}
 
     ngOnInit() {
@@ -56,20 +56,20 @@ export class LoginComponent implements OnInit{
         this.clearMessage();
         this.selectedAuth = this.getAuthById();
         if (this.selectedAuthId == 'vcenter_sso') {
-            this.apixApiService.vcenterLogin(this.user.username, this.user.password, this.selectedAuth).then(() => {
+            this.apixAuthService.vcenterLogin(this.user.username, this.user.password, this.selectedAuth).then(() => {
                 //this.router.navigate([this.returnUrl]);
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'vra_sso') {
-            this.apixApiService.vraLogin(this.user.username, this.user.password, this.user.tenant, this.selectedAuth).then(() => {
+            this.apixAuthService.vraLogin(this.user.username, this.user.password, this.user.tenant, this.selectedAuth).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'basic') {
-            this.apixApiService.basicLogin(this.user.username, this.user.password, this.selectedAuth);
+            this.apixAuthService.basicLogin(this.user.username, this.user.password, this.selectedAuth);
         } else {
-            this.apixApiService.login(this.user.username, this.user.password, this.selectedAuth.authUrl).then(() => {
+            this.apixAuthService.login(this.user.username, this.user.password, this.selectedAuth.authUrl).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
@@ -89,14 +89,14 @@ export class LoginComponent implements OnInit{
     }
 
     isLoggedIn() : boolean {
-        if (this.apixApiService.isLoggedIn()) {
+        if (this.apixAuthService.isLoggedIn()) {
             return true;
         }
         return false;
     }
 
     getUser(): string {
-        return this.apixApiService.getCurrentUser().username;
+        return this.apixAuthService.getCurrentUser().username;
     }
 
     openLogin() : void {
@@ -105,22 +105,22 @@ export class LoginComponent implements OnInit{
     }
 
     logout() : void {
-        var sessionId = sessionStorage.getItem(this.apixApiService.SESSION_KEY);
+        var sessionId = sessionStorage.getItem(this.apixAuthService.SESSION_KEY);
 
         if (this.selectedAuthId == 'vcenter_sso') {
-            this.apixApiService.vcenterLogout(sessionId, this.selectedAuth.authUrl).then(() => {
+            this.apixAuthService.vcenterLogout(sessionId, this.selectedAuth.authUrl).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'vra_sso') {
-            this.apixApiService.vraLogout(sessionId, this.selectedAuth.authUrl).then(() => {
+            this.apixAuthService.vraLogout(sessionId, this.selectedAuth.authUrl).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'basic') {
-            this.apixApiService.clearSession();
+            this.apixAuthService.clearSession();
         } else {
-            this.apixApiService.logout(this.selectedAuth.authUrl).then(() => {
+            this.apixAuthService.logout(this.selectedAuth.authUrl).then(() => {
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );

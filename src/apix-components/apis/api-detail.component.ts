@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -129,7 +129,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                         }
                         this.api.type = type;
                     }
-                    this.api.url = ApixUtils.fixVMwareDownloadUrl(api.api_ref_doc_url);
+                    this.api.url = api.api_ref_doc_url;
                     this.setSelectedApi();
             },
             (response) => {
@@ -268,8 +268,8 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             arr.push({
                 title: title,
                 version: value.version,
-                webUrl: ApixUtils.fixVMwareDownloadUrl(value.web_url),
-                downloadUrl: ApixUtils.fixVMwareDownloadUrl(value.download_url),
+                webUrl: value.web_url,
+                downloadUrl: value.download_url,
                 categories: value.categories,
                 tags: value.tags
             });
@@ -349,8 +349,8 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                     samples.push({
                         title: sample.name,
                         platform: categories,
-                        webUrl: ApixUtils.fixVMwareDownloadUrl(sample.webUrl),
-                        downloadUrl: ApixUtils.fixVMwareDownloadUrl(sample.downloadUrl),
+                        webUrl: sample.webUrl,
+                        downloadUrl: sample.downloadUrl,
                         contributor: sample.author.communitiesUser,
                         createdDate: sample.created,
                         lastUpdated: sample.lastUpdated,

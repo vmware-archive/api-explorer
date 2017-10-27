@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -299,7 +299,7 @@ export class ApiListComponent implements OnInit {
                     version: api.version,
                     api_uid: api.api_uid,
                     description: api.description,
-                    url: ApixUtils.fixVMwareDownloadUrl(api.api_ref_doc_url),
+                    url: api.api_ref_doc_url,
                     type: type,
                     products: ApixUtils.createProductListNoVersions(products),
                     productDisplayString: ApixUtils.createDisplayStringForProducts(products),

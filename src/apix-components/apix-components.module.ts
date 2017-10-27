@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -23,6 +23,7 @@ import { FilterTagPipe } from './pipes/filterTag.pipe';
 import { SafePipe } from './pipes/safe.pipe';
 
 import { ApixApiService } from './apix-api.service';
+import { ApixAuthService } from './apix-auth.service';
 import { ApixHttp } from './apix.http';
 import { ApixRoutingModule} from './apix.routing';
 
@@ -66,7 +67,7 @@ export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptio
             deps: [XHRBackend, RequestOptions, Injector]
         },
 
-        ApixApiService]
+        ApixApiService, ApixAuthService]
 })
 
 export class ApixComponentsModule {
@@ -74,8 +75,8 @@ export class ApixComponentsModule {
         return {
             ngModule: ApixComponentsModule,
             providers: [
-                ApixApiService
-
+                ApixApiService,
+                ApixAuthService
             ]
         };
     }

@@ -25,17 +25,17 @@ export const apixConfig = {
         {   "id": "basic",
             "swaggerAuthName": "BasicAuth",
             "displayName": "BasicAuth",
-            "authUrl": "http://mp-test-app1.eng.vmware.com:8080/api/v1"
+            "authUrl": "/api/v1"
         },
         {   "id": "vcenter_sso",
             "swaggerAuthName": "ApiKeyAuth",
             "displayName": "vCenter SSO",
-            "authUrl": "https://10.154.10.43/rest/com/vmware/cis/session"
+            "authUrl": "/rest/com/vmware/cis/session"
         },
         {   "id": "vra_sso",
             "swaggerAuthName": "ApiKeyAuth",
             "displayName": "vRealize Automation SSO",
-            "authUrl": "http://localhost"
+            "authUrl": "/api/v1"
         }
         ]
 
