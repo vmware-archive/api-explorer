@@ -3,9 +3,8 @@
 ## Tools used
 
 Building requires:
-* NodeJS, currently development is done with 4.x, but any version later than 4 should work.
-* bower
-* grunt
+* Node 6.x
+* NPM 3.x
 
 The distribution itself can be served by any web server, Node, Tomcat, Apache, whatever.
 
@@ -28,27 +27,25 @@ sudo apt-get update
 ```bash
 sudo apt-get install nodejs
 ```
-##### Install bower (you can install it locally or globally)
+##### Install angular/cli (you can install it locally or globally)
 ```bash
-sudo npm install -g bower
+sudo npm install -g @angular/cli
 ```
-##### Install grunt
-```bash
-sudo npm install -g grunt-cli
+
 ```
 ## Build & Run
 The first time, Install dependencies:
 ```bash
 npm install
-bower install
+
 ```
 
-Use grunt to build
+Use angular/cli to build
 ```bash
-grunt build
+ng build
 ```
 
-Serve content locally using grunt to start the Node server:
+Serve content locally using angular/cli to startt the Node server:
 ```bash
-grunt serve
+ng serve
 ```

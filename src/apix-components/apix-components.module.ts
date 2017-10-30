@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule, Http, XHRBackend, RequestOptions } from '@angular/http';
 import { RouterModule } from "@angular/router";
 import { ClarityModule } from 'clarity-angular';
-import { SelectModule } from 'ng-select';
 
 import { ApiListComponent } from "./apis/api-list.component";
 import { ApiDetailComponent } from "./apis/api-detail.component";
@@ -37,7 +36,6 @@ export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptio
         FormsModule,
         HttpModule,
         ClarityModule.forRoot(),
-        SelectModule,
         ApixRoutingModule
     ],
     declarations: [

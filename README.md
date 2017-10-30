@@ -4,7 +4,7 @@
 This project is a lightweight HTML5/AngularJS 1.x component that implements an API Explorer for VMware APIs.  This
 component has minimal dependencies and can be embedded in any product that has an embedded web server.
 
-If you wish to see an instance of this project in action, check out the [VMware Platypus Project](http://github.com/vmware/platypus/), 
+If you wish to see an instance of this project in action, check out the [VMware Platypus Project](http://github.com/vmware/platypus/),
 which is a package of this API Explorer in a convenient Docker container.
 
 ### Features
@@ -23,21 +23,49 @@ To run the API explorer locally (development mode)
 
 1. [Setup your development environment](BUILD.md)
 
-2. Run 'grunt serve' to start the local node server and open your browser
+2. Run 'ng serve' to start the local node server and open your browser
 
 ### Embed it as a component in your app
 The project is in development mode at this moment, but soon we will be deploying
  releases on npm, and instructions will be posted here on how to install and
-configure the component. For now you will have to do a build (grunt build) and copy
+configure the component. For now you will have to do a build (ng build) and copy
 the contents of the dist folder into your tree.
 
 ### Component configuration
-You can config the api-explorer by setting environment variables in config.js file (shown below).  By default, both the local APIs and remote APIs are enabled.  To disable the remote APIs, set the "window.config.enableRemote=false". For local APIs, you need to set the "local.json" file path in the "window.config.localApiEndPoint" variable. 
+You can import the Apix-component module into your Angular App. The minimum requirement is to, in your app.module.ts file, import the module:
+
+import { ApixComponentsModule } from "apix-components.module";
+
+and add it to your imports list e.g.:
+
+```javascript
+ 10 @NgModule({
+ 11     declarations: [
+ 12         AppComponent,
+ 13     ],
+ 14     imports: [
+ 15         BrowserModule,
+ 16         FormsModule,
+ 17         HttpModule,
+ 18         ClarityModule.forRoot(),
+ 19         ApixComponentsModule.forRoot(),
+ 20         ROUTING
+ 21     ],
+ 22     providers: [],
+ 23     bootstrap: [AppComponent]
+ 24 })
+ 25 export class AppModule {
+ 26 }
+
+
+Enable apix-component via tags:
+
+By default, both the local APIs and remote APIs are enabled.  To disable the remote APIs, set the "enableRemote=false". For local APIs, you need to set the "local.json" file path in the "localApiUrl" tag.
 
 It is possible to specify default settings for filter values in the defaultFilters variable.
 This can be used to only display APIs for a particular product for example.
 
-Additionally if you wish to prevent the user from being able to change a particular filter 
+Additionally if you wish to prevent the user from being able to change a particular filter
 selection, you can specify a "true" value for one of the  window.config.hide* variables. These
 values cause either all of the filters (in the case of "hideFilters"), or a particular filter
 pane to be hidden by default.
@@ -47,40 +75,17 @@ setting defaultFilters values as well as hideFilters = true.
 
 ```javascript
 
-  // Whether or not to enable debug mode
-  // Setting this to false will disable console output
-  window.config.enableDebug = false;
-  
-  // Whether or not to enable local APIs
-  window.config.enableLocal = true;
-    
-  // local APIs endpoint
-  window.config.localApiEndPoint = "local.json";
-  
-  // Whether or not to enable remote APIs and resources
-  window.config.enableRemote = true;
+  <api-list
+        [baseRoute] = "'apix'"
+        [enableLocal] ="true"
+        [enableRemote]= "true"
+        [localApiUrl]="local.json"
+        [hideFilters]="true"
+        [apiListHeaderText]="'vSphere APIs'"
+        [defaultProductsFilter]="'vSphere'"
+        [defaultSourcesFilter]="'local'">
+  </api-list>
 
-  // you can customize the text that is displayed above the APIs, to scope
-  // to a particular product for example.
-  window.config.apiListHeaderText = "vSphere APIs";
-
-  // default filtering to apply to the window after the initial load is done.
-  window.config.defaultFilters = {
-      keywords : "",
-      products : ["vSphere"],
-      languages: [],
-      types: [],
-      sources: ["local"]
-  };
-
-  // Default control over display of filters.  This has nothing to do do with the actual values of the filters,
-  // only over the display of them.  If all filters or a particular filter pane are not displayed and yet there is
-  // a defaultFilters value for it, the user will not be able to change the value. This can be used to scope to a
-  // particular product for example.
-  window.config.hideFilters = true;             // if true, the filter pane is not displayed at all
-  window.config.hideProductFilter = false;       // if true, the products filter is hidden
-  window.config.hideLanguageFilter = false;      // if true, the language filter is hidden
-  window.config.hideSourcesFilter = false;       // if true, the sources filter is hidden
 ```
 
 ## Contributing
