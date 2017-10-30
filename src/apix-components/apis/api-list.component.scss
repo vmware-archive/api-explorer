@@ -1,0 +1,187 @@
+/*
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
+ * This software is released under MIT license.
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
+
+.show-child {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    height: 18px;
+    width: 20px;
+}
+
+
+/* apis */
+.datagrid {
+    margin: 0px !important;
+}
+
+.filters ul li label,
+.filters ul li input {
+    cursor: pointer;
+}
+
+.apis > #tabs {
+    padding: 0 18px;
+}
+
+.apis button {
+    float: right !important;
+    font-size: 10px !important;
+    margin: 10px 12px 6px 0;
+}
+
+.overview {
+    padding: 15px;
+    overflow-x:auto;
+}
+
+.overview h2 {
+    color: #565656 !important;
+    font-size: 25px !important;
+    font-weight: 300 !important;
+    margin: 0px;
+}
+
+.overview h3 {
+    color: #565656;
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0 0 10px 0!important;
+    padding: 20px 0!important;
+}
+
+.overview table {
+    position: relative;
+    display: block;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.overview th {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+}
+.overview th, td {
+    padding: 10px;
+    text-align: left;
+    min-width: 20%;
+}
+
+.overview tr:hover {
+    background-color: #f5f5f5
+}
+
+.hide {
+    float: right;
+    font-size: 12px;
+}
+
+.filters-trigger {
+    position: absolute;
+    width: 10px;
+    height: 200px;
+    left: 0px;
+    top: 10%;
+    background-color: #685959;
+    line-height: 200px;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 0 5px 5px 0;
+    opacity: 0.5;
+    cursor: pointer;
+    z-index: 10;
+}
+
+i {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.card .card-header, .card .card-block {
+    border-bottom: 1px solid #eee;
+    margin: 10px;
+}
+
+.card .card-header .filter-all {
+    text-align: left;
+}
+
+.card .card-header .filter-all input {
+    width: 90%
+}
+
+.card-block .method_info {
+	margin: 5px 0px;
+}
+
+.card-block .method_info .deprecated {
+	text-decoration: line-through;
+}
+
+.card-block .delete {
+	background-color: #f5e8e8;
+	border: 1px solid #e8c6c7;
+}
+.card-block .post {
+	background-color: #e7f6ec;
+	border: 1px solid #c3e8d1;
+}
+.card-block .get {
+	background-color: #e7f0f7;
+	border: 1px solid #c3d9ec;
+}
+.card-block .put {
+	background-color: #f9f2e9;
+	border: 1px solid #f0e0ca;
+}
+.card-block .patch {
+	background-color: #fce9e3;
+	border: 1px solid #f5d5c3;
+}
+
+.card-block .method_info .method_row {
+	padding-left: 0px;
+}
+.card-block .method_info .http_method {
+	text-transform: uppercase;
+	display: inline-block;
+	width: 50px;
+	text-align: center;
+	font-size: .7em;
+	color: #fff;
+	padding-top: 2px;
+}
+
+.card-block .delete .http_method {
+	background-color: #d14956;
+}
+.card-block .post .http_method {
+	background-color: #1ea18d;
+}
+.card-block .get .http_method {
+	background-color: #0b88b9;
+}
+.card-block .put .http_method {
+	background-color: #87538f;
+}
+.card-block .patch .http_method {
+	background-color: #d38042;
+}
+
+.card-block .method_info .path {
+	margin-left: 10px;
+}
+
+.card-block .method_info .description {
+	float: right;
+}

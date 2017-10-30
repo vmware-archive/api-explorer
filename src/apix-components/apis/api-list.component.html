@@ -1,0 +1,109 @@
+<!--
+  ~ Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+  -->
+
+<div class="apis">
+  <div class="col-md-12">
+    <div class="filters-trigger" *ngIf="!hideFilters && hideLeftNav" (click)="toggleFilterDisplay()">
+        <i class="right"></i>
+    </div>
+    <clr-tabs>
+        <clr-tab-link *ngIf="overviewHtml" [clrTabLinkActive]="isActiveTab(1)">Overview</clr-tab-link>
+        <clr-tab-link [clrTabLinkActive]="isActiveTab(2)">APIs</clr-tab-link>
+
+        <clr-tab-content *ngIf="overviewHtml" [clrTabContentActive]="isActiveTab(1)">
+            <div class="overview" [innerHTML]="overviewHtml"></div>
+        </clr-tab-content>
+        <clr-tab-content *ngIf="apis" [clrTabContentActive]="isActiveTab(2)">
+            <div class="row">
+                <div class="filters col-md-2" *ngIf="!hideFilters && !hideLeftNav" >
+                    <div class="card">
+                        <div class="card-header">Filters
+                            <a class="hide" (click)="toggleFilterDisplay()" href="javascript:void(0)">Hide</a>
+                        </div>
+                        <div class="card-block">
+                            <div *ngIf="(!hideProductFilter) &&  products.length && products.length > 1">
+                                <h3 class="card-title">Products</h3>
+                                <ul class="list-unstyled">
+                                    <li *ngFor="let product of products | sort">
+                                        <label>
+                                            <input  type="checkbox" name="filterProducts[]" [checked]="filters.products.indexOf(product) > -1" (click)="toggleFilterSelection(product, filters.products)"/> &nbsp; {{product}}
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="card-divider"></div>
+                            </div>
+                            <div *ngIf="(!hideLanguageFilter) &&  languages.length && languages.length > 1">
+                                <h3 class="card-title">Language Bindings</h3>
+                                <ul class="list-unstyled">
+                                    <li *ngFor="let language of languages | sort">
+                                        <label>
+                                            <input  type="checkbox" name="filterLanguages[]" [checked]="filters.languages.indexOf(language) > -1" (click)="toggleFilterSelection(language, filters.languages)"/> &nbsp; {{language}}
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="card-divider"></div>
+                            </div>
+                            <div *ngIf="(!hideSourceFilter) &&  sources.length && sources.length > 1">
+                                <h3 class="card-title">Sources</h3>
+                                <ul class="list-unstyled">
+                                    <li *ngFor="let source of sources | sort">
+                                        <label>
+                                            <input  type="checkbox" name="filterSources[]" [checked]="filters.sources.indexOf(source) > -1" (click)="toggleFilterSelection(source, filters.sources)"/> &nbsp; {{source}}
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="card-divider"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container col-md-10" [ngClass]="(hideFilters || hideLeftNav) ? 'col-md-12' : 'col-md-10'">
+                    <div class="card">
+                        <div class="card-header row">
+                            <div class="col-md-4">{{apiListHeaderText}}</div>
+			                <div class="col-md-4"></div>
+                            <div class="col-md-4 filter-all"><input type="text" name="filter" [(ngModel)]="filters.keywords" (ngModelChange)="keywordsChanged()" placeholder="Search APIs/Methods..."/>
+                                <clr-icon shape="search" size="12" (click)="keywordsChanged()"></clr-icon>
+                            </div>
+                        </div>
+                        <div class="card-block">
+                            <ul class="list-group">
+                                <li class="api list-group-item"  *ngFor="let api of filteredApis | orderBy: ['-productDisplayString', 'name']">
+                                    <!--<api-details [apiId]="api.id" (hrefClick)="apiHrefClick($event)"></api-details>-->
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <a [routerLink]="['/apis', api.id]">{{api.name}}</a>
+                                            &nbsp;
+                                            <span *ngIf="api.source=='local'" class="badge badge-light-blue">local</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <span>{{api.productDisplayString}}</span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div>{{api.description}}</div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="showMethod()">
+                                    <div class="row method_info {{method.http_method}}" *ngFor="let method of api.methods">
+                                        <div class="col-md-12 method_row" >
+                                            <div class="http_method">{{method.http_method}}</div>
+
+                                            <a [routerLink]="['/apis', api.id]" [queryParams]="{path:method.url}" ><span class="path {{method.deprecated ? 'deprecated' : ''}}">{{method.path}}</span></a>
+                                            <span class="description">{{method.summary}}</span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- container -->
+            </div> <!-- row -->
+        </clr-tab-content>
+    </clr-tabs>
+  </div>
+</div>

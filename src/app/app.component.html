@@ -1,0 +1,26 @@
+<!--
+  ~ Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
+  ~ This software is released under MIT license.
+  ~ The full license information can be found in LICENSE in the root directory of this project.
+  -->
+
+<clr-main-container>
+  <clr-header class="header-6">
+    <div class="branding">
+      <a href [routerLink]="['/']"  class="nav-link">
+        <clr-icon shape="vm-bug"></clr-icon>
+        <span class="title">API Explorer</span>
+      </a>
+    </div>
+    <div class="header-actions header-nav">
+        <apix-login [authSchemas]="apixAuth"></apix-login>
+    </div>
+  </clr-header>
+
+  <div class="content-container">
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+</clr-main-container>
