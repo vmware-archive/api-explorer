@@ -10,13 +10,16 @@
         <i class="right"></i>
     </div>
     <clr-tabs>
-        <clr-tab-link *ngIf="overviewHtml" [clrTabLinkActive]="isActiveTab(1)">Overview</clr-tab-link>
-        <clr-tab-link [clrTabLinkActive]="isActiveTab(2)">APIs</clr-tab-link>
+        <clr-tab *ngIf="overviewHtml">
+            <button clrTabLink>Overview</button>
+            <clr-tab-content *clrIfActive="isActiveTab(1)">
+                <div class="overview" [innerHTML]="overviewHtml"></div>
+            </clr-tab-content>
+        </clr-tab>
 
-        <clr-tab-content *ngIf="overviewHtml" [clrTabContentActive]="isActiveTab(1)">
-            <div class="overview" [innerHTML]="overviewHtml"></div>
-        </clr-tab-content>
-        <clr-tab-content *ngIf="apis" [clrTabContentActive]="isActiveTab(2)">
+        <clr-tab *ngIf="apis" >
+            <button clrTabLink>APIs</button>
+            <clr-tab-content *clrIfActive="isActiveTab(2)" >
             <div class="row">
                 <div class="filters col-md-2" *ngIf="!hideFilters && !hideLeftNav" >
                     <div class="card">
@@ -103,7 +106,8 @@
                     </div>
                 </div><!-- container -->
             </div> <!-- row -->
-        </clr-tab-content>
+            </clr-tab-content>
+        </clr-tab>
     </clr-tabs>
   </div>
 </div>

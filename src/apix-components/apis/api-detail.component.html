@@ -16,103 +16,104 @@
 
     <div class="col-md-12">
         <clr-tabs>
-            <clr-tab-link *ngIf="overviewHtml">Overview</clr-tab-link>
-            <clr-tab-link *ngIf="api">API Reference</clr-tab-link>
-            <clr-tab-link *ngIf="resources && resources.docs && resources.docs.length > 0" >Documentation</clr-tab-link>
-            <clr-tab-link *ngIf="resources && resources.sdks && resources.sdks.length > 0" >Related SDKs</clr-tab-link>
-            <clr-tab-link *ngIf="resources && resources.samples && resources.samples.length > 0" >Related Code Samples</clr-tab-link>
+            <clr-tab *ngIf="overviewHtml">
+                <button clrTabLink>Overview</button>
+                <clr-tab-content *clrIfActive>
+                    <div class="api-overview" [innerHTML]="overviewHtml"></div>
+                </clr-tab-content>
+            </clr-tab>
+            <clr-tab *ngIf="api">
+                <button clrTabLink>API Reference</button>
+                <clr-tab-content *clrIfActive>
+                    <div [ngSwitch]="api.type">
+                        <div *ngIf="api.url === null">
+                            <p>Oops! The API documentation is missing.</p>
+                        </div>
+                        <div *ngSwitchCase="'swagger'" class="swagger">
+                            <div class="card preferences">
+                                <div class="card-block">
+                                    <div class="card-title hand" (click)="togglePreferences()">
+                                        Preferences
+                                        <div [ngClass]="showPreferences ? 'arrow-down' : 'arrow-right'"></div>
+                                    </div>
+                                </div>
 
-            <clr-tab-content *ngIf="overviewHtml" >
-                <div class="api-overview" [innerHTML]="overviewHtml"></div>
-            </clr-tab-content>
-            <clr-tab-content *ngIf="api">
-                <div [ngSwitch]="api.type">
+                                <div class="card-text" *ngIf="showPreferences">
+                                    <form class="compact">
+                                        <div class="form-group">
+                                            <label for="swagger-host">Host:</label>
+                                            <input type="text" class="form-control" id="swagger-host" name="host" [(ngModel)]="preferences.host">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="swagger-basepath">Base URL:</label>
+                                            <input type="text" class="form-control" id="swagger-basepath" name="basePath" [(ngModel)]="preferences.basePath">
+                                        </div>
+                                    </form>
+                                </div>
 
-                    <div *ngIf="api.url === null">
-                        <p>Oops! The API documentation is missing.</p>
+                                <button type="button" (click)="updatePreferences('swagger')" class="btn btn-default" *ngIf="showPreferences">Update</button>
+                            </div>
+
+                            <local-iframe [src]="api.url + '&host=' + swaggerPreferences?.host + '&basePath=' + swaggerPreferences?.basePath"></local-iframe>
+                        </div>
+                        <div *ngSwitchCase="'html'">
+                            <iframe  class="html" width="100%" height="75vh" allowfullscreen [src]="api.url | safe"></iframe>
+                        </div>
                     </div>
-                    <div *ngSwitchCase="'swagger'" class="swagger">
-
-                        <div class="card preferences">
-                            <div class="card-block">
-                                <div class="card-title hand" (click)="togglePreferences()">
-                                    Preferences
-                                    <div [ngClass]="showPreferences ? 'arrow-down' : 'arrow-right'"></div>
+                </clr-tab-content>
+            </clr-tab>
+            <clr-tab *ngIf="resources && resources.docs && resources.docs.length > 0">
+                <button clrTabLink>Documentation</button>
+                <clr-tab-content *clrIfActive>
+                    <ul class="list-group list-group-flush">
+                        <li *ngFor="let doc of resources.docs | orderBy: 'title'" class="list-group-item">
+                            <a *ngIf="doc.title!=='null' || !doc.downloadUrl" [href]="doc.downloadUrl" target="_blank">{{doc.title}}</a>
+                        </li>
+                    </ul>
+                </clr-tab-content>
+            </clr-tab>
+            <clr-tab *ngIf="resources && resources.sdks && resources.sdks.length > 0">
+                <button clrTabLink>Related SDKs</button>
+                <clr-tab-content *clrIfActive>
+                    <ul class="list-group list-group-flush">
+                        <li *ngFor="let sdk of resources.sdks | orderBy: 'title'" class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <a [href]="sdk.webUrl" target="_blank">{{sdk.title}}</a>
+                                    <div *ngIf="sdk.tags && sdk.tags.length">
+                                        <span *ngFor="let tag of sdk.tags | filterTag " class="badge badge-light-blue">{{tag.name}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <a [href]="sdk.downloadUrl" class="btn btn-light btn-block download">Download</a>
                                 </div>
                             </div>
-
-                            <div class="card-text" *ngIf="showPreferences">
-                                <form class="compact">
-                                    <div class="form-group">
-                                        <label for="swagger-host">Host:</label>
-                                        <input type="text" class="form-control" id="swagger-host" name="host" [(ngModel)]="preferences.host">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="swagger-basepath">Base URL:</label>
-                                        <input type="text" class="form-control" id="swagger-basepath" name="basePath" [(ngModel)]="preferences.basePath">
-                                    </div>
-                                </form>
-                            </div>
-
-                            <button type="button" (click)="updatePreferences('swagger')" class="btn btn-default" *ngIf="showPreferences">Update</button>
-
-                        </div>
-
-                        <local-iframe [src]="api.url + '&host=' + swaggerPreferences?.host + '&basePath=' + swaggerPreferences?.basePath"></local-iframe>
-
-                    </div>
-                    <div *ngSwitchCase="'html'">
-                        <iframe  class="html" width="100%" height="75vh" allowfullscreen [src]="api.url | safe"></iframe>
-                    </div>
-                </div>
-            </clr-tab-content>
-
-            <clr-tab-content *ngIf="resources && resources.docs && resources.docs.length > 0">
-                <ul class="list-group list-group-flush">
-                    <li *ngFor="let doc of resources.docs | orderBy: 'title'" class="list-group-item">
-                        <a *ngIf="doc.title!=='null' || !doc.downloadUrl" [href]="doc.downloadUrl" target="_blank">{{doc.title}}</a>
-                    </li>
-                </ul>
-            </clr-tab-content>
-
-            <clr-tab-content *ngIf="resources && resources.sdks && resources.sdks.length > 0">
-                <ul class="list-group list-group-flush">
-                    <li *ngFor="let sdk of resources.sdks | orderBy: 'title'" class="list-group-item">
-                        <div class="row">
-                            <div class="col-md-9">
-                                <a [href]="sdk.webUrl" target="_blank">{{sdk.title}}</a>
-                                <div *ngIf="sdk.tags && sdk.tags.length">
-                                    <span *ngFor="let tag of sdk.tags | filterTag " class="badge badge-light-blue">{{tag.name}}</span>
+                        </li>
+                    </ul>
+                </clr-tab-content>
+            </clr-tab>
+            <clr-tab *ngIf="resources && resources.samples && resources.samples.length > 0">
+                <button clrTabLink>Related Code Samples</button>
+                <clr-tab-content *clrIfActive>
+                    <ul class="list-group list-group-flush">
+                        <li *ngFor="let sample of resources.samples | orderBy: 'title'" class="list-group-item">
+                            <div class="sample row">
+                                <div class="col-md-9">
+                                    <a class="title" [href]="sample.webUrl" target="_blank">{{sample.title}}</a>
+                                    <div *ngIf="sample.contributor" class="author"><small> Contributor {{sample.contributor}}</small></div>
+                                    <div class="snippet">{{sample.snippet}}</div>
+                                    <span *ngFor="let tag of sample.tags" class="badge badge-light-blue">{{tag}}</span>
+                                </div>
+                                <div class="col-md-3 secondary-column">
+                                    <a [href]="sample.downloadUrl" class="btn btn-light btn-block download">Download</a>
+                                    <div *ngIf="sample.favoriteCount >0" ><small class="favorites-count"><i class="icon-star"></i><b>{{sample.favoriteCount}}</b> Favorites</small></div>
+                                    <div *ngIf="sample.lastUpdated"><small><i class="icon-time"></i>Updated at <span [innerHtml]="sample.lastUpdated | date:'medium'"></span></small></div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <a [href]="sdk.downloadUrl" class="btn btn-light btn-block download">Download</a>
-                            </div>
-                        </div>
-
-                    </li>
-                </ul>
-            </clr-tab-content>
-            <clr-tab-content *ngIf="resources && resources.samples && resources.samples.length > 0">
-                <ul class="list-group list-group-flush">
-                    <li *ngFor="let sample of resources.samples | orderBy: 'title'" class="list-group-item">
-                        <div class="sample row">
-                            <div class="col-md-9">
-                                <a class="title" [href]="sample.webUrl" target="_blank">{{sample.title}}</a>
-                                <div *ngIf="sample.contributor" class="author"><small> Contributor {{sample.contributor}}</small></div>
-                                <div class="snippet">{{sample.snippet}}</div>
-                                <span *ngFor="let tag of sample.tags" class="badge badge-light-blue">{{tag}}</span>
-                            </div>
-                            <div class="col-md-3 secondary-column">
-                                <a [href]="sample.downloadUrl" class="btn btn-light btn-block download">Download</a>
-                                <div *ngIf="sample.favoriteCount >0" ><small class="favorites-count"><i class="icon-star"></i><b>{{sample.favoriteCount}}</b> Favorites</small></div>
-                                <div *ngIf="sample.lastUpdated"><small><i class="icon-time"></i>Updated at <span [innerHtml]="sample.lastUpdated | date:'medium'"></span></small></div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </clr-tab-content>
-
+                        </li>
+                    </ul>
+                </clr-tab-content>
+            </clr-tab>
         </clr-tabs>
     </div>
 
