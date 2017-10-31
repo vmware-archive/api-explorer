@@ -11,7 +11,23 @@
 #get the directory of this script regardless of where it is invoked from
 BRANCH_DIR="$( cd "$( dirname "$0" )"/.. && pwd )"
 
-VERSION=`grep version ${BRANCH_DIR}/bower.json | sed 's/[\",]//g' | sed 's/[ \t]*version:[ \t]*//g'`
+# validate content first
+if [ ! -f ${BRANCH_DIR}/package.json ]; then 
+echo "ERROR: package.json does not exist in directory '${BRANCH_DIR}'"
+exit 1
+fi
+
+if [ ! -d ${BRANCH_DIR}/dist ]; then 
+echo "ERROR: dist directory '${BRANCH_DIR}/dist' does not exist."
+exit 1
+fi
+
+if [ ! -d ${BRANCH_DIR}/tools ]; then 
+echo "ERROR: tools directory '${BRANCH_DIR}/tools' does not exist."
+exit 1
+fi
+
+VERSION=`grep version ${BRANCH_DIR}/package.json | sed 's/[\",]//g' | sed 's/[ \t]*version:[ \t]*//g'`
 
 echo "Packaging release ${VERSION}"
 
@@ -36,7 +52,5 @@ unzip -o -d ./apixlocal ./apixlocal.zip
 zip -r ${TOOLS_ZIP} ./*.py ./apixlocal
 rm -rf ./apixlocal
 popd
-
-cp -v ${BRANCH_DIR}/build/api-explorer-${VERSION}.war ${OUTPUT_DIR}
 
 echo "Build artifacts written to ${OUTPUT_DIR}"
