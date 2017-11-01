@@ -27,7 +27,10 @@ module.exports = function (grunt) {
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
     version: require('./bower.json').version || '1.0.0',
-    builddate: new Date(),
+    buildnumber: process.env.BUILD_NUMBER,
+    buildbranch: process.env.BRANCH_NAME,
+    buildchange: process.env.CHANGE_NUMBER,
+    builddate: new Date().toISOString(),
     dist: 'dist',
     gitinfo: null
   };
@@ -389,11 +392,11 @@ module.exports = function (grunt) {
             replacements: [
                 {
 	                pattern: /APIX_GIT_SHA/g,
-	                replacement: '<%= gitinfo.local.branch.current.SHA %>'
+	                replacement: '<%= (yeoman.buildchange ? yeoman.buildchange : gitinfo.local.branch.current.SHA) %>'
                 },    
                 {
 	                pattern: /APIX_GIT_BRANCH/g,
-	                replacement: '<%= gitinfo.local.branch.current.name %>'
+	                replacement: '<%= (yeoman.buildbranch ? yeoman.buildbranch : gitinfo.local.branch.current.name) %>'
                 },    
                 {
 	                pattern: /APIX_VERSION/g,
@@ -401,7 +404,7 @@ module.exports = function (grunt) {
                 },                           
                 {
 	                pattern:  /APIX_BUILD_DATE/g,
-	                replacement: '<%= yeoman.builddate %>'
+	                replacement: '<%= yeoman.builddate + ( yeoman.buildnumber ? (" build:" + yeoman.buildnumber) : "") %>'
                 }
             ]
         }
