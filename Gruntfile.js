@@ -556,6 +556,26 @@ module.exports = function (grunt) {
     'string-replace',
     'war'
   ]);
+  
+  grunt.registerTask('build:nohash', [
+    'gitinfo',
+    'clean:dist',
+    'wiredep',
+    'useminPrepare',
+    'concurrent:dist',
+    'postcss',
+    'ngtemplates',
+    'concat',
+    'ngAnnotate',
+    'copy:dist',
+    'cdnify',
+    'cssmin',
+    'uglify',
+    'usemin',
+    'htmlmin',
+    'string-replace',
+    'war'
+  ]);
 
   grunt.registerTask('default', [
     'newer:jshint',
