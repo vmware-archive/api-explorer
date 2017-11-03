@@ -7,10 +7,13 @@ import { NgModule }             from '@angular/core';
 import { ModuleWithProviders }  from '@angular/core/src/metadata/ng_module';
 import { Routes, RouterModule } from '@angular/router';
 
+import { ApixDemo } from './apix.demo';
+
 const appRoutes: Routes = [
     {path: '', redirectTo: 'apis', pathMatch: 'full'},
     //{path: 'apis',   redirectTo: '/apis', pathMatch: 'full' },
-    {path: "apis", loadChildren: "app/apix/apix.demo.module", data: {title: 'Apix'} }
+    //{path: "apis", loadChildren: "app/apix/apix.demo.module", data: {title: 'Apix'} }
+    {path: "apis", component: ApixDemo, data: {title: 'Apix'}}
 ];
 
 @NgModule({

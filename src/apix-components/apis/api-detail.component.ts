@@ -223,6 +223,15 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
 
         if (apiId) {
             console.log("fetching resources for api id=" + apiId );
+            // For swagger APIs, add the API swagger.json to the Documentation tab
+            if (this.api.type === "swagger") {
+                var n = this.api.url.lastIndexOf("/");
+                var title = this.api.url.substring(n+1);
+                result.resources.docs.push({
+                    title: title,
+                    downloadUrl: this.api.url
+                });
+            }
             this.loading += 1;
             this.apixApiService.getRemoteApiResources(apiId).then(res => {
                 this.loading -= 1;
@@ -232,13 +241,15 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                     this.setArray("SDK", sdks, resource);
                     this.setArray("DOC", docs, resource);
                 }
+                //
                 if (sdks.length || docs.length) {
                     console.log("got " + sdks.length + " sdks, " + docs.length + " docs");
                     if (sdks.length) {
                          result.resources.sdks = sdks;
                     }
                     if (docs.length) {
-                        result.resources.docs = docs;
+                        for (let doc of docs)
+                            result.resources.docs.push(doc);
                     }
                 }
                 this.prepareApiResources(result);

@@ -14,6 +14,7 @@ import { ClarityModule } from 'clarity-angular';
 import { ApiListComponent } from "./apis/api-list.component";
 import { ApiDetailComponent } from "./apis/api-detail.component";
 import { LocalIframeComponent } from "./apis/local-iframe.component";
+import { IFrameResizerDirective } from "./directives/iframe-resize.directive";
 import { LoginComponent } from './login/login.component';
 import { ApixUtils } from './apix.utils';
 import { ArraySortPipe } from './pipes/sort.pipe';
@@ -42,6 +43,7 @@ export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptio
         ApiListComponent,
         ApiDetailComponent,
         LocalIframeComponent,
+        IFrameResizerDirective,
         LoginComponent,
         ArraySortPipe,
         OrderByPipe,

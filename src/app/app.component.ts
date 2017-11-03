@@ -9,8 +9,8 @@ import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { APP_TITLE } from './apix.config';
-import { apixConfig } from './apix.config';
+import { APP_TITLE } from './app.config';
+import { AppConfig } from './app.config';
 
 @Component({
     selector: 'my-app',
@@ -21,9 +21,9 @@ import { apixConfig } from './apix.config';
 export class AppComponent {
     webappVersion: string = '';
 
-    private apixAuth: any[] = apixConfig.sso;
+    apixAuth: any[] = this.config.getConfig("sso");
 
-    constructor(public router: Router, private route: ActivatedRoute, private title : Title) {
+    constructor(public router: Router, private route: ActivatedRoute, private title : Title, private config: AppConfig) {
         this.router.events
             .filter(event => event instanceof NavigationEnd)
             .subscribe(event => {

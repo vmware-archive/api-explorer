@@ -9,6 +9,7 @@
             "assets": [
                 "images",
                 "favicon.ico",
+                "apix-config.json",
                 "apix-components",
                 "local.json",
                 "local",
@@ -23,7 +24,6 @@
             "styles": [
                 "../node_modules/clarity-icons/clarity-icons.min.css",
                 "../node_modules/clarity-ui/clarity-ui.min.css",
-                "../node_modules/jqwidgets-framework/jqwidgets/styles/jqx.base.css",
                 "../node_modules/swagger-ui/dist/css/screen.css",
 				"styles.css"
 
@@ -34,17 +34,8 @@
                 "../node_modules/@webcomponents/custom-elements/custom-elements.min.js",
                 "../node_modules/clarity-icons/clarity-icons.min.js",
                 "../node_modules/web-animations-js/web-animations.min.js",
-                "../node_modules/jqwidgets-framework/jqwidgets/jqxcore.js",
-                "../node_modules/jqwidgets-framework/jqwidgets/jqxdatetimeinput.js",
-                "../node_modules/jqwidgets-framework/jqwidgets/jqxcalendar.js",
-                "../node_modules/jqwidgets-framework/jqwidgets/jqxtooltip.js",
-                "../node_modules/jqwidgets-framework/jqwidgets/globalization/globalize.js",
                 "../node_modules/jquery/dist/jquery.min.js",
-                "../node_modules/jquery/dist/jquery.slim.min.js",
-                "../node_modules/moment/moment.js",
-                "../node_modules/moment-timezone/moment-timezone.js"
-
-
+                "../node_modules/jquery/dist/jquery.slim.min.js"
             ],
             "environmentSource": "environments/environment.ts",
             "environments": {

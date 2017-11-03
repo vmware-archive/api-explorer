@@ -18,9 +18,9 @@ export const config = {
     defaultLanguagesFilter: [],
     defaultSourcesFilter: [],
     hideFilters: false,
-    hideProductFilter: false,
-    hideLanguageFilter: false,
-    hideSourceFilter: false,
+    hideProductsFilter: false,
+    hideLanguagesFilter: false,
+    hideSourcesFilter: false,
     sso: [
         {   "id": "basic",
             "swaggerAuthName": "BasicAuth",

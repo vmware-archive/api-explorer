@@ -53,9 +53,9 @@ export class ApiListComponent implements OnInit {
     @Input() remoteSampleExchangeUrl: string = config.remoteSampleExchangeUrl;
     @Input() hideFilters: boolean = config.hideFilters;
     @Input() apiListHeaderText: string = config.apiListHeaderText;
-    @Input() hideProductFilter: boolean = config.hideProductFilter;
-    @Input() hideLanguageFilter: boolean = config.hideLanguageFilter;
-    @Input() hideSourcesFilter: boolean = config.hideSourceFilter;
+    @Input() hideProductsFilter: boolean = config.hideProductsFilter;
+    @Input() hideLanguagesFilter: boolean = config.hideLanguagesFilter;
+    @Input() hideSourcesFilter: boolean = config.hideSourcesFilter;
     @Input() defaultProductsFilter: any[] = config.defaultProductsFilter;
     @Input() defaultLanguagesFilter: any[] = config.defaultLanguagesFilter;
     @Input() defaultSourcesFilter: any[] = config.defaultSourcesFilter;
