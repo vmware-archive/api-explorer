@@ -44,7 +44,7 @@ angular.module('apiExplorerApp').controller('VsphereUserSessionCtrl', function($
     $scope.loading += 1;
 
     $scope.vspherelogout = function() {
-        apis.logout(sessionStorage.getItem('vmware-api-session-id'), $sce.trustAsResourceUrl($rootScope.settings.authApiEndPoint)).then(function(response) {
+        apis.vspherelogout(sessionStorage.getItem('vmware-api-session-id'), $sce.trustAsResourceUrl($rootScope.settings.authApiEndPoint)).then(function(response) {
 
         }).finally(function() {
             $rootScope.loggedIn = false;
