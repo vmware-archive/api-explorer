@@ -17,7 +17,12 @@ export class AppConfig {
     constructor(private http: Http) {}
 
     public getConfig(key: any) {
-        return this.config[key];
+        if (!Array.isArray(key)) {
+            return this.config[key];
+        }
+        let res: any = this.config;
+        key.forEach(k => res = res[k]);
+        return res;
     }
 
     public load() {
@@ -33,39 +38,3 @@ export class AppConfig {
         });
     }
 }
-
-    /*
-    baseRoute: "/",
-    apiListHeaderText: "Available APIs",
-    remoteApiUrl: 'https://vdc-repo.vmware.com/apix',
-    remoteSampleExchangeUrl: 'https://apigw.vmware.com/sampleExchange/v1',
-    localApiUrl: 'local.json',
-    enableLocal: false,
-    enableRemote: true,
-    defaultKeywordsFilter: '',
-    defaultProductsFilter: [],
-    defaultLanguagesFilter: [],
-    defaultSourcesFilter: [],
-    hideFilters: false,
-    hideProductFilter: false,
-    hideLanguageFilter: false,
-    hideSourceFilter: false,
-    sso: [
-        {   "id": "basic",
-            "swaggerAuthName": "BasicAuth",
-            "displayName": "BasicAuth",
-            "authUrl": "/api/v1"
-        },
-        {   "id": "vcenter_sso",
-            "swaggerAuthName": "ApiKeyAuth",
-            "displayName": "vCenter SSO",
-            "authUrl": "/rest/com/vmware/cis/session"
-        },
-        {   "id": "vra_sso",
-            "swaggerAuthName": "ApiKeyAuth",
-            "displayName": "vRealize Automation SSO",
-            "authUrl": "/api/v1"
-        }
-        ]
-
-  };*/

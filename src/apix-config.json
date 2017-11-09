@@ -1,5 +1,5 @@
 {
-    "baseRoute" : "/",
+    "baseRoute" : "/dist/",
     "apiListHeaderText" : "Available APIs",
     "remoteApiUrl" : "https://vdc-repo.vmware.com/apix",
     "remoteSampleExchangeUrl" : "https://apigw.vmware.com/sampleExchange/v1",

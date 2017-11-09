@@ -14,7 +14,7 @@ import { Api } from '../apix.model';
   selector: 'local-iframe',
 
   template: `
-    <iframe #iframe width="100%" height="700" frameBorder="0" allowfullscreen></iframe>
+    <iframe #iframe iframe-resize  width="100%" frameBorder="0" allowfullscreen></iframe>
   `,
   styles: [`
   `]
@@ -32,7 +32,7 @@ export class LocalIframeComponent implements AfterViewInit {
 
   @Input() set src(value: string) {
     this.url = value;
-    this.localIframe = 'apix-components/swagger-console.html?url=' + this.url;
+    this.localIframe = './apix-components/swagger-console.html?url=' + this.url;
     this.loadContent();
   }
 

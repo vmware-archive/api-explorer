@@ -4,13 +4,13 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Pipe, PipeTransform } from '@angular/core';
-import { DomSanitizer} from '@angular/platform-browser';
+import { Pipe, PipeTransform} from '@angular/core';
+import { DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) {}
-  transform(url) {
+  transform(url) : SafeUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 }

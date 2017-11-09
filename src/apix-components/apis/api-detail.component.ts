@@ -225,10 +225,10 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             console.log("fetching resources for api id=" + apiId );
             // For swagger APIs, add the API swagger.json to the Documentation tab
             if (this.api.type === "swagger") {
-                var n = this.api.url.lastIndexOf("/");
-                var title = this.api.url.substring(n+1);
+                //var n = this.api.url.lastIndexOf("/");
+                //var title = this.api.url.substring(n+1);
                 result.resources.docs.push({
-                    title: title,
+                    title: 'Swagger/Open API specification download',
                     downloadUrl: this.api.url
                 });
             }

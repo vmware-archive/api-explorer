@@ -1,39 +1,41 @@
-import { Directive, OnDestroy, HostListener, ElementRef, Input } from '@angular/core';
+/*
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
+ * This software is released under MIT license.
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
+
+import { Directive, ElementRef, HostListener, HostBinding, OnInit, Renderer } from '@angular/core';
 
 @Directive({
-    selector: '[iframe-resizer]'
+    selector: '[iframe-resize]'
 })
 
-export class IFrameResizerDirective implements OnDestroy {
-    @Input('iframe-resizer') sourceName: string;
+export class IFrameResizerDirective implements OnInit  {
+    private el: any;
+    private renderer: Renderer;
+    private prevHeight: number;
+    private sameCount: number;
 
-    constructor(private el: ElementRef) { }
-
-
-    @HostListener('window:message', ['$event'])
-
-    onMessage(event: any) {
-        if ('undefined' !== typeof event.data &&
-            'undefined' !== typeof event.data.type &&
-             event.data.type === 'resize' &&
-            'undefined' !== typeof event.data.source &&
-             event.data.source === this.sourceName) {
-                this.resizeIframe(event.data);
-
-        }
+    constructor(_elementRef: ElementRef, _renderer: Renderer) {
+        this.el = _elementRef.nativeElement;
+        this.renderer = _renderer;
     }
 
-    resizeIframe(data) {
-       if ('undefined' !== typeof data.value && 'undefined' !== typeof data.value.height) {
-           if (this.el.nativeElement.clientHeight !== Number(data.value.height)) {
-               this.el.nativeElement.style.height = data.value.height + 'px';
-           }
-       }
+    ngOnInit() {
+        this.setHeight();
     }
 
-    ngOnDestroy() {
-        // TODO: destroy @HostListener watcher?
-    }
+    private setHeight() {
+        const self = this;
 
+        this.renderer.setElementStyle(
+            self.el,
+            "height",
+            (window.screen.height*0.75) + "px"
+        );
+        setTimeout(() => {
+            self.setHeight();
+        }, 50);
+    }
 
 }
