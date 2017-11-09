@@ -8,7 +8,7 @@
     "ng": "ng",
     "start": "ng serve --delete-output-path=false",
     "clean": "del ./dist",
-    "build": "npm-run-all clean build:apix",
+    "build:all": "npm-run-all clean build:apix",
     "build:dev": "ng build --delete-output-path=false",
     "build:app": "ng build --prod --delete-output-path=false",
     "test": "echo success",
