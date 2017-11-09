@@ -13,9 +13,7 @@
                 "local.json",
                 "local",
                 "examples",
-                { "glob": "**/*", "input": "../node_modules/clarity-icons", "output": "../src/apix-components/assets/clarity-icons" },
-                { "glob": "**/*", "input": "../node_modules/clarity-ui", "output": "../src/apix-components/assets/clarity-ui" },
-                { "glob": "**/*", "input": "../node_modules/swagger-ui/dist", "output": "../src/apix-components/assets/swagger-ui" }
+                "version.json"
             ],
             "index": "index.html",
             "main": "main.ts",

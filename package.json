@@ -18,7 +18,9 @@
     "publish:all": "node tools/publish.js",
     "replace": "replace",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "build": "ng build --prod",
+    "postbuild": "bash set-version.sh"
   },
   "private": true,
   "dependencies": {
