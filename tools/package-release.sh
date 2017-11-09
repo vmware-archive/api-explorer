@@ -27,7 +27,7 @@ echo "ERROR: tools directory '${BRANCH_DIR}/tools' does not exist."
 exit 1
 fi
 
-VERSION=`grep version ${BRANCH_DIR}/package.json | sed 's/[\",]//g' | sed 's/[ \t]*version:[ \t]*//g'`
+VERSION=`grep \"version\" ${BRANCH_DIR}/package.json | sed 's/[\",]//g' | sed 's/[ \t]*version:[ \t]*//g'`
 
 echo "Packaging release ${VERSION}"
 
