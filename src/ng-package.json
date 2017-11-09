@@ -1,0 +1,8 @@
+{
+    "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
+    "src": "src/apix-components",
+    "dest": "dist/apix-components",
+    "lib": {
+      "entryFile": "./public_api.ts"
+    }
+  }

@@ -1,0 +1,30 @@
+{
+    "name": "apix-components",
+    "version": "@VERSION",
+    "description": "Angular 2+ components for APIX",
+    "homepage": "https://vmware.github.io/api-explorer/",
+    "main": "bundles/apix-components.umd.js",
+    "module": "apix-components/apix-components.es5.js",
+    "repository" : {
+        "type" : "git",
+        "url" : "git@github.com:vmware/api-explorer.git"
+    },
+    "peerDependencies": {
+        "@angular/common": "4.3.0",
+        "@angular/compiler": "4.3.0",
+        "@angular/core": "4.3.0",
+        "@angular/forms": "4.3.0",
+        "@angular/platform-browser": "4.3.0",
+        "@angular/platform-browser-dynamic": "4.3.0",
+        "@angular/router": "4.3.0",
+        "clarity-angular": "0.10.10",
+        "clarity-icons": "0.10.10",
+        "clarity-ui": "0.10.10",
+        "swagger-ui": "2.x"
+    },
+    "author": "vmwarecode",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/vmware/api-explorer/issues"
+    }
+}

@@ -10,3 +10,4 @@ dist/
 .DS_Store
 .Gruntfile.js.swp
 .settings
+.ng_build/
