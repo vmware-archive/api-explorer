@@ -2,6 +2,7 @@
 
 ## Tools used
 
+
 Building requires:
 * Node 6.x
 * NPM 3.x
@@ -32,12 +33,21 @@ npm install
 
 ```
 
-Use angular/cli to build
+Run npm tasks to do the angularcli build.  There are a couple of 
+different options depending on your desired build type:
+
+The following will build a normal image of everything which includes
+cache-breaker hashes on files:
 ```bash
-ng build
+npm run build:all
+```
+
+The following will build a web image that has no hashes on the files:
+```bash
+npm run buildnohash:all
 ```
 
 Serve content locally using angular/cli to startt the Node server:
 ```bash
-ng serve
+npm run serve
 ```
