@@ -8,8 +8,8 @@ If you wish to see an instance of this project in action, check out the [VMware 
 which is a package of this API Explorer in a convenient Docker container.
 
 ### Features
-* Support for Swagger, RAML, or generic HTML API documentation
-* Swagger and RAML components can make API calls using the client browsers network connectivity.
+* Support for Swagger or generic HTML API documentation
+* Swagger components can make API calls using the client browsers network connectivity.
 * API Metadata can be statically embedded locally with the component OR
 * API Metadata for released VMware products can come from VMware API services
 
@@ -23,42 +23,45 @@ To run the API explorer locally (development mode)
 
 1. [Setup your development environment](BUILD.md)
 
-2. Run 'ng serve' to start the local node server and open your browser
+2. Run 'npm run:start' to start the local node server and open your browser
 
-### Embed it as a component in your app
-The project is in development mode at this moment, but soon we will be deploying
- releases on npm, and instructions will be posted here on how to install and
-configure the component. For now you will have to do a build (ng build) and copy
-the contents of the dist folder into your tree.
+### Embed it as an Angular component in your app
+API explorer is published as a npm package:
 
-### Component configuration
-You can import the Apix-component module into your Angular App. The minimum requirement is to, in your app.module.ts file, import the module:
+* __apix-components.__ Contains the APIX Angular components.
 
-import { ApixComponentsModule } from "apix-components.module";
+If you already have an Angular application, you can follow the installation steps below to include and use APIX in your application.
 
-and add it to your imports list e.g.:
+1. Install APIX Components package through npm:
+    ```bash
+    npm install apix-components --save
+    ```
 
-```javascript
- 10 @NgModule({
- 11     declarations: [
- 12         AppComponent,
- 13     ],
- 14     imports: [
- 15         BrowserModule,
- 16         FormsModule,
- 17         HttpModule,
- 18         ClarityModule.forRoot(),
- 19         ApixComponentsModule.forRoot(),
- 20         ROUTING
- 21     ],
- 22     providers: [],
- 23     bootstrap: [AppComponent]
- 24 })
- 25 export class AppModule {
- 26 }
+2. Install the polyfill for Custom Elements:
+    ```bash
+    npm install @webcomponents/custom-elements --save
+    ```
 
+3. Import the ApixComponentsModule into your Angular application's module.  Your application's main module might look like this:
+    ```typescript
+    import { NgModule } from '@angular/core';
+    import { BrowserModule } from '@angular/platform-browser';
+    import { ApixComponentsModule } from 'apix-components';
+    import { AppComponent } from './app.component';
 
-Enable apix-component via tags:
+    @NgModule({
+        imports: [
+            BrowserModule,
+            ApixComponentsModule.forRoot(),
+            ....
+         ],
+         declarations: [ AppComponent ],
+         bootstrap: [ AppComponent ]
+    })
+    export class AppModule {    }
+    ```
+
+4. Enable apix-component via tags:
 
 By default, both the local APIs and remote APIs are enabled.  To disable the remote APIs, set the "enableRemote=false". For local APIs, you need to set the "local.json" file path in the "localApiUrl" tag.
 
@@ -87,6 +90,17 @@ setting defaultFilters values as well as hideFilters = true.
   </api-list>
 
 ```
+
+### Use the api-explorer app
+If you don't have an Angular application, you can follow the installation steps below to include API Explorer in your product.
+
+1. Build API Explorer app through npm:
+    ```bash
+    npm run build:all
+    ```
+
+2. Config your application by changing the default setting in src/apix-config.json file.
+
 
 ## Contributing
 The API Explorer project team welcomes contributions from the community. For more detailed information, see [CONTRIBUTING.md](CONTRIBUTING.md).

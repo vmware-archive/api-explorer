@@ -9,7 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Response } from '@angular/http';
 
-import * as _ from 'lodash';
+//import * as _ from 'lodash';
 
 import { Api } from '../apix.model';
 import { ArraySortPipe } from '../pipes/sort.pipe';
@@ -455,7 +455,8 @@ export class ApiListComponent implements OnInit {
 
     private pushUnique(arr, vals) {
         for (let val of vals) {
-            if (!_.includes(arr, val)) {
+            //if (!_.includes(arr, val)) {
+            if (arr.indexOf(val) === -1) {
                 arr.push(val);
             }
         }

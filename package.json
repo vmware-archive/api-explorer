@@ -6,8 +6,9 @@
   "angular-cli": {},
   "scripts": {
     "ng": "ng",
-    "prestart": "node tools/copy-node-assets.js",
-    "start": "ng serve",
+    "update:apixasset": "node tools/update-apix-assets.js",
+    "start:dev": "ng serve --delete-output-path=false",
+    "start": "npm-run-all build:apix start:dev",
     "clean": "del ./dist",
     "postbuild": "bash set-version.sh",
     "build:app": "ng build --prod --delete-output-path=false",

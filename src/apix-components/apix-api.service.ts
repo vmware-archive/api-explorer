@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
 import * as _ from 'lodash';
 
 import { ApixUtils } from './apix.utils';
