@@ -222,7 +222,7 @@ table.prettytable {
                 </div>
 
                 <iframe
-                    local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath + '&ssoId=' + ssoId)}}">
+                    local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath + '&ssoId=' + ssoId +'&loggedIn=' + loggedIn)}}">
                 </iframe>
 
                 <!--

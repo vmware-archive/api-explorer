@@ -45,10 +45,10 @@
   window.config.remoteSampleExchangeApiEndPoint = "https://apigw.vmware.com/sampleExchange/v1";
   window.config.remoteApiEndPoint = "https://vdc-repo.vmware.com/apix";
 
-  // By default SSO is disabled with a value of "none" for the ssoId. To enable it, 
+  // By default SSO is disabled with a value of "none" for the ssoId. To enable it,
   // provide a supported string for the ssoId and a valid SSO endpoint host/path for
   // window.config.authApiEndpoint
-  window.config.ssoId = "none";
+  window.config.ssoId = "vsphere_sso";
 
   //If you can use basic auth for all contained APIs, you can use this block.  The resulting auth
   // credentials will then be passed to Swagger to use on all APIs.
@@ -62,5 +62,5 @@
   //If using vRA SSO, use this block
   //window.config.ssoId = "vra_sso";
   //window.config.authApiEndPoint = "https://localhost/identity/api/tokens";
-  
+
 }(this));
