@@ -48,7 +48,7 @@
   // By default SSO is disabled with a value of "none" for the ssoId. To enable it,
   // provide a supported string for the ssoId and a valid SSO endpoint host/path for
   // window.config.authApiEndpoint
-  window.config.ssoId = "vsphere_sso";
+  window.config.ssoId = "none";
 
   //If you can use basic auth for all contained APIs, you can use this block.  The resulting auth
   // credentials will then be passed to Swagger to use on all APIs.
