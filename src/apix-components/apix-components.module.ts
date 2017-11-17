@@ -24,6 +24,7 @@ import { SafePipe } from './pipes/safe.pipe';
 
 import { ApixApiService } from './apix-api.service';
 import { ApixAuthService } from './apix-auth.service';
+import { ApixSharedService } from './apix-shared.service';
 import { ApixHttp } from './apix.http';
 import { ApixRoutingModule} from './apix.routing';
 
@@ -67,7 +68,7 @@ export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptio
             deps: [XHRBackend, RequestOptions, Injector]
         },
 
-        ApixApiService, ApixAuthService]
+        ApixApiService, ApixAuthService, ApixSharedService]
 })
 
 export class ApixComponentsModule {

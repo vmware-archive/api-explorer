@@ -4,10 +4,11 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
 import { ApixAuthService } from '../apix-auth.service';
+import { ApixSharedService } from '../apix-shared.service';
 import { Auth } from '../apix.model';
 import { config } from '../apix.config';
 
@@ -33,11 +34,11 @@ export class LoginComponent implements OnInit{
 
     constructor(private route: ActivatedRoute,
         private router: Router,
-        private apixAuthService: ApixAuthService)
+        private apixAuthService: ApixAuthService,
+        private apixSharedService: ApixSharedService)
     {}
 
     ngOnInit() {
-        //this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
         if (this.authSchemas.length == 1) {
             //console.log(this.authSchemas);
             this.selectedAuthId = this.authSchemas[0].id;
@@ -57,17 +58,19 @@ export class LoginComponent implements OnInit{
         this.selectedAuth = this.getAuthById();
         if (this.selectedAuthId == 'vcenter_sso') {
             this.apixAuthService.vcenterLogin(this.user.username, this.user.password, this.selectedAuth).then(() => {
-                //this.router.navigate([this.returnUrl]);
+                this.apixSharedService.loginChanged.emit(true);
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'vra_sso') {
             this.apixAuthService.vraLogin(this.user.username, this.user.password, this.user.tenant, this.selectedAuth).then(() => {
+                this.apixSharedService.loginChanged.emit(true);
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'basic') {
             this.apixAuthService.basicLogin(this.user.username, this.user.password, this.selectedAuth);
+            this.apixSharedService.loginChanged.emit(true);
         } else {
             this.apixAuthService.login(this.user.username, this.user.password, this.selectedAuth.authUrl).then(() => {
             }).catch(response =>

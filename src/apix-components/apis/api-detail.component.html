@@ -6,7 +6,7 @@
 
 <div *ngIf="loading" class="loading"></div>
 
-<div  class="card api">
+<div class="card api" *ngIf="api">
     <div class="card-header">
         {{api?.name}}
         <a [routerLink]="['/apis']" (click)="setHomePageTab()" class="back" target="_self">
@@ -54,7 +54,7 @@
                                 <button type="button" (click)="updatePreferences('swagger')" class="btn btn-default" *ngIf="showPreferences">Update</button>
                             </div>
 
-                            <local-iframe [src]="api.url + '&host=' + swaggerPreferences?.host + '&basePath=' + swaggerPreferences?.basePath"></local-iframe>
+                            <local-iframe [src]="api.url + '&host=' + swaggerPreferences?.host + '&basePath=' + swaggerPreferences?.basePath + '&reload=' + reload"></local-iframe>
                         </div>
                         <div *ngSwitchCase="'html'">
                             <iframe  class="html" width="100%" height="75vh" allowfullscreen [src]="api.url | safe"></iframe>

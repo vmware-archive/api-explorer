@@ -8,7 +8,7 @@
     "ng": "ng",
     "update:apixasset": "node tools/update-apix-assets.js",
     "start:dev": "ng serve --delete-output-path=false",
-    "start": "npm-run-all build:apix start:dev",
+    "start": "npm-run-all clean build:apix start:dev",
     "clean": "del ./dist",
     "postbuild": "bash set-version.sh",
     "build:app": "ng build --prod --delete-output-path=false",

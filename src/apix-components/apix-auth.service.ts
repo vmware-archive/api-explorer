@@ -47,11 +47,11 @@ export class ApixAuthService {
                .toPromise()
                .then(response => {
                    let value = response.json().value;
-                   //console.log(value);
+                   console.log(value);
                    let user = {username: username};
                    this.addUserToStorage(user)
                    this.addAuthToStorage(auth);
-                   this.addSessionIdStorage(value.sessionId);
+                   this.addSessionIdStorage(value);
                });
     }
 
@@ -119,10 +119,7 @@ export class ApixAuthService {
     }
 
     getCurrentUser() {
-        let user = localStorage.getItem(this.USER_KEY);
-        if (!user)
-            user = sessionStorage.getItem(this.USER_KEY);
-
+        let user = sessionStorage.getItem(this.USER_KEY);
         if (user)
             return JSON.parse(user);
         return null;

@@ -6,7 +6,7 @@
 const shell = require('shelljs');
 
 shell.exec('cd dist/apix-components; mkdir assets;');
-shell.exec('cp -r ./src/apix-components/assets/* ./dist/apix-components/assets; cp ./dist/apix-components/bundles/* ./dist/apix-components');
+shell.exec('cp ./src/assets/jquery.sieve.js ./dist/apix-components/assets; cp ./src/assets/swagger-console.html ./dist/apix-components/assets; cp ./dist/apix-components/bundles/* ./dist/apix-components');
 shell.exec('cd dist/apix-components; npm pack;');
 
 

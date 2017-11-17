@@ -9,8 +9,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Response } from '@angular/http';
 
-//import * as _ from 'lodash';
-
 import { Api } from '../apix.model';
 import { ArraySortPipe } from '../pipes/sort.pipe';
 import { OrderByPipe } from '../pipes/orderBy.pipe';
@@ -64,12 +62,11 @@ export class ApiListComponent implements OnInit {
     @Input() enableRemote: boolean = config.enableRemote;
 
     initDefaultFilters: boolean = false;
-
     overviewHtml: string = '';
     tab: number = 1;
     hideLeftNav: boolean = false;
-
     selectedApiId: string = null;
+
     loading: number = 0;
     errorMessage: string = '';
     infoMessage: string = '';
@@ -103,6 +100,7 @@ export class ApiListComponent implements OnInit {
         this.setFilteredApis();
         this.loadAPIGroupOverview(overviewHtmlPath);
         */
+
         this.apixApiService.setEnvironment(this.baseRoute, this.remoteApiUrl, this.localApiUrl, this.remoteSampleExchangeUrl);
         this.getApis();
         if (localStorage.getItem(ApixUtils.APIS_TAB_KEY) == 'apis') {

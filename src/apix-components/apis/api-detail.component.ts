@@ -9,7 +9,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { Response } from '@angular/http';
 
-import { Observable } from 'rxjs/Observable';
+//import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
@@ -17,6 +17,8 @@ import 'rxjs/add/operator/switchMap';
 import { Api, ApiResources, ApiPreferences } from '../apix.model';
 import { ApixUtils } from '../apix.utils';
 import { ApixApiService } from '../apix-api.service';
+import { ApixAuthService } from '../apix-auth.service';
+import { ApixSharedService } from '../apix-shared.service';
 
 @Component({
     selector: 'api-details',
@@ -40,20 +42,30 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     infoMessage: string = '';
 
     showDetail = false;
+    reload: boolean = false;
+
     private sub: any;
     private timer: any;
 
     constructor(private route: ActivatedRoute,
         private location: Location,
-        private apixApiService: ApixApiService
-    ) {}
+        private apixApiService: ApixApiService,
+        private authService: ApixAuthService,
+        private apixSharedService: ApixSharedService)
+    {
+        this.apixSharedService.loginChanged.subscribe(
+            (data: any) => {
+                console.log(data);
+                this.reload = data;
+            });
+    }
 
     ngOnInit() :void {
         this.path = this.route.snapshot.queryParams['path'];
 
         this.sub = this.route.params.subscribe(params => {
             this.id = +params['id'];
-            this.getApi();
+            this.getApi(this.id);
         });
 
         if (this.path) {
@@ -69,35 +81,36 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         localStorage.setItem(ApixUtils.APIS_TAB_KEY, 'apis');
     }
 
-    private getApi() {
+    private getApi(apiId: number) {
         var apis = JSON.parse(localStorage.getItem(ApixUtils.APIS_STORAGE_KEY));
         var result = [];
         if (apis) {
-            result = apis.filter(api => api.id === this.id);
+            result = apis.filter(api => api.id === apiId);
             if (result) {
                 this.api = result[0];
                 this.setSelectedApi();
             }
         } else {
-            // FIXME
-            var localApis = this.getLocalApis();
-            result = localApis.filter(api => api.id === this.id);
-            if (result) {
-                this.api = result[0];
-                this.setSelectedApi();
+            this.getLocalApi(apiId);
+
+            if (!this.api) {
+                this.getRemoteApi(apiId);
             }
-            else
-                this.getRemoteApi();
         }
     }
 
-    private getLocalApis() : any {
+    private getLocalApi(apiId: number) : any {
         this.loading++;
         this.apixApiService.getLocalApis().then(res => {
             this.loading--;
-            var results = ApixUtils.formatLocalApis(res.apis);
-            localStorage.setItem(ApixUtils.APIS_STORAGE_KEY, JSON.stringify(results));
-            return results;
+            var localApis = ApixUtils.formatLocalApis(res.apis);
+            if (localApis) {
+                var result = localApis.filter(api => api.id === apiId);
+                if (result) {
+                    this.api = result[0];
+                    this.setSelectedApi();
+                }
+            }
         }).catch(response => {
             this.loading--;
             if (response instanceof Response)
@@ -107,36 +120,19 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         });
     }
 
-    private getRemoteApi() {
+    private getRemoteApi(apiId: number) {
         this.loading++;
-
-        this.route.params
-            .switchMap((params: Params) => this.apixApiService.getRemoteApi(+params['id']))
-            .subscribe(
-                api => {
-                    this.loading--;
-                    this.api =  new Api();
-                    this.api.id = api.id;
-                    this.api.name = api.name;
-                    this.api.version = api.version;
-                    this.api.description = api.description;
-                    this.api.api_uid = api.api_uid;
-                    //this.api_ref_doc_artifact_id = api.api_ref_doc_artifact_id;
-                    if (api.tags) {
-                        var type = api.tags.find(i => i.category === 'display').name;
-                        // Clean the type
-                        if (type == "iframe-documentation" || (api.api_ref_doc_url && api.api_ref_doc_url.endsWith(".html"))) {
-                            type = "html";
-                        }
-                        this.api.type = type;
-                    }
-                    this.api.url = api.api_ref_doc_url;
-                    this.setSelectedApi();
-            },
-            (response) => {
-                this.loading--;
-                this.errorMessage = response.text() || response.statusText;
-            });
+        this.apixApiService.getRemoteApi(apiId).then(api => {
+            this.loading--;
+            this.api = ApixUtils.formatRemoteApi(api);
+            this.setSelectedApi();
+        }).catch(response => {
+            this.loading--;
+            if (response instanceof Response)
+                this.errorMessage = response.text() ? response.text() : response.statusText;
+            else
+                this.errorMessage = response;
+        });
     }
 
     private setSelectedApi (){
@@ -412,13 +408,15 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         this.loading += 1;
         this.swaggerPreferences = Object.assign({}, this.preferences);
         localStorage.setItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
+        //this.timeout();
+    };
 
+    timeout() {
         clearTimeout(this.timer);
         this.timer = setTimeout(() => {
             this.loading -= 1;
         }, 500);
-
-    };
+    }
 
     // Toggles the detail view preferences
     togglePreferences () {

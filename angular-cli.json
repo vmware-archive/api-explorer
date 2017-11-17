@@ -7,7 +7,7 @@
             "root": "src",
             "outDir": "dist",
             "assets": [
-                "apix-components/assets",
+                "assets",
                 "favicon.ico",
                 "apix-config.json",
                 "local.json",

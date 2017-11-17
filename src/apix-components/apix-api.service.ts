@@ -23,10 +23,10 @@ export class ApixApiService {
 
     public CONFIG_KEY = "apix-config";
 
-    private baseUrl;
-    private remoteApiUrl;
-    private localApiUrl;
-    private remoteSXApiUrl;
+    private baseUrl = config.baseRoute;
+    private remoteApiUrl = config.remoteApiUrl;
+    private localApiUrl = config.localApiUrl;
+    private remoteSXApiUrl = config.remoteSampleExchangeUrl;
 
     constructor(private http: Http, private router: Router) {
         if (!this.remoteApiUrl) {
@@ -63,11 +63,11 @@ export class ApixApiService {
             .catch(this.handleError);
     }
 
-    getRemoteApi(id: number): Promise<any> {
+    getRemoteApi(id: number) {
         return this.http.get(`${this.remoteApiUrl}/apis/${id}`)
-               .toPromise()
-               .then(response => response.json())
-               .catch(this.handleError);
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
     }
 
     getLatestRemoteApiIdForApiUid (api_uid: string) {

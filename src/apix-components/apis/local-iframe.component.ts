@@ -32,7 +32,7 @@ export class LocalIframeComponent implements AfterViewInit {
 
   @Input() set src(value: string) {
     this.url = value;
-    this.localIframe = './apix-components/assets/swagger-console.html?url=' + this.url;
+    this.localIframe = './assets/swagger-console.html?url=' + this.url;
     this.loadContent();
   }
 

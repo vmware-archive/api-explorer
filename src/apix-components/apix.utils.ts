@@ -10,6 +10,7 @@ import { Http } from '@angular/http';
 import { OnInit } from '@angular/core';
 
 import { config } from './apix.config';
+import { Api } from './apix.model';
 
 @Injectable()
 export class ApixUtils {
@@ -66,6 +67,49 @@ export class ApixUtils {
       productListNoVersions.push(productPair[0]);
     }
     return productListNoVersions;
+  }
+
+  public static formatRemoteApi(api: any): Api {
+    if (api) {
+        var result = new Api();
+        result.id = api.id;
+        result.name = api.name;
+        result.version = api.version;
+        result.description = api.description;
+        result.api_uid = api.api_uid;
+        result.source = "remote";
+
+        var type = "swagger";
+        var products = [];
+        var languages = [];
+        var apiGroup = "";
+
+        if (api.tags && api.tags.length > 0) {
+            for (let tag of api.tags) {
+                if (tag.category === 'display') {
+                    type = tag.name;
+                } else if (tag.category === 'api-group') {
+                    apiGroup = tag.name;
+                } else if (tag.category === 'product') {
+                    products.push(tag.name);
+                 } else if (tag.category === 'programming-language') {
+                    languages.push(tag.name);
+                }
+            }
+        }
+
+        // Clean the type
+        if (type == "iframe-documentation" || (api.api_ref_doc_url && api.api_ref_doc_url.endsWith(".html"))) {
+            type = "html";
+        }
+        result.type = type;
+        result.url = api.api_ref_doc_url;
+        result.products = ApixUtils.createProductListNoVersions(products),
+        result.productDisplayString = ApixUtils.createDisplayStringForProducts(products),
+        result.languages = languages;
+        return result;
+    }
+    return null;
   }
 
   public static formatLocalApis(apis: any[]): any[] {
