@@ -67,5 +67,25 @@ export class Auth {
     }
 };
 
+/**
+ * Config class.
+ */
+export class Config {
+    base: string;
+    path: string;
+    localApiUrl: string;
+    remoteApiUrl: string;
+    remoteSampleExchangeUrl: string;
+    hideFilters: boolean;
+    apiListHeaderText: string;
+    hideProductsFilter: boolean;
+    hideLanguagesFilter: boolean;
+    hideSourcesFilter: boolean;
+    defaultProductsFilter: any[];
+    defaultLanguagesFilter: any[];
+    defaultSourcesFilter: any[];
+    defaultKeywordsFilter: string;
+    enableLocal: boolean;
+    enableRemote: boolean;
 
-
+}

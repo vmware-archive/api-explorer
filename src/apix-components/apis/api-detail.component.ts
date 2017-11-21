@@ -34,15 +34,15 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     preferences: ApiPreferences;
     swaggerPreferences: ApiPreferences;
     showPreferences: boolean = false;
-
-    loading: number = 0;
+    showDetail = false;
     tab: number = 1;
 
+    loading: number = 0;
     errorMessage: string = '';
     infoMessage: string = '';
-
-    showDetail = false;
     reload: boolean = false;
+    baseUrl: string = '/';
+    backUrl: string = 'apis';
 
     private sub: any;
     private timer: any;
@@ -53,9 +53,17 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         private authService: ApixAuthService,
         private apixSharedService: ApixSharedService)
     {
+        this.baseUrl = this.apixApiService.getBase();
+        let path= this.apixApiService.getPath();
+        if (path) {
+            this.backUrl = '/' + path; // + '/apis';
+        } else {
+            this.backUrl = '/apis';
+        }
+
         this.apixSharedService.loginChanged.subscribe(
             (data: any) => {
-                console.log(data);
+                //console.log(data);
                 this.reload = data;
             });
     }

@@ -15,38 +15,52 @@ import 'rxjs/add/operator/map';
 import * as _ from 'lodash';
 
 import { ApixUtils } from './apix.utils';
-import { Auth } from './apix.model';
+import { Auth, Config } from './apix.model';
 import { config } from './apix.config';
 
 @Injectable()
 export class ApixApiService {
 
     public CONFIG_KEY = "apix-config";
+    public APIX_BASE = "apix-base";
+    public APIX_PATH = "apix-path";
 
-    private baseUrl = config.baseRoute;
+    private base = config.base;
+    private path = config.path;
     private remoteApiUrl = config.remoteApiUrl;
     private localApiUrl = config.localApiUrl;
     private remoteSXApiUrl = config.remoteSampleExchangeUrl;
 
     constructor(private http: Http, private router: Router) {
+        /*
         if (!this.remoteApiUrl) {
             let configStored = localStorage.getItem(this.CONFIG_KEY);
             if (configStored) {
                 let config = JSON.parse(configStored);
-                this.baseUrl = config.baseUrl;
+                this.base = config.baseUrl;
+                this.path = config.routePath;
                 this.remoteApiUrl = config.remoteApiUrl;
                 this.localApiUrl = config.localApiurl;
                 this.remoteSXApiUrl = config.remoteSXApiUrl;
             }
-        }
+        }*/
     }
 
-    setEnvironment (baseUrl: string, remoteApiUrl: string, localApiurl: string, sxApiUrl: string) {
-        this.baseUrl = baseUrl;
-        this.remoteApiUrl = remoteApiUrl;
-        this.localApiUrl = localApiurl;
-        this.remoteSXApiUrl = sxApiUrl;
-        this.addConfigOptionToStorage();
+    setConfig (config: Config) {
+        this.base = config.base;
+        this.path = config.path;
+        this.remoteApiUrl = config.remoteApiUrl;
+        this.localApiUrl = config.localApiUrl;
+        this.remoteSXApiUrl = config.remoteSampleExchangeUrl;
+        this.addConfigOptionToStorage(config);
+    }
+
+    getBase() {
+        return this.base;
+    }
+
+    getPath() {
+        return this.path;
     }
 
     getRemoteApis() {
@@ -130,9 +144,10 @@ export class ApixApiService {
             .catch(this.handleError);
     }
 
-    public addConfigOptionToStorage() {
-        let config = {baseUrl: this.baseUrl, localApiUrl: this.localApiUrl, remoteApiUrl: this.remoteApiUrl, remoteSXApiUrl: this.remoteSXApiUrl};
-        localStorage.setItem(this.CONFIG_KEY, JSON.stringify(config));
+    public addConfigOptionToStorage(myconfig: Config) {
+        localStorage.setItem(this.APIX_BASE, this.base);
+        localStorage.setItem(this.APIX_PATH, this.path);
+        localStorage.setItem(this.CONFIG_KEY, JSON.stringify(myconfig));
     }
 
     private handleError(error: any): Promise<any> {

@@ -79,7 +79,7 @@
                                     <!--<api-details [apiId]="api.id" (hrefClick)="apiHrefClick($event)"></api-details>-->
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <a [routerLink]="['/apis', api.id]">{{api.name}}</a>
+                                            <a [routerLink]="[apixPath, api.id]">{{api.name}}</a>
                                             &nbsp;
                                             <span *ngIf="api.source=='local'" class="badge badge-light-blue">local</span>
                                         </div>
@@ -95,7 +95,7 @@
                                         <div class="col-md-12 method_row" >
                                             <div class="http_method">{{method.http_method}}</div>
 
-                                            <a [routerLink]="['/apis', api.id]" [queryParams]="{path:method.url}" ><span class="path {{method.deprecated ? 'deprecated' : ''}}">{{method.path}}</span></a>
+                                            <a [routerLink]="[apixPath, api.id]" [queryParams]="{path:method.url}" ><span class="path {{method.deprecated ? 'deprecated' : ''}}">{{method.path}}</span></a>
                                             <span class="description">{{method.summary}}</span>
                                         </div>
                                     </div>

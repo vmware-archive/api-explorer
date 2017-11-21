@@ -9,7 +9,8 @@ import { AppConfig } from './app.config';
 
     <!-- vCenter Demo -->
     <api-list
-        [baseRoute] = "baseRoute"
+        [base] = "base"
+        [path] = "path"
         [apiListHeaderText]="apiListHeaderText"
         [enableLocal] ="enableLocal"
         [enableRemote]= "enableRemote"
@@ -32,7 +33,8 @@ import { AppConfig } from './app.config';
 
 export class ApixDemo {
 
-    baseRoute: string = this.config.getConfig("baseRoute");
+    base: string = this.config.getConfig("base");
+    path: string = this.config.getConfig("path");
     localApiUrl: string = this.config.getConfig("localApiUrl");
     remoteApiUrl: string = this.config.getConfig("remoteApiUrl");
     remoteSampleExchangeUrl: string = this.config.getConfig("remoteSampleExchangeUrl");

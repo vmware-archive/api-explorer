@@ -9,11 +9,21 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { ApiListComponent } from './apis/api-list.component';
 import { ApiDetailComponent } from './apis/api-detail.component';
+import { MYPATH } from './apix.config';
 
+let detailpath = 'apis/:id';
+let listpath = 'apis';
+let path = localStorage.getItem("apix-path");
+
+if (path) {
+  listpath = path + 'apis';
+  detailpath = path + 'apis/:id';
+}
 
 const apixRoutes: Routes = [
-    {path: 'apis', component: ApiListComponent, data: {title: 'APIs List'}},
-    {path: 'apis/:id', component: ApiDetailComponent, data: {title: 'API Detail'}}
+    {path: '', component: ApiListComponent, data: {title: 'APIs List'}},
+    {path: listpath, component: ApiListComponent, data: {title: 'APIs List'}},
+    {path: detailpath, component: ApiDetailComponent, data: {title: 'API Detail'}}
 ];
 
 @NgModule({

@@ -5,8 +5,11 @@
  */
 export const APP_TITLE = 'VMware API Explorer Component';
 
+export const MYPATH = window['mypath'];
+
 export const config = {
-    baseRoute: "/",
+    base: "/",
+    path: '',
     apiListHeaderText: "Available APIs",
     remoteApiUrl: 'https://vdc-repo.vmware.com/apix',
     remoteSampleExchangeUrl: 'https://apigw.vmware.com/sampleExchange/v1',

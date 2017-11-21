@@ -9,7 +9,7 @@
 <div class="card api" *ngIf="api">
     <div class="card-header">
         {{api?.name}}
-        <a [routerLink]="['/apis']" (click)="setHomePageTab()" class="back" target="_self">
+        <a [routerLink]="[backUrl]" (click)="setHomePageTab()" class="back" target="_self">
             <strong>&lt;&lt; Back</strong>
         </a>
     </div>
