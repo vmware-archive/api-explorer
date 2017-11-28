@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
+ * This software is released under MIT license.
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
+
 import { Component } from "@angular/core";
 import { AppConfig } from './app.config';
 
@@ -31,7 +37,7 @@ import { AppConfig } from './app.config';
     `
 })
 
-export class ApixDemo {
+export class ApixListDemo {
 
     base: string = this.config.getConfig("base");
     path: string = this.config.getConfig("path");

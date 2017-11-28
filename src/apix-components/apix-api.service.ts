@@ -25,8 +25,8 @@ export class ApixApiService {
     public APIX_BASE = "apix-base";
     public APIX_PATH = "apix-path";
 
-    private base = config.base;
-    private path = config.path;
+    private base = null;
+    private path = null;
     private remoteApiUrl = config.remoteApiUrl;
     private localApiUrl = config.localApiUrl;
     private remoteSXApiUrl = config.remoteSampleExchangeUrl;
@@ -52,7 +52,6 @@ export class ApixApiService {
         this.remoteApiUrl = config.remoteApiUrl;
         this.localApiUrl = config.localApiUrl;
         this.remoteSXApiUrl = config.remoteSampleExchangeUrl;
-        this.addConfigOptionToStorage(config);
     }
 
     getBase() {
@@ -144,10 +143,18 @@ export class ApixApiService {
             .catch(this.handleError);
     }
 
-    public addConfigOptionToStorage(myconfig: Config) {
-        localStorage.setItem(this.APIX_BASE, this.base);
-        localStorage.setItem(this.APIX_PATH, this.path);
+    addConfigOptionToStorage(myconfig: Config) {
+        this.addBaseToStorage();
+        this.addPathToStorage();
         localStorage.setItem(this.CONFIG_KEY, JSON.stringify(myconfig));
+    }
+
+    addBaseToStorage() {
+        localStorage.setItem(this.APIX_BASE, this.base);
+    }
+
+    addPathToStorage() {
+        localStorage.setItem(this.APIX_PATH, this.path);
     }
 
     private handleError(error: any): Promise<any> {

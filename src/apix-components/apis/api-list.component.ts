@@ -15,7 +15,6 @@ import { OrderByPipe } from '../pipes/orderBy.pipe';
 import { ApixUtils } from '../apix.utils';
 import { ApixApiService } from '../apix-api.service';
 
-import { MYPATH } from '../apix.config';
 import { config } from '../apix.config';
 
 @Component({
@@ -50,7 +49,7 @@ export class ApiListComponent implements OnInit {
     @Input() path: string = null;
     @Input() localApiUrl: string = null;
     @Input() remoteApiUrl: string = config.remoteApiUrl;
-    @Input() remoteSampleExchangeUrl: string = config.remoteSampleExchangeUrl
+    @Input() remoteSampleExchangeUrl: string = config.remoteSampleExchangeUrl;
     @Input() hideFilters: boolean = config.hideFilters;
     @Input() apiListHeaderText: string = config.apiListHeaderText;
     @Input() hideProductsFilter: boolean = config.hideProductsFilter;
@@ -206,6 +205,7 @@ export class ApiListComponent implements OnInit {
             myconfig.enableLocal = this.enableLocal;
             myconfig.enableRemote = this.enableRemote;
             this.apixApiService.setConfig(myconfig);
+            this.apixApiService.addConfigOptionToStorage(myconfig);
         }
     }
 

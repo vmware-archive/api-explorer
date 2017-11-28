@@ -16,7 +16,8 @@ import { ApixComponentsModule } from "../apix-components/apix-components.module"
 import { AppConfig } from './app.config';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from "./app.routing";
-import { ApixDemo } from './apix.demo';
+import { ApixListDemo } from './apix-list.demo';
+import { ApixDetailsDemo } from './apix-details.demo';
 import { environment } from '../environments/environment';
 
 export function initConfig(config: AppConfig){
@@ -26,7 +27,8 @@ export function initConfig(config: AppConfig){
 @NgModule({
     declarations: [
         AppComponent,
-        ApixDemo
+        ApixListDemo,
+        ApixDetailsDemo
     ],
     imports: [
         BrowserModule,

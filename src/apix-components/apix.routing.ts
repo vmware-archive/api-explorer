@@ -9,7 +9,6 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { ApiListComponent } from './apis/api-list.component';
 import { ApiDetailComponent } from './apis/api-detail.component';
-import { MYPATH } from './apix.config';
 
 let detailpath = 'apis/:id';
 let listpath = 'apis';
