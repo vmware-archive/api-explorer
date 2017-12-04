@@ -7,9 +7,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
 import { Http } from '@angular/http';
-import { OnInit } from '@angular/core';
-
-import { config } from './apix.config';
 import { Api } from './apix.model';
 
 @Injectable()

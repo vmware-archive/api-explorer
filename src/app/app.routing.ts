@@ -7,28 +7,9 @@ import { NgModule }             from '@angular/core';
 import { ModuleWithProviders }  from '@angular/core/src/metadata/ng_module';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ApixListDemo } from './apix-list.demo';
-import { ApixDetailsDemo } from './apix-details.demo';
-
-const appRoutes: Routes = [
+export const APP_ROUTES: Routes = [
     {path: '', redirectTo: 'apis', pathMatch: 'full'},
-    //{path: 'apis',   redirectTo: '/apis', pathMatch: 'full' },
-    //{path: "apis", loadChildren: "app/apix/apix.demo.module", data: {title: 'Apix'} }
-    {path: "apis", component: ApixListDemo, data: {title: 'Apix'}},
-    {path: "apis/:id", component: ApixDetailsDemo, data: {title: 'Apix Details'}}
+    {path: "apis", loadChildren: "app/apix/apix.demo.module" },
 ];
 
-@NgModule({
-    imports: [
-      RouterModule.forRoot(
-        appRoutes,
-        { enableTracing: false }
-      )
-      // other imports here
-    ],
-    exports: [
-        RouterModule
-      ]
-  })
-export class AppRoutingModule {}
-
+export const ROUTING: ModuleWithProviders = RouterModule.forRoot(APP_ROUTES);

@@ -7,7 +7,8 @@
 import { Component, ViewChild, ElementRef, Renderer, Input, OnInit, AfterViewInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { ApixApiService } from '../apix-api.service';
+import { ApixApiService } from './apix-api.service';
+import { ApixConfigService } from '../config/config.service';
 import { Api } from '../apix.model';
 
 @Component({
@@ -38,7 +39,8 @@ export class LocalIframeComponent implements AfterViewInit {
 
   constructor(
     private renderer: Renderer,
-    private apixApiService: ApixApiService
+    private apixApiService: ApixApiService,
+    private configService: ApixConfigService
   ) {}
 
   ngOnInit() :void {
@@ -53,11 +55,15 @@ export class LocalIframeComponent implements AfterViewInit {
     if (this.localIframe) {
       this.loading += 1;
 
+      var apixbase = this.configService.getConfigValue("base") || '/';
+
       this.apixApiService.getSwaggerConsoleHTML(this.localIframe).then(response => {
           this.loading -= 1;
           var content = response._body;
           var doc =  this.iframe.nativeElement.contentDocument;
           doc.open('text/html');
+          content = content.replace(/@@folder@@/g, apixbase);
+          content = content.replace(/@@base@@/g, window.location.pathname);
           doc.write(content);
           doc.close();
 

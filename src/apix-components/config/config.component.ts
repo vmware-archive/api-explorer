@@ -3,14 +3,10 @@
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
-
-import { Component, Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 @Injectable()
-export class ApixSharedService {
+export class ApixComponentsConfig {
+    configFileUrl?: string = "";
 
-    constructor() {}
-
-    loginChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 }
-

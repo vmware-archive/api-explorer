@@ -4,35 +4,65 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 import { NgModule }            from '@angular/core';
-import { ModuleWithProviders } from '@angular/core/src/metadata/ng_module';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ApiListComponent } from './apis/api-list.component';
 import { ApiDetailComponent } from './apis/api-detail.component';
 
-let detailpath = 'apis/:id';
-let listpath = 'apis';
-let path = localStorage.getItem("apix-path");
-
-if (path) {
-  listpath = path + 'apis';
-  detailpath = path + 'apis/:id';
-}
-
 const apixRoutes: Routes = [
-    {path: '', component: ApiListComponent, data: {title: 'APIs List'}},
-    {path: listpath, component: ApiListComponent, data: {title: 'APIs List'}},
-    {path: detailpath, component: ApiDetailComponent, data: {title: 'API Detail'}}
+  {path: '', component: ApiListComponent, data: {title: 'APIs List'}},
+  {path: 'apis', component: ApiListComponent, data: {title: 'APIs List'}},
+  {path: 'apis/:id', component: ApiDetailComponent, data: {title: 'API Detail'}}
 ];
 
 @NgModule({
     imports: [
       RouterModule.forChild(apixRoutes)
+      /*
+      RouterModule.forChild([
+        {
+          path: '',
+          component: ApiListComponent,
+          children: [
+              {
+                  path: 'apis',
+                  component: ApiListComponent
+              },
+              {
+                  path: 'apis/:id',
+                  component: ApiDetailComponent,
+              }
+          ]
+        }
+      ])*/
     ],
     exports: [
       RouterModule
     ]
-  })
-export class ApixRoutingModule { }
+})
+
+export class ApixRoutingModule {}
+
+/*
+constructor(private configService: ApixConfigService) {}
+
+    detailpath = 'apis/:id';
+    listpath = 'apis';
+
+    path = this.configService.getConfigValue("path");
+
+    if (path) {
+        this.listpath = path + 'apis';
+        this.detailpath = path + 'apis/:id';
+    }
+
+    const apixRoutes: Routes = [
+      {path: '', component: ApiListComponent, data: {title: 'APIs List'}},
+      {path: this.listpath, component: ApiListComponent, data: {title: 'APIs List'}},
+      {path: this.detailpath, component: ApiDetailComponent, data: {title: 'API Detail'}}
+  ];
+    console.log('apix-list-path=' + this.listpath);
+    console.log('apix-detail-path=' + this.detailpath);
+}*/
 
 

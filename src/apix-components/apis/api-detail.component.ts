@@ -15,10 +15,10 @@ import 'rxjs/add/operator/switchMap';
 
 import { Api, ApiResources, ApiPreferences, Config } from '../apix.model';
 import { ApixUtils } from '../apix.utils';
-import { ApixApiService } from '../apix-api.service';
-import { ApixAuthService } from '../apix-auth.service';
-import { ApixSharedService } from '../apix-shared.service';
-import { config } from '../apix.config';
+import { ApixApiService } from './apix-api.service';
+import { ApixAuthService } from '../login/apix-auth.service';
+import { ApixConfigService } from '../config/config.service';
+import { config } from '../config/config';
 
 @Component({
     selector: 'api-details',
@@ -42,76 +42,78 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     reload: boolean = false;
     backUrl: string = '/apis';
 
-    private sub: any;
+    private subscription: any;
+    private loginSubscription: any;
     private timer: any;
 
-    @Input() base: string = null;
-    @Input() path: string = null;
-    @Input() localApiUrl: string = config.localApiUrl;
-    @Input() remoteApiUrl: string = config.remoteApiUrl;
-    @Input() remoteSampleExchangeUrl: string = config.remoteSampleExchangeUrl;
+    base: string = config.base;
+    path: string = config.path;
+    localApiUrl: string = config.localApiUrl;
+    remoteApiUrl: string = config.remoteApiUrl;
+    remoteSampleExchangeUrl: string = config.remoteSampleExchangeUrl;
 
     constructor(private route: ActivatedRoute,
         private location: Location,
         private apixApiService: ApixApiService,
-        private authService: ApixAuthService,
-        private apixSharedService: ApixSharedService)
-    {
-/*
-        let path= this.apixApiService.getPath();
-        if (path) {
-            this.backUrl = '/' + path; // + '/apis';
-        } else {
-            this.backUrl = '/apis';
-        }
-*/
-        this.apixSharedService.loginChanged.subscribe(
-            (data: any) => {
-                //console.log(data);
-                this.reload = data;
-            });
-    }
+        private configService: ApixConfigService,
+        private apixAuthService: ApixAuthService)
+    {}
 
     ngOnInit() :void {
-        let mypath= this.apixApiService.getPath();
-        if (mypath) {
-            this.backUrl = '/' + mypath; // + '/apis';
-        } else if (this.path) {
-            this.backUrl = "/" + this.path;
-        }
-
-        let mybase = this.apixApiService.getBase();
-        if (mybase) {
-            this.base = mybase;
-        } else {
-            var myconfig = new Config();
-            myconfig.base = this.base;
-            myconfig.path = this.path;
-            myconfig.localApiUrl = this.localApiUrl;
-            myconfig.remoteApiUrl = this.remoteApiUrl;
-            myconfig.remoteSampleExchangeUrl = this.remoteSampleExchangeUrl;
-            this.apixApiService.setConfig(myconfig);
-            this.apixApiService.addBaseToStorage();
-        }
-
-        let methodPath = this.route.snapshot.queryParams['path'];
-
-        this.sub = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe(params => {
             this.id = +params['id'];
-            this.getApi(this.id);
         });
 
+        if (this.configService.isReady) {
+            this.path = this.configService.getConfigValue("path");
+            this.getApi(this.id);
+        } else {
+            let readySubscription = this.configService.ready.subscribe((ready: string) => {
+                let myconfig = this.configService.getConfig();
+                if (myconfig) {
+                    this.setConfigValue(myconfig);
+                    this.apixApiService.setUrls(this.remoteApiUrl, this.localApiUrl, this.remoteSampleExchangeUrl);
+                    this.getApi(this.id);
+                }
+                readySubscription.unsubscribe();
+            });
+        }
+        if (this.path) {
+            this.backUrl = '/' + this.path;
+        }
+
+        this.loginSubscription = this.apixAuthService.loginChanged.subscribe(
+            (data: any) => {
+                this.reload = data;
+            }
+        );
+
+        let methodPath = this.route.snapshot.queryParams['path'];
         if (methodPath) {
             this.location.replaceState("/apis/" + this.id + methodPath);
         }
     }
 
     ngOnDestroy() {
-        this.sub.unsubscribe();
+        this.subscription.unsubscribe();
+        this.loginSubscription.unsubscribe();
     }
 
     setHomePageTab() {
         localStorage.setItem(ApixUtils.APIS_TAB_KEY, 'apis');
+    }
+
+    private setConfigValue (value: any) {
+        if (value.base)
+            this.base = value.base;
+        if (value.path)
+            this.path = value.path;
+        if (value.localApiUrl)
+            this.localApiUrl = value.localApiUrl;
+        if (value.remoteApiUrl)
+            this.remoteApiUrl = value.remoteApiUrl;
+        if (value.remoteSampleExchangeUrl)
+            this.remoteSampleExchangeUrl = value.remoteSampleExchangeUrl;
     }
 
     private getApi(apiId: number) {

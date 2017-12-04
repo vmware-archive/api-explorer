@@ -30,7 +30,7 @@ export class AppConfig {
 
     public load() {
         return new Promise((resolve, reject) => {
-            this.http.get('./apix-config.json').map(res => res.json())
+            this.http.get('assets/apix-config.json').map(res => res.json())
                 .catch((error: any): any => {
                     console.log('could not load config file');
                     resolve(true);

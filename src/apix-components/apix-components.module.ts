@@ -11,22 +11,16 @@ import { HttpModule, Http, XHRBackend, RequestOptions } from '@angular/http';
 import { RouterModule } from "@angular/router";
 import { ClarityModule } from 'clarity-angular';
 
-import { ApiListComponent } from "./apis/api-list.component";
-import { ApiDetailComponent } from "./apis/api-detail.component";
-import { LocalIframeComponent } from "./apis/local-iframe.component";
-import { IFrameResizerDirective } from "./directives/iframe-resize.directive";
-import { LoginComponent } from './login/login.component';
-import { ApixUtils } from './apix.utils';
-import { ArraySortPipe } from './pipes/sort.pipe';
-import { OrderByPipe } from './pipes/orderBy.pipe';
-import { FilterTagPipe } from './pipes/filterTag.pipe';
-import { SafePipe } from './pipes/safe.pipe';
-
-import { ApixApiService } from './apix-api.service';
-import { ApixAuthService } from './apix-auth.service';
-import { ApixSharedService } from './apix-shared.service';
+import { APIS_DIRECTIVES } from "./apis/index";
+import { LOGIN_DIRECTIVES } from './login/index';
+import { PIPES_DIRECTIVES } from './pipes/index';
+import { ApixApiService } from './apis/apix-api.service';
+import { ApixAuthService } from './login/apix-auth.service';
 import { ApixHttp } from './apix.http';
 import { ApixRoutingModule} from './apix.routing';
+
+import { ApixComponentsConfig } from "./config/config.component";
+import { ApixConfigService } from './config/config.service';
 
 export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptions, injector: Injector) {
     return new ApixHttp(xhrBackend, requestOptions, injector);
@@ -41,25 +35,14 @@ export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptio
         ApixRoutingModule
     ],
     declarations: [
-        ApiListComponent,
-        ApiDetailComponent,
-        LocalIframeComponent,
-        IFrameResizerDirective,
-        LoginComponent,
-        ArraySortPipe,
-        OrderByPipe,
-        SafePipe,
-        FilterTagPipe
+        APIS_DIRECTIVES,
+        LOGIN_DIRECTIVES,
+        PIPES_DIRECTIVES,
     ],
     exports: [
-        ApiListComponent,
-        ApiDetailComponent,
-        LocalIframeComponent,
-        LoginComponent,
-        ArraySortPipe,
-        OrderByPipe,
-        SafePipe,
-        FilterTagPipe
+        APIS_DIRECTIVES,
+        LOGIN_DIRECTIVES,
+        PIPES_DIRECTIVES
     ],
     providers: [
         {
@@ -67,17 +50,16 @@ export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptio
             useFactory: getApixHttp,
             deps: [XHRBackend, RequestOptions, Injector]
         },
-
-        ApixApiService, ApixAuthService, ApixSharedService]
+        ApixApiService, ApixAuthService]
 })
 
 export class ApixComponentsModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(config: ApixComponentsConfig = {}): ModuleWithProviders {
         return {
             ngModule: ApixComponentsModule,
             providers: [
-                ApixApiService,
-                ApixAuthService
+                ApixConfigService,
+                { provide: ApixComponentsConfig, useValue: config }
             ]
         };
     }

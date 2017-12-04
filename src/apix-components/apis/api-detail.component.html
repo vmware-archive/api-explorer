@@ -6,7 +6,7 @@
 
 <div *ngIf="loading" class="loading"></div>
 
-<div class="card api" *ngIf="api">
+<div class="api" *ngIf="api">
     <div class="card-header">
         {{api?.name}}
         <a [routerLink]="[backUrl]" (click)="setHomePageTab()" class="back" target="_self">

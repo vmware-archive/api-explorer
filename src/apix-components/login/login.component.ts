@@ -7,10 +7,9 @@
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
-import { ApixAuthService } from '../apix-auth.service';
-import { ApixSharedService } from '../apix-shared.service';
+import { ApixAuthService } from './apix-auth.service';
 import { Auth } from '../apix.model';
-import { config } from '../apix.config';
+import { config } from '../config/config';
 
 @Component({
     selector: 'apix-login',
@@ -34,8 +33,7 @@ export class LoginComponent implements OnInit{
 
     constructor(private route: ActivatedRoute,
         private router: Router,
-        private apixAuthService: ApixAuthService,
-        private apixSharedService: ApixSharedService)
+        private apixAuthService: ApixAuthService)
     {}
 
     ngOnInit() {
@@ -58,19 +56,19 @@ export class LoginComponent implements OnInit{
         this.selectedAuth = this.getAuthById();
         if (this.selectedAuthId == 'vcenter_sso') {
             this.apixAuthService.vcenterLogin(this.user.username, this.user.password, this.selectedAuth).then(() => {
-                this.apixSharedService.loginChanged.emit(true);
+                this.apixAuthService.loginChanged.emit(true);
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'vra_sso') {
             this.apixAuthService.vraLogin(this.user.username, this.user.password, this.user.tenant, this.selectedAuth).then(() => {
-                this.apixSharedService.loginChanged.emit(true);
+                this.apixAuthService.loginChanged.emit(true);
             }).catch(response =>
                 this.errorMessage = response.text() ? response.text() : response.statusText
             );
         } else if (this.selectedAuthId == 'basic') {
             this.apixAuthService.basicLogin(this.user.username, this.user.password, this.selectedAuth);
-            this.apixSharedService.loginChanged.emit(true);
+            this.apixAuthService.loginChanged.emit(true);
         } else {
             this.apixAuthService.login(this.user.username, this.user.password, this.selectedAuth.authUrl).then(() => {
             }).catch(response =>

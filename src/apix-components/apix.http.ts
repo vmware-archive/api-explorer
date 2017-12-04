@@ -7,9 +7,9 @@
 import { Injectable, Injector } from '@angular/core';
 import { ConnectionBackend, Request, RequestOptions, RequestOptionsArgs, Response, ResponseOptions, Http } from '@angular/http';
 import { Router } from '@angular/router';
-import {Observable} from "rxjs/Rx";
+import { Observable } from "rxjs/Rx";
 
-import { ApixAuthService } from './apix-auth.service';
+import { ApixAuthService } from './login/apix-auth.service';
 
 /**
  * This class extends the Angular Http class to handle the network and 401 errors.

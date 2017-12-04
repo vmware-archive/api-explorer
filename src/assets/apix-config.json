@@ -9,7 +9,7 @@
     "enableRemote" : true,
     "defaultFilters" : {
         "keywords" : "",
-        "products" : [],
+        "products" : ["vSphere"],
         "languages": [],
         "types" : [],
         "sources" : []

@@ -4,7 +4,7 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, EventEmitter } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Router } from '@angular/router';
 
@@ -12,17 +12,16 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import * as _ from 'lodash';
 
-import { ApixUtils } from './apix.utils';
-import { Auth } from './apix.model';
-import { config } from './apix.config';
+import { ApixUtils } from '../apix.utils';
+import { Auth } from '../apix.model';
 
 @Injectable()
 export class ApixAuthService {
-
     public USER_KEY: string = 'apix-user';
     public SESSION_KEY: string = 'apix-session-id';
     public SSO_KEY = "apix-sso";
-    public CONFIG_KEY = "apix-config";
+
+    loginChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     constructor(private http: Http, private router: Router) {
 

@@ -15,9 +15,7 @@ import { ApixComponentsModule } from "../apix-components/apix-components.module"
 
 import { AppConfig } from './app.config';
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from "./app.routing";
-import { ApixListDemo } from './apix-list.demo';
-import { ApixDetailsDemo } from './apix-details.demo';
+import { ROUTING } from "./app.routing";
 import { environment } from '../environments/environment';
 
 export function initConfig(config: AppConfig){
@@ -27,17 +25,17 @@ export function initConfig(config: AppConfig){
 @NgModule({
     declarations: [
         AppComponent,
-        ApixListDemo,
-        ApixDetailsDemo
     ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         FormsModule,
         HttpModule,
-        AppRoutingModule,
+        ROUTING,
         ClarityModule.forRoot(),
-        ApixComponentsModule.forRoot()
+        ApixComponentsModule.forRoot({
+            configFileUrl: "assets/apix-config.json"
+        }),
     ],
     providers: [
         AppConfig,

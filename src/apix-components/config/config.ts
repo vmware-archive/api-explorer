@@ -5,8 +5,6 @@
  */
 export const APP_TITLE = 'VMware API Explorer Component';
 
-export const MYPATH = window['mypath'];
-
 export const config = {
     base: "/",
     path: '',
@@ -42,4 +40,4 @@ export const config = {
         }
         ]
 
-  };
+};

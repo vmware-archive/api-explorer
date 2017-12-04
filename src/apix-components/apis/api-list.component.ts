@@ -13,9 +13,9 @@ import { Api, Config } from '../apix.model';
 import { ArraySortPipe } from '../pipes/sort.pipe';
 import { OrderByPipe } from '../pipes/orderBy.pipe';
 import { ApixUtils } from '../apix.utils';
-import { ApixApiService } from '../apix-api.service';
-
-import { config } from '../apix.config';
+import { ApixApiService } from './apix-api.service';
+import { ApixConfigService } from '../config/config.service';
+import { config } from '../config/config';
 
 @Component({
     selector: "api-list",
@@ -45,30 +45,29 @@ export class ApiListComponent implements OnInit {
         sources: []
     };
 
-    @Input() base: string = null;
-    @Input() path: string = null;
-    @Input() localApiUrl: string = null;
-    @Input() remoteApiUrl: string = config.remoteApiUrl;
-    @Input() remoteSampleExchangeUrl: string = config.remoteSampleExchangeUrl;
-    @Input() hideFilters: boolean = config.hideFilters;
-    @Input() apiListHeaderText: string = config.apiListHeaderText;
-    @Input() hideProductsFilter: boolean = config.hideProductsFilter;
-    @Input() hideLanguagesFilter: boolean = config.hideLanguagesFilter;
-    @Input() hideSourcesFilter: boolean = config.hideSourcesFilter;
-    @Input() defaultProductsFilter: any[] = config.defaultProductsFilter;
-    @Input() defaultLanguagesFilter: any[] = config.defaultLanguagesFilter;
-    @Input() defaultSourcesFilter: any[] = config.defaultSourcesFilter;
-    @Input() defaultKeywordsFilter: string = config.defaultKeywordsFilter;
-    @Input() enableLocal: boolean = config.enableLocal;
-    @Input() enableRemote: boolean = config.enableRemote;
+    base: string = config.base;
+    path: string = config.path;
+    localApiUrl: string = config.localApiUrl;
+    remoteApiUrl: string = config.remoteApiUrl;
+    remoteSampleExchangeUrl: string = config.remoteSampleExchangeUrl;
+    hideFilters: boolean = config.hideFilters;
+    apiListHeaderText: string = config.apiListHeaderText;
+    hideProductsFilter: boolean = config.hideProductsFilter;
+    hideLanguagesFilter: boolean = config.hideLanguagesFilter;
+    hideSourcesFilter: boolean = config.hideSourcesFilter;
+    defaultProductsFilter: any[] = config.defaultProductsFilter;
+    defaultLanguagesFilter: any[] = config.defaultLanguagesFilter;
+    defaultSourcesFilter: any[] = config.defaultSourcesFilter;
+    defaultKeywordsFilter: string = config.defaultKeywordsFilter;
+    enableLocal: boolean = config.enableLocal;
+    enableRemote: boolean = config.enableRemote;
 
     initDefaultFilters: boolean = false;
     overviewHtml: string = '';
     tab: number = 1;
     hideLeftNav: boolean = false;
     selectedApiId: string = null;
-
-    apixPath: string = null;
+    apixPath: string = '/apis';
 
     loading: number = 0;
     errorMessage: string = '';
@@ -76,54 +75,21 @@ export class ApiListComponent implements OnInit {
 
     constructor(private router: Router,
         private route: ActivatedRoute,
-        private apixApiService: ApixApiService
+        private apixApiService: ApixApiService,
+        private configService: ApixConfigService
     ) {}
 
     ngOnInit(): void {
-        /* Read form cache
-
-        var apis = localStorage.getItem(ApixUtils.APIS_STORAGE_KEY);
-        var products = localStorage.getItem(ApixUtils.PRODUCTS_STORAGE_KEY);
-        var languages = localStorage.getItem(ApixUtils.LANGUAGES_STORAGE_KEY);
-        var sources = localStorage.getItem(ApixUtils.SOURCES_STORAGE_KEY);
-        var overviewHtmlPath = localStorage.getItem(ApixUtils.OVERVIEW_PATH_STORAGE_KEY);
-
-        //console.log(this.apis);
-        if (apis == null || products == null || languages == null || sources == null || overviewHtmlPath == null) {
-            console.log('call service');
+        if (this.configService.isReady) {
+            this.configApix();
             this.getApis();
         } else {
-            console.log('from cache');
-            this.apis = JSON.parse(apis);
-            this.products = JSON.parse(products);
-            this.languages = JSON.parse(languages);
-            this.sources = JSON.parse(sources);
+            let readySubscription = this.configService.ready.subscribe((ready: string) => {
+                this.configApix();
+                this.getApis();
+                readySubscription.unsubscribe();
+            });
         }
-        console.log(this.apis);
-        this.setFilteredApis();
-        this.loadAPIGroupOverview(overviewHtmlPath);
-        */
-
-        this.setConfig();
-
-        if (this.path) {
-            this.apixPath = '/' + this.path + '/apis';
-        } else {
-            this.apixPath = '/apis';
-        }
-
-        // Load cached filters
-        let filtersFromCache = localStorage.getItem("filters");
-        if (filtersFromCache) {
-            this.filters = JSON.parse(filtersFromCache);
-            this.setFilteredApis();
-        } else {
-            // there are no cached filters, so we need to set the default filter
-            // values after we load for the first time.
-            this.initDefaultFilters = true;
-        }
-
-        this.getApis();
 
         if (localStorage.getItem(ApixUtils.APIS_TAB_KEY) == 'apis') {
             this.setActiveTab(2);
@@ -172,59 +138,60 @@ export class ApiListComponent implements OnInit {
         return true;
     }
 
-    private setConfig() {
-        if (this.base == null) {
-            // check cache
-            let value = localStorage.getItem(this.apixApiService.CONFIG_KEY);
-            if (value) {
-               let configFromCache = JSON.parse(value);
-               if (configFromCache) {
-                    console.log('get config from cache');
-                    this.setConfigValue(configFromCache);
-               } else {
-                    console.log('use default');
-                    this.setConfigValue(config);
-               }
+    private configApix() {
+        let myconfig = this.configService.getConfig();
+        //console.log(myconfig);
+        if (myconfig) {
+            this.setConfigValue(myconfig);
+            this.apixApiService.setUrls(this.remoteApiUrl, this.localApiUrl, this.remoteSampleExchangeUrl);
+
+            if (this.path) {
+                this.apixPath = '/' + this.path + '/apis';
             }
+        }
+        // Load cached filters
+        let filtersFromCache = localStorage.getItem("filters");
+        if (filtersFromCache) {
+            this.filters = JSON.parse(filtersFromCache);
+            this.setFilteredApis();
         } else {
-            console.log('set config and store in cache');
-            var myconfig = new Config();
-            myconfig.base = this.base;
-            myconfig.path = this.path;
-            myconfig.localApiUrl = this.localApiUrl;
-            myconfig.remoteApiUrl = this.remoteApiUrl;
-            myconfig.remoteSampleExchangeUrl = this.remoteSampleExchangeUrl;
-            myconfig.hideFilters = this.hideFilters;
-            myconfig.apiListHeaderText = this.apiListHeaderText;
-            myconfig.hideProductsFilter = this.hideProductsFilter;
-            myconfig.hideLanguagesFilter = this.hideLanguagesFilter;
-            myconfig.hideSourcesFilter = this.hideSourcesFilter;
-            myconfig.defaultProductsFilter = this.defaultProductsFilter;
-            myconfig.defaultLanguagesFilter = this.defaultLanguagesFilter;
-            myconfig.defaultSourcesFilter = this.defaultSourcesFilter;
-            myconfig.enableLocal = this.enableLocal;
-            myconfig.enableRemote = this.enableRemote;
-            this.apixApiService.setConfig(myconfig);
-            this.apixApiService.addConfigOptionToStorage(myconfig);
+            // there are no cached filters, so we need to set the default filter
+            // values after we load for the first time.
+            this.initDefaultFilters = true;
         }
     }
 
     private setConfigValue (value: any) {
-        this.base = value.base;
-        this.path = value.path;
-        this.localApiUrl = value.localApiUrl;
-        this.remoteApiUrl = value.remoteApiUrl;
-        this.remoteSampleExchangeUrl = value.remoteSampleExchangeUrl;
-        this.hideFilters = value.hideFilters;
-        this.apiListHeaderText = value.apiListHeaderText;
-        this.hideProductsFilter = value.hideProductsFilter;
-        this.hideLanguagesFilter = value.hideLanguagesFilter;
-        this.hideSourcesFilter = value.hideSourcesFilter;
-        this.defaultProductsFilter = value.defaultProductsFilter;
-        this.defaultLanguagesFilter = value.defaultLanguagesFilter;
-        this.defaultSourcesFilter = value.defaultSourcesFilter;
-        this.enableLocal = value.enableLocal;
-        this.enableRemote = config.enableRemote;
+        if (value.hasOwnProperty('base'))
+            this.base = value.base;
+        if (value.hasOwnProperty('path'))
+            this.path = value.path;
+        if (value.hasOwnProperty('localApiUrl'))
+            this.localApiUrl = value.localApiUrl;
+        if (value.hasOwnProperty('remoteApiUrl'))
+            this.remoteApiUrl = value.remoteApiUrl;
+        if (value.hasOwnProperty('remoteSampleExchangeUrl'))
+            this.remoteSampleExchangeUrl = value.remoteSampleExchangeUrl;
+        if (value.hasOwnProperty('defaultFilters')) {
+            this.defaultProductsFilter = value.defaultFilters.products;
+            this.defaultLanguagesFilter = value.defaultFilters.languages;
+            this.defaultSourcesFilter = value.defaultFilters.sources;
+        }
+
+        if (value.hasOwnProperty('hideFilters'))
+            this.hideFilters = value.hideFilters;
+        if (value.hasOwnProperty('apiListHeaderText'))
+            this.apiListHeaderText = value.apiListHeaderText;
+        if (value.hasOwnProperty('hideProductsFilter'))
+            this.hideProductsFilter = value.hideProductsFilter;
+        if (value.hasOwnProperty('hideLanguagesFilter'))
+            this.hideLanguagesFilter = value.hideLanguagesFilter;
+        if (value.hasOwnProperty('hideSourcesFilter'))
+            this.hideSourcesFilter = value.hideSourcesFilter;
+        if (value.hasOwnProperty('enableLocal'))
+            this.enableLocal = value.enableLocal;
+        if(value.hasOwnProperty('enableRemote'))
+            this.enableRemote = value.enableRemote;
     }
 
     private getApis(): void {
@@ -413,13 +380,6 @@ export class ApiListComponent implements OnInit {
     	this.languages = result.filters.languages;
         this.sources = result.filters.sources;
         this.apis = result.apis;
-
-        // save to the cache
-        /*
-        localStorage.setItem(ApixUtils.PRODUCTS_STORAGE_KEY, JSON.stringify(this.products));
-        localStorage.setItem(ApixUtils.LANGUAGES_STORAGE_KEY, JSON.stringify(this.languages));
-        localStorage.setItem(ApixUtils.SOURCES_STORAGE_KEY, JSON.stringify(this.sources));
-        */
         localStorage.setItem(ApixUtils.APIS_STORAGE_KEY, JSON.stringify(this.apis));
     }
 
@@ -431,7 +391,7 @@ export class ApiListComponent implements OnInit {
                 this.filters.keywords = this.defaultKeywordsFilter;
             }
 
-            if (this.defaultProductsFilter) {
+            if (this.defaultProductsFilter && this.defaultProductsFilter.length > 0) {
                 for (let product of this.defaultProductsFilter) {
                     this.filters.products.push(product);
                 }
@@ -508,7 +468,6 @@ export class ApiListComponent implements OnInit {
 
         // Persist the current filters
         localStorage.setItem("filters", JSON.stringify(this.filters));
-
         this.filteredApis = this.filterByKeywords(apis);
     }
 
