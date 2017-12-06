@@ -51,7 +51,9 @@ export class LocalIframeComponent implements AfterViewInit {
   }
 
   loadContent() {
-    //console.log('load iframe content');
+    //console.log('window.location.pathname=' + window.location.pathname);
+    console.log('window.location.href=' + window.location.href);
+    //console.log('this.localIframe=' + this.localIframe);
     if (this.localIframe) {
       this.loading += 1;
 
@@ -63,13 +65,14 @@ export class LocalIframeComponent implements AfterViewInit {
           var doc =  this.iframe.nativeElement.contentDocument;
           doc.open('text/html');
           content = content.replace(/@@folder@@/g, apixbase);
-          content = content.replace(/@@base@@/g, window.location.pathname);
+          content = content.replace(/@@base@@/g, window.location.href);
           doc.write(content);
           doc.close();
 
           // Add the queryString parameters of the original URL as a hash to the new iframe
           var split = this.localIframe.split("?");
           if (split.length > 1) {
+            //console.log('doc.location.hash=' + doc.location.hash);
             doc.location.hash = split[1];
           }
       }).catch(response => {

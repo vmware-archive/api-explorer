@@ -199,15 +199,36 @@
             //console.log(qs);
 
             // Add to the parent's hash, without triggering any "hashchange" event
-            if (window.parent && window.parent.history.replaceState){
+            if (window.parent && window.parent.history.replaceState) {
                 var hash = window.parent.document.location.hash;
-
-                if (hash.length > 1) {
-                    window.location.hash = decodeURIComponent(hash);
+                var split = hash.split("?");
+                if (qs.useHash && qs.useHash == 'true') {
+                    if (split.length > 1) {
+                        var mhash = decodeURIComponent(split[1]).replace("path=", "");
+                        var msplit = mhash.split("m=");
+                        if (msplit.length > 1) {
+                            window.location.hash = msplit[1];
+                        } else {
+                            window.location.hash = msplit[0];
+                        }
+                    } else if (split.length  == 1) {
+                        window.location.hash = decodeURIComponent(split[0]);
+                    }
+                } else {
+                    if (hash.length > 1) {
+                        window.location.hash = decodeURIComponent(hash);
+                    }
                 }
 
-                $(window).on("hashchange", function(){
-                    window.parent.history.replaceState('', '', window.parent.document.location.href.split('#')[0] + decodeURIComponent(window.location.hash));
+                var parentUrl = window.parent.document.location.href;
+                $(window).on("hashchange", function() {
+                    if (!parentUrl.includes(window.location.hash)) {
+                        if (qs.useHash && qs.useHash == 'true') {
+                            window.parent.history.replaceState('', '', split[0] + "?m=" + decodeURIComponent(window.location.hash.substr(1)));
+                        } else {
+                            window.parent.history.replaceState('', '', window.parent.document.location.href.split('#')[0] + decodeURIComponent(window.location.hash));
+                        }
+                    }
                 });
             }
 

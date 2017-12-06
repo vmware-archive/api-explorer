@@ -54,7 +54,7 @@
                                 <button type="button" (click)="updatePreferences('swagger')" class="btn btn-default" *ngIf="showPreferences">Update</button>
                             </div>
 
-                            <local-iframe [src]="api.url + '&host=' + swaggerPreferences?.host + '&basePath=' + swaggerPreferences?.basePath + '&reload=' + reload"></local-iframe>
+                            <local-iframe [src]="api.url + '&host=' + swaggerPreferences?.host + '&basePath=' + swaggerPreferences?.basePath + '&reload=' + reload + '&useHash=' + useHash"></local-iframe>
                         </div>
                         <div *ngSwitchCase="'html'">
                             <iframe  class="html" width="100%" height="75vh" allowfullscreen [src]="api.url | safe"></iframe>

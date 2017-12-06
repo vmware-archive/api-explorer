@@ -40,6 +40,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     errorMessage: string = '';
     infoMessage: string = '';
     reload: boolean = false;
+    useHash: boolean = true;
     backUrl: string = '/apis';
 
     private subscription: any;
@@ -66,12 +67,14 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
 
         if (this.configService.isReady) {
             this.path = this.configService.getConfigValue("path");
+            this.useHash = this.configService.getConfigValue("useHash");
             this.getApi(this.id);
         } else {
             let readySubscription = this.configService.ready.subscribe((ready: string) => {
                 let myconfig = this.configService.getConfig();
                 if (myconfig) {
                     this.setConfigValue(myconfig);
+                    this.useHash = this.configService.getConfigValue("useHash");
                     this.apixApiService.setUrls(this.remoteApiUrl, this.localApiUrl, this.remoteSampleExchangeUrl);
                     this.getApi(this.id);
                 }
@@ -89,7 +92,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         );
 
         let methodPath = this.route.snapshot.queryParams['path'];
-        if (methodPath) {
+        if (methodPath && !this.useHash) {
             this.location.replaceState("/apis/" + this.id + methodPath);
         }
     }

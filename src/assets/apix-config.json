@@ -1,4 +1,5 @@
 {
+    "useHash": true,
     "base" : "/",
     "path" : "",
     "apiListHeaderText" : "Available APIs",
@@ -9,7 +10,7 @@
     "enableRemote" : true,
     "defaultFilters" : {
         "keywords" : "",
-        "products" : ["vSphere"],
+        "products" : [],
         "languages": [],
         "types" : [],
         "sources" : []

@@ -9,6 +9,7 @@ import { ROUTING } from "./apix.demo.routing";
 import { ClarityModule } from "clarity-angular";
 import { ApixComponentsModule } from "../../apix-components/apix-components.module";
 import { ApixListDemo } from "./apix-list.demo";
+import { ApixDetailsDemo } from "./apix-details.demo";
 
 @NgModule({
     imports: [
@@ -19,9 +20,11 @@ import { ApixListDemo } from "./apix-list.demo";
     ],
     declarations: [
         ApixListDemo,
+        ApixDetailsDemo,
     ],
     exports: [
         ApixListDemo,
+        ApixDetailsDemo,
     ]
 })
 export class ApixDemoModule {

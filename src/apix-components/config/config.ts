@@ -6,6 +6,7 @@
 export const APP_TITLE = 'VMware API Explorer Component';
 
 export const config = {
+    useHash: true,
     base: "/",
     path: '',
     apiListHeaderText: "Available APIs",

@@ -6,12 +6,11 @@
 import { ModuleWithProviders } from "@angular/core/src/metadata/ng_module";
 import { Routes, RouterModule } from "@angular/router";
 import { ApixListDemo } from "./apix-list.demo";
+import { ApixDetailsDemo } from "./apix-details.demo";
 
 const ROUTES: Routes = [
-    {
-        path: "",
-        component: ApixListDemo,
-    }
+    {path: "", component: ApixListDemo,},
+    {path: 'apis/:id', component: ApixDetailsDemo,}
 ];
 
 export const ROUTING: ModuleWithProviders = RouterModule.forChild(ROUTES);

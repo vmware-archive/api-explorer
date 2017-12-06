@@ -18,23 +18,6 @@ const apixRoutes: Routes = [
 @NgModule({
     imports: [
       RouterModule.forChild(apixRoutes)
-      /*
-      RouterModule.forChild([
-        {
-          path: '',
-          component: ApiListComponent,
-          children: [
-              {
-                  path: 'apis',
-                  component: ApiListComponent
-              },
-              {
-                  path: 'apis/:id',
-                  component: ApiDetailComponent,
-              }
-          ]
-        }
-      ])*/
     ],
     exports: [
       RouterModule
@@ -42,27 +25,5 @@ const apixRoutes: Routes = [
 })
 
 export class ApixRoutingModule {}
-
-/*
-constructor(private configService: ApixConfigService) {}
-
-    detailpath = 'apis/:id';
-    listpath = 'apis';
-
-    path = this.configService.getConfigValue("path");
-
-    if (path) {
-        this.listpath = path + 'apis';
-        this.detailpath = path + 'apis/:id';
-    }
-
-    const apixRoutes: Routes = [
-      {path: '', component: ApiListComponent, data: {title: 'APIs List'}},
-      {path: this.listpath, component: ApiListComponent, data: {title: 'APIs List'}},
-      {path: this.detailpath, component: ApiDetailComponent, data: {title: 'API Detail'}}
-  ];
-    console.log('apix-list-path=' + this.listpath);
-    console.log('apix-detail-path=' + this.detailpath);
-}*/
 
 
