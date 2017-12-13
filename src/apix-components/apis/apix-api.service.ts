@@ -21,6 +21,9 @@ import { config } from '../config/config';
 
 @Injectable()
 export class ApixApiService {
+    public VMWARE_CODE_CLIENT: string = "X-VMware-Code-Client";
+    public VMWARE_CODE_CLIENT_UUID: string = "X-VMware-Code-Client-UUID";
+
     private remoteApiUrl = config.remoteApiUrl;
     private localApiUrl = config.localApiUrl;
     private remoteSXApiUrl = config.remoteSampleExchangeUrl;
@@ -37,7 +40,10 @@ export class ApixApiService {
     }
 
     getRemoteApis() {
-        return this.http.get(`${this.remoteApiUrl}/apis`)
+        let headers = new Headers();
+        this.addClientHeaders(headers);
+
+        return this.http.get(`${this.remoteApiUrl}/apis`, new RequestOptions({headers: headers}))
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError);
@@ -51,14 +57,20 @@ export class ApixApiService {
     }
 
     getRemoteApi(id: number) {
-        return this.http.get(`${this.remoteApiUrl}/apis/${id}`)
+        let headers = new Headers();
+        this.addClientHeaders(headers);
+
+        return this.http.get(`${this.remoteApiUrl}/apis/${id}`, new RequestOptions({headers: headers}))
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError);
     }
 
     getLatestRemoteApiIdForApiUid (api_uid: string) {
-        return this.http.get(`${this.remoteApiUrl}/apis/uids/${api_uid}`)
+        let headers = new Headers();
+        this.addClientHeaders(headers);
+
+        return this.http.get(`${this.remoteApiUrl}/apis/uids/${api_uid}`, new RequestOptions({headers: headers}))
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError);
@@ -66,24 +78,47 @@ export class ApixApiService {
     }
 
     getRemoteApiResources (apiId: number) {
-        return this.http.get(`${this.remoteApiUrl}/apis/${apiId}/resources`)
+        let headers = new Headers();
+        this.addClientHeaders(headers);
+
+        return this.http.get(`${this.remoteApiUrl}/apis/${apiId}/resources`, new RequestOptions({headers: headers}))
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError);
     }
 
-    getHTMLResponse (url: string) {
+    getRemoteHTMLResponse (url: string) {
+        let headers = new Headers();
+        this.addClientHeaders(headers);
+
+        return this.http.get(`${url}`, new RequestOptions({headers: headers}))
+            .toPromise()
+            .then(response => response)
+            .catch(this.handleError);
+    }
+
+    getLocalHTMLResponse (url: string) {
         return this.http.get(`${url}`)
             .toPromise()
             .then(response => response)
             .catch(this.handleError);
     }
 
-    getJSONResponse (url: string) {
-        return this.http.get(`${url}`)
-            .toPromise()
-            .then(response => response.json())
-            .catch(this.handleError);
+    getJSONResponse (url: string, source: string) {
+        if (source == 'local') {
+            return this.http.get(`${url}`)
+                .toPromise()
+                .then(response => response.json())
+                .catch(this.handleError);
+        } else {
+            let headers = new Headers();
+            this.addClientHeaders(headers);
+
+            return this.http.get(`${url}`, new RequestOptions({headers: headers}))
+                .toPromise()
+                .then(response => response.json())
+                .catch(this.handleError);
+        }
     }
 
     getSwaggerConsoleHTML (url: string) {
@@ -98,10 +133,13 @@ export class ApixApiService {
             return;
         }
 
+        let headers = new Headers();
+        this.addClientHeaders(headers);
+
         // aaron note: it seems that the apigw can only support the syntax of having a single instance of
         // a given query argument, so insteand of multiple platform values, pass all values comma separated.
         var url = this.remoteSXApiUrl + '/search/samples?platform=' + encodeURIComponent(platform) + '&summary=true';
-        return this.http.get(url)
+        return this.http.get(url, new RequestOptions({headers: headers}))
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError);
@@ -119,6 +157,39 @@ export class ApixApiService {
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
+    }
+
+    /**
+     * Add client headers
+     */
+    private addClientHeaders(headers: Headers) {
+        let vmwareCodeClient = this.configService.getConfigValue("vmwareCodeClient");
+        let vmwareCodeClientUUID = this.configService.getConfigValue("vmwareCodeClientUUID");
+        if (vmwareCodeClient) {
+            headers.append(this.VMWARE_CODE_CLIENT, vmwareCodeClient);
+        }
+
+        if (vmwareCodeClientUUID && vmwareCodeClientUUID !== null) {
+            let ga = this.getCookie('_ga');
+            //console.log(ga);
+            if (ga !== '') {
+                headers.append(this.VMWARE_CODE_CLIENT_UUID, ga);
+            }
+        }
+    }
+
+    private getCookie(name: string) {
+        let ca: Array<string> = document.cookie.split(';');
+        let cookieName = name + "=";
+        let c: string;
+
+        for (let i: number = 0; i < ca.length; i += 1) {
+            if (ca[i].indexOf(name, 0) > -1) {
+                c = ca[i].substring(cookieName.length +1, ca[i].length);
+                return c;
+            }
+        }
+        return "";
     }
 }
 

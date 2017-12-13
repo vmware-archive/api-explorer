@@ -507,7 +507,7 @@ export class ApiListComponent implements OnInit {
             useLocal = true;
             console.log("load API group overview from local, " + localOverviewPath);
             this.loading++;
-            this.apixApiService.getHTMLResponse(localOverviewPath).then(result => {
+            this.apixApiService.getLocalHTMLResponse(localOverviewPath).then(result => {
                 this.loading--;
                 this.overviewHtml = result._body;
             }).catch(response => {
@@ -556,7 +556,7 @@ export class ApiListComponent implements OnInit {
                         }
                         if (overviewResource) {
                             this.loading++;
-                            this.apixApiService.getHTMLResponse(overviewResource.downloadUrl).then(result => {
+                            this.apixApiService.getRemoteHTMLResponse(overviewResource.downloadUrl).then(result => {
                                 this.loading--;
                                 this.overviewHtml = result._body;
                             }).catch(response => {
@@ -647,7 +647,7 @@ export class ApiListComponent implements OnInit {
             if (_apiRefDocUrl) {
                 // fetch swagger.json
                 this.loading++;
-                this.apixApiService.getJSONResponse(_apiRefDocUrl).then(result => {
+                this.apixApiService.getJSONResponse(_apiRefDocUrl, 'local').then(result => {
                     this.loading--;
                     var name = result.info.title;
                     var version = result.info.version;

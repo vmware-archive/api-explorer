@@ -8,6 +8,8 @@
     "localApiUrl" : "local.json",
     "enableLocal" : true,
     "enableRemote" : true,
+    "vmwareCodeClient" : null,
+    "vmwareCodeClientUUID" : null,
     "defaultFilters" : {
         "keywords" : "",
         "products" : [],
