@@ -66,6 +66,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         });
 
         if (this.configService.isReady) {
+            //console.log('config is ready');
             this.path = this.configService.getConfigValue("path");
             this.useHash = this.configService.getConfigValue("useHash");
             this.getApi(this.id);
@@ -130,7 +131,6 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             }
         } else {
             this.getLocalApi(apiId);
-
             if (!this.api) {
                 this.getRemoteApi(apiId);
             }
@@ -210,40 +210,43 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                     this.loadResourcesForRemoteApi(null);
                 }
             }
+            this.setSwaggerPreferences();
+        }
+    }
 
-            if (this.api.type === "swagger") {
-                // Load swagger's JSON definition to read the default "preferences"
-                var value = localStorage.getItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id);
+    private setSwaggerPreferences() {
+        if (this.api.type === "swagger") {
+            // Load swagger's JSON definition to read the default "preferences"
+            var value = localStorage.getItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id);
 
-                if (value) {
-                    console.log('found preferences in cache');
-                    var preferences = JSON.parse(value);
-                    this.preferences = new ApiPreferences();
-                    this.preferences.host = preferences.host;
-                    this.preferences.basePath = preferences.basePath;
-                    this.swaggerPreferences = Object.assign({}, this.preferences);
-                } else {
-                    if (this.api.url) {
-                        // fetch swagger.json
-                        console.log('fetch swagger.json to load preferences, ' + this.api.url);
-                        this.loading++;
-                        this.apixApiService.getJSONResponse(this.api.url).then(result => {
-                            this.loading--;
-                            this.preferences = new ApiPreferences();
-                            this.preferences.host = result.host;
-                            this.preferences.basePath = result.basePath;
-                            this.swaggerPreferences = Object.assign({}, this.preferences);
-                            localStorage.setItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
-                        }).catch(response => {
-                            this.loading--;
-                            if (response instanceof Response)
-                                this.errorMessage = response.text() ? response.text() : response.statusText;
-                            else
-                                this.errorMessage = response;
-                        });
-                    }
+            if (value) {
+                console.log('found preferences in cache');
+                var preferences = JSON.parse(value);
+                this.preferences = new ApiPreferences();
+                this.preferences.host = preferences.host;
+                this.preferences.basePath = preferences.basePath;
+                //this.swaggerPreferences = Object.assign({}, this.preferences);
+            } else {
+                if (this.api.url) {
+                    // fetch swagger.json
+                    console.log('fetch swagger.json to load preferences, ' + this.api.url);
+                    this.loading++;
+                    this.apixApiService.getJSONResponse(this.api.url, this.api.source).then(result => {
+                        this.loading--;
+                        this.preferences = new ApiPreferences();
+                        this.preferences.host = result.host;
+                        this.preferences.basePath = result.basePath;
+                        //this.swaggerPreferences = Object.assign({}, this.preferences);
+                        localStorage.setItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
+                    }).catch(response => {
+                        this.loading--;
+                        if (response instanceof Response)
+                            this.errorMessage = response.text() ? response.text() : response.statusText;
+                        else
+                            this.errorMessage = response;
+                    });
                 }
-             }
+            }
         }
     }
 
@@ -260,23 +263,21 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             console.log("fetching resources for api id=" + apiId );
             // For swagger APIs, add the API swagger.json to the Documentation tab
             if (this.api.type === "swagger") {
-                //var n = this.api.url.lastIndexOf("/");
-                //var title = this.api.url.substring(n+1);
                 result.resources.docs.push({
                     title: 'Swagger/Open API specification download',
                     downloadUrl: this.api.url
                 });
             }
-            this.loading += 1;
+            this.loading++;
             this.apixApiService.getRemoteApiResources(apiId).then(res => {
-                this.loading -= 1;
+                this.loading--;
                 var sdks = [];
                 var docs = [];
                 for (let resource of res) {
                     this.setArray("SDK", sdks, resource);
                     this.setArray("DOC", docs, resource);
                 }
-                //
+
                 if (sdks.length || docs.length) {
                     console.log("got " + sdks.length + " sdks, " + docs.length + " docs");
                     if (sdks.length) {
@@ -286,10 +287,11 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                         for (let doc of docs)
                             result.resources.docs.push(doc);
                     }
+
                 }
                 this.prepareApiResources(result);
             }).catch(response => {
-                this.loading -= 1;
+                this.loading--;
                 if (response instanceof Response)
                     this.errorMessage = response.text() ? response.text() : response.statusText;
                 else
@@ -324,7 +326,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
 
     private prepareApiResources (remoteResources) {
         // if there are no remote resources, then simply create an empty container
-        if (! remoteResources ) {
+        if (!remoteResources) {
             console.log("No remote resources to merge.");
             remoteResources = {docs:[],sdks:[]};
         }
@@ -379,6 +381,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                 idx++;
             }
         }
+
         if (categories) {
             // asynchronously fetch samples
             this.loading++;
@@ -422,12 +425,12 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             // now we need to fetch the overview from the overviewResource.downloadUrl, merge it with the template
             // and set it as the overview body
             //console.log(overviewResource);
-            this.loading += 1;
-            this.apixApiService.getHTMLResponse(overviewResource.downloadUrl).then(result => {
-                this.loading -= 1;
+            this.loading++;
+            this.apixApiService.getRemoteHTMLResponse(overviewResource.downloadUrl).then(result => {
+                this.loading--;
                 this.overviewHtml = result._body;
             }).catch(response => {
-                this.loading -= 1;
+                this.loading--;
                 this.overviewHtml = null;
                 this.tab = 2;
                 if (response instanceof Response)
@@ -443,10 +446,8 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
 
     // Updates the API preferences
     updatePreferences (type){
-        this.loading += 1;
         this.swaggerPreferences = Object.assign({}, this.preferences);
         localStorage.setItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
-        //this.timeout();
     };
 
     timeout() {
