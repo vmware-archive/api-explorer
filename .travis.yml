@@ -1,9 +1,9 @@
 language: node_js
 node_js:
-  - "4"
+  - "6.10"
 
 before_script:
-  - npm install @angular/cli -g
+  - npm install -g @angular/cli
   - npm install -g karma
   - npm install -g gulp
   - npm install
