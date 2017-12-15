@@ -8,7 +8,7 @@
     "localApiUrl" : "local.json",
     "enableLocal" : true,
     "enableRemote" : true,
-    "vmwareCodeClient" : null,
+    "vmwareCodeClient" : "apix.unknown",
     "vmwareCodeClientUUID" : null,
     "defaultFilters" : {
         "keywords" : "",

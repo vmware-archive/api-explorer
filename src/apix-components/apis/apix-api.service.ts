@@ -23,6 +23,7 @@ import { config } from '../config/config';
 export class ApixApiService {
     public VMWARE_CODE_CLIENT: string = "X-VMware-Code-Client";
     public VMWARE_CODE_CLIENT_UUID: string = "X-VMware-Code-Client-UUID";
+    public VMWARE_CODE_CLIENT_USER: string = "X-VMware-Code-User";
 
     private remoteApiUrl = config.remoteApiUrl;
     private localApiUrl = config.localApiUrl;
@@ -165,16 +166,21 @@ export class ApixApiService {
     private addClientHeaders(headers: Headers) {
         let vmwareCodeClient = this.configService.getConfigValue("vmwareCodeClient");
         let vmwareCodeClientUUID = this.configService.getConfigValue("vmwareCodeClientUUID");
+
         if (vmwareCodeClient) {
             headers.append(this.VMWARE_CODE_CLIENT, vmwareCodeClient);
+        } else {
+            headers.append(this.VMWARE_CODE_CLIENT, "apix.unknown");
         }
 
         if (vmwareCodeClientUUID && vmwareCodeClientUUID !== null) {
-            let ga = this.getCookie('_ga');
-            //console.log(ga);
-            if (ga !== '') {
-                headers.append(this.VMWARE_CODE_CLIENT_UUID, ga);
-            }
+            headers.append(this.VMWARE_CODE_CLIENT_UUID, vmwareCodeClientUUID);
+        }
+
+        let ga = this.getCookie('_ga');
+        //console.log(ga);
+        if (ga !== '') {
+            headers.append(this.VMWARE_CODE_CLIENT_USER, ga);
         }
     }
 
