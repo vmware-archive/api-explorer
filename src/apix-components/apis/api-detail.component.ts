@@ -193,12 +193,13 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                 console.log("fetching remote resources for remote api");
                 this.loadResourcesForRemoteApi(this.api.id);
             } else if (this.api.url && this.api.source == 'local') {
+                let remoteId: number = 0;
                 if (this.api.api_uid) {
                     console.log("fetching remote resources for local api_uid=" + this.api.api_uid);
                     this.loading++;
                     this.apixApiService.getLatestRemoteApiIdForApiUid(this.api.api_uid).then(result => {
                         this.loading--;
-                        let remoteId: number = +result[0].id;
+                        remoteId = +result[0].id;
                         this.loadResourcesForRemoteApi(remoteId);
                     }).catch(response => {
                         this.loading--;
@@ -208,9 +209,9 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                             this.errorMessage = response;
                     });
 
-                } else {
-                    // response.data should have the id.  Might be null
-                    console.log("No api_uid. fetch local resources.");
+                }
+                if (remoteId == 0) {
+                    console.log("No remote resources, fetch local resources.");
                     this.loadLocalResources();
                 }
             }
