@@ -30,7 +30,7 @@
                             <p>Oops! The API documentation is missing.</p>
                         </div>
                         <div *ngSwitchCase="'swagger'" class="swagger">
-                            <div class="card preferences">
+                            <div class="card preferences" *ngIf="hidePreferenceSection == false">
                                 <div class="card-block">
                                     <div class="card-title hand" (click)="togglePreferences()">
                                         Preferences

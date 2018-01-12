@@ -33,6 +33,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     preferences: ApiPreferences;
     swaggerPreferences: ApiPreferences;
     showPreferences: boolean = false;
+    hidePreferenceSection: boolean = config.hidePreference;
     showDetail = false;
     tab: number = 1;
 
@@ -69,6 +70,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             //console.log('config is ready');
             this.path = this.configService.getConfigValue("path");
             this.useHash = this.configService.getConfigValue("useHash");
+            this.hidePreferenceSection = this.configService.getConfigValue("hidePreference");
             this.getApi(this.id);
         } else {
             let readySubscription = this.configService.ready.subscribe((ready: string) => {
@@ -118,6 +120,8 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             this.remoteApiUrl = value.remoteApiUrl;
         if (value.remoteSampleExchangeUrl)
             this.remoteSampleExchangeUrl = value.remoteSampleExchangeUrl;
+        if (value.hidePreference)
+            this.hidePreferenceSection = value.hidePreference;
     }
 
     private getApi(apiId: number) {
@@ -206,11 +210,13 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
 
                 } else {
                     // response.data should have the id.  Might be null
-                    console.log("No api_uid. synchronizing local resources.");
-                    this.loadResourcesForRemoteApi(null);
+                    console.log("No api_uid. fetch local resources.");
+                    this.loadLocalResources();
                 }
             }
-            this.setSwaggerPreferences();
+            if (!this.hidePreferenceSection) {
+                this.setSwaggerPreferences();
+            }
         }
     }
 
@@ -220,23 +226,21 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             var value = localStorage.getItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id);
 
             if (value) {
-                console.log('found preferences in cache');
+                //console.log('found preferences in cache');
                 var preferences = JSON.parse(value);
                 this.preferences = new ApiPreferences();
                 this.preferences.host = preferences.host;
                 this.preferences.basePath = preferences.basePath;
-                //this.swaggerPreferences = Object.assign({}, this.preferences);
             } else {
                 if (this.api.url) {
                     // fetch swagger.json
-                    console.log('fetch swagger.json to load preferences, ' + this.api.url);
+                    //console.log('fetch swagger.json to load preferences, ' + this.api.url);
                     this.loading++;
                     this.apixApiService.getJSONResponse(this.api.url, this.api.source).then(result => {
                         this.loading--;
                         this.preferences = new ApiPreferences();
                         this.preferences.host = result.host;
                         this.preferences.basePath = result.basePath;
-                        //this.swaggerPreferences = Object.assign({}, this.preferences);
                         localStorage.setItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id, JSON.stringify(this.preferences));
                     }).catch(response => {
                         this.loading--;
@@ -250,46 +254,18 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         }
     }
 
-    private loadResourcesForRemoteApi(apiId: number) {
-        var emptyResult = {
-            resources : {
-            	sdks : [],
-                docs : []
-            }
-        };
-        var result = Object.assign({}, emptyResult);
+    private loadLocalResources() {
+        this.prepareApiResources(this.api.resources);
+    }
 
+    private loadResourcesForRemoteApi(apiId: number) {
         if (apiId) {
             console.log("fetching resources for api id=" + apiId );
-            // For swagger APIs, add the API swagger.json to the Documentation tab
-            if (this.api.type === "swagger") {
-                result.resources.docs.push({
-                    title: 'Swagger/Open API specification download',
-                    downloadUrl: this.api.url
-                });
-            }
+
             this.loading++;
             this.apixApiService.getRemoteApiResources(apiId).then(res => {
                 this.loading--;
-                var sdks = [];
-                var docs = [];
-                for (let resource of res) {
-                    this.setArray("SDK", sdks, resource);
-                    this.setArray("DOC", docs, resource);
-                }
-
-                if (sdks.length || docs.length) {
-                    console.log("got " + sdks.length + " sdks, " + docs.length + " docs");
-                    if (sdks.length) {
-                         result.resources.sdks = sdks;
-                    }
-                    if (docs.length) {
-                        for (let doc of docs)
-                            result.resources.docs.push(doc);
-                    }
-
-                }
-                this.prepareApiResources(result);
+                this.prepareApiResources(res);
             }).catch(response => {
                 this.loading--;
                 if (response instanceof Response)
@@ -299,7 +275,6 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             });
         } else {
             console.log("skipping resource fetch, id is null.");
-            this.prepareApiResources(null);
         }
     }
 
@@ -324,99 +299,136 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         }
     }
 
-    private prepareApiResources (remoteResources) {
-        // if there are no remote resources, then simply create an empty container
-        if (!remoteResources) {
-            console.log("No remote resources to merge.");
-            remoteResources = {docs:[],sdks:[]};
-        }
-
-        var resources = remoteResources.resources;
-        this.resources =  remoteResources.resources;
-        var docList = resources.docs;
-        var overviewResource = null;
-
-        if (docList) {
-            // find the overview resource if it exists and remove it from the resources
-            for (var i = docList.length - 1; i >= 0; --i) {
-                var resource = docList[i];
-                if (resource.categories && (resource.categories.length > 0) && (resource.categories[0] == 'API_OVERVIEW')) {
-                    console.log("Removing API_OVERVIEW from resource list.");
-                    overviewResource = resource;
-                    docList.splice(i, 1);
-                }
+    private prepareApiResources (resources) {
+        var emptyResult = {
+            resources : {
+            	sdks : [],
+                docs : [],
+                samples : []
             }
-            if (docList.length == 0) {
-                this.resources.docs = null;
-            }
-        }
-        this.loadOverviewHtml(overviewResource);
+        };
+        var result = Object.assign({}, emptyResult);
 
-        // categories are the values that we are going to pass to the sample search service
-        // to search for matching samples.
-        var categories = "";
-
-        // include the UID of this API in the sample search as a platform value.
-        if (this.api.api_uid) {
-            categories = this.api.api_uid;
-        }
-        if (this.api.name) {
-            if (categories.length == 0) {
-                categories = this.api.name;
-            } else {
-                categories += "," + this.api.name;
-            }
-        }
-        // Use any category value from any SDK that was included
-        // in the list of SDKs.
-        if (this.resources.sdks) {
-            var idx = 0;
-            for (let sdk of this.resources.sdks) {
-                var category = sdk.categories[0];
-                if (categories.length == 0) {
-                    categories = category;
-                } else {
-                    categories += "," + category;
-                }
-                idx++;
-            }
-        }
-
-        if (categories) {
-            // asynchronously fetch samples
-            this.loading++;
-            this.apixApiService.getSamples(categories).then(result => {
-                this.loading--;
-                var samples = [];
-                for (let sample of result) {
-                    var tags = [];
-                    if (sample.tags) {
-                        for (let tag of sample.tags) {
-                            tags.push(tag.name);
-                        }
-                    }
-                    samples.push({
-                        title: sample.name,
-                        platform: categories,
-                        webUrl: sample.webUrl,
-                        downloadUrl: sample.downloadUrl,
-                        contributor: sample.author.communitiesUser,
-                        createdDate: sample.created,
-                        lastUpdated: sample.lastUpdated,
-                        tags: tags,
-                        snippet: sample.readmeHtml,
-                        favoriteCount: sample.favoriteCount
-                    });
-                }
-                this.resources.samples = samples;
-            }).catch(response => {
-                this.loading--;
-                if (response instanceof Response)
-                    this.errorMessage = response.text() ? response.text() : response.statusText;
-                else
-                    this.errorMessage = response;
+        if (this.api.type === "swagger") {
+            result.resources.docs.push({
+                title: 'Swagger/Open API specification download',
+                downloadUrl: this.api.url
             });
+        }
 
+        if (resources) {
+            var sdks = [];
+            var docs = [];
+
+            for (let resource of resources) {
+                this.setArray("SDK", sdks, resource);
+                this.setArray("DOC", docs, resource);
+            }
+
+            if (sdks.length || docs.length) {
+                console.log("got " + sdks.length + " sdks, " + docs.length + " docs");
+                if (sdks.length) {
+                    result.resources.sdks = sdks;
+                }
+                if (docs.length) {
+                    for (let doc of docs)
+                        result.resources.docs.push(doc);
+                }
+            }
+        }
+
+        if (result) {
+            var apiResources = result.resources;
+            this.resources =  result.resources;
+
+            var docList = null;
+            if (apiResources) {
+                docList = apiResources.docs;
+            }
+            var overviewResource = null;
+
+            if (docList) {
+                // find the overview resource if it exists and remove it from the resources
+                for (var i = docList.length - 1; i >= 0; --i) {
+                    var resource = docList[i];
+                    if (resource.categories && (resource.categories.length > 0) && (resource.categories[0] == 'API_OVERVIEW')) {
+                        console.log("Removing API_OVERVIEW from resource list.");
+                        overviewResource = resource;
+                        docList.splice(i, 1);
+                    }
+                }
+                if (docList.length == 0) {
+                    this.resources.docs = null;
+                }
+            }
+
+            this.loadOverviewHtml(overviewResource);
+
+            // categories are the values that we are going to pass to the sample search service
+            // to search for matching samples.
+            var categories = "";
+
+            // include the UID of this API in the sample search as a platform value.
+            if (this.api.api_uid) {
+                categories = this.api.api_uid;
+            }
+            if (this.api.name) {
+                if (categories.length == 0) {
+                    categories = this.api.name;
+                } else {
+                    categories += "," + this.api.name;
+                }
+            }
+            // Use any category value from any SDK that was included
+            // in the list of SDKs.
+            if (this.resources && this.resources.sdks) {
+                var idx = 0;
+                for (let sdk of this.resources.sdks) {
+                    var category = sdk.categories[0];
+                    if (categories.length == 0) {
+                        categories = category;
+                    } else {
+                        categories += "," + category;
+                    }
+                    idx++;
+                }
+            }
+
+            if (categories.length > 0) {
+                // asynchronously fetch samples
+                this.loading++;
+                this.apixApiService.getSamples(categories).then(result => {
+                    this.loading--;
+                    var samples = [];
+                    for (let sample of result) {
+                        var tags = [];
+                        if (sample.tags) {
+                            for (let tag of sample.tags) {
+                                tags.push(tag.name);
+                            }
+                        }
+                        samples.push({
+                            title: sample.name,
+                            platform: categories,
+                            webUrl: sample.webUrl,
+                            downloadUrl: sample.downloadUrl,
+                            contributor: sample.author.communitiesUser,
+                            createdDate: sample.created,
+                            lastUpdated: sample.lastUpdated,
+                            tags: tags,
+                            snippet: sample.readmeHtml,
+                            favoriteCount: sample.favoriteCount
+                        });
+                    }
+                    this.resources.samples = samples;
+                }).catch(response => {
+                    this.loading--;
+                    if (response instanceof Response)
+                        this.errorMessage = response.text() ? response.text() : response.statusText;
+                    else
+                        this.errorMessage = response;
+                });
+            }
         }
     }
 

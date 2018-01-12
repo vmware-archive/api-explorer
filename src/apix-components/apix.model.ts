@@ -20,6 +20,7 @@ export class Api {
     type: string;
     url: string;
     apiGroup: string;
+    resources: any[];
 }
 
 /**

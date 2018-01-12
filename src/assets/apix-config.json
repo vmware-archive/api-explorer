@@ -21,6 +21,7 @@
     "hideProductsFilter" : false,
     "hideLanguagesFilter" : false,
     "hideSourcesFilter" : false,
+    "hidePreference" : true,
     "sso" : [
     {   "id": "basic",
         "swaggerAuthName": "BasicAuth",

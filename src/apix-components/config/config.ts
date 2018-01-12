@@ -15,6 +15,7 @@ export const config = {
     localApiUrl: 'local.json',
     enableLocal: true,
     enableRemote: true,
+    hidePreference: false,
     defaultKeywordsFilter: '',
     defaultProductsFilter: [],
     defaultLanguagesFilter: [],
