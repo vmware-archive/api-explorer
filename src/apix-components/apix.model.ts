@@ -21,6 +21,8 @@ export class Api {
     url: string;
     apiGroup: string;
     resources: any[];
+    host: string;
+    basePath: string;
 }
 
 /**

@@ -9,12 +9,34 @@
     margin-left: 20px;
 }
 
+.list-group-item:last-child {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+
+}
+
+.list-group-item {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-color: #eee;
+    padding-top: 20px;
+}
+
 .btn {
     margin: 6px 12px 6px 12px;
 }
 
 .api {
     width:100%;
+}
+
+.api h3 {
+    margin:20px;
+}
+
+.api h3 a {
+    font-size: .71667rem;
 }
 .api iframe {
     border: none;

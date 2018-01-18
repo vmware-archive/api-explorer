@@ -16,6 +16,7 @@ export const config = {
     enableLocal: true,
     enableRemote: true,
     hidePreference: false,
+    hideApiInfo: false,
     defaultKeywordsFilter: '',
     defaultProductsFilter: [],
     defaultLanguagesFilter: [],

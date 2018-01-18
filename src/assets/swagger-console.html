@@ -290,6 +290,12 @@
 
                             // When filtering, we first need to "expand" all the operations
                             $input.on("keyup change", toggleOperations);
+
+                            // Hide swagger-ui "auth_container"
+                            if (qs.hideApiInfo && qs.hideApiInfo == 'true') {
+                                $("#auth_container").hide();
+                                $("#api_info").hide();
+                            }
                         },
                         onFailure : function(data) {
                             console.log("Unable to load SwaggerUI");
@@ -302,6 +308,8 @@
                     });
 
                     window.swaggerUi.load();
+
+
                     var user = sessionStorage.getItem('apix-user');
                     if (user)
                         user = JSON.parse(user);

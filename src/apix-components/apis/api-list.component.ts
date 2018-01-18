@@ -45,6 +45,7 @@ export class ApiListComponent implements OnInit {
         sources: []
     };
 
+    title: string = null;
     base: string = config.base;
     path: string = config.path;
     localApiUrl: string = config.localApiUrl;
@@ -158,6 +159,7 @@ export class ApiListComponent implements OnInit {
             // there are no cached filters, so we need to set the default filter
             // values after we load for the first time.
             this.initDefaultFilters = true;
+            this.setDefaultFilters();
         }
     }
 
@@ -166,6 +168,9 @@ export class ApiListComponent implements OnInit {
             this.base = value.base;
         if (value.hasOwnProperty('path'))
             this.path = value.path;
+
+        if (value.hasOwnProperty('title'))
+            this.title = value.title;
         if (value.hasOwnProperty('localApiUrl'))
             this.localApiUrl = value.localApiUrl;
         if (value.hasOwnProperty('remoteApiUrl'))
@@ -245,9 +250,30 @@ export class ApiListComponent implements OnInit {
     }
 
     private handleResponse(results: any[], overviewPath: string) {
-        this.setApis(results);
-        this.setFilteredApis();
-        this.loadAPIGroupOverview(overviewPath);
+        var useLocal = false;
+
+        if (overviewPath && typeof overviewPath !== 'undefined') {
+            useLocal = true;
+            console.log("load API group overview from local, " + overviewPath);
+            this.loading++;
+            this.apixApiService.getLocalHTMLResponse(overviewPath).then(result => {
+                this.loading--;
+                this.overviewHtml = result._body;
+                this.setApis(results);
+                this.setFilteredApis();
+            }).catch(response => {
+                this.loading--;
+                if (response instanceof Response)
+                    this.errorMessage = response.text() ? response.text() : response.statusText;
+                else
+                    this.errorMessage = response;
+            });
+        }
+
+        if( !useLocal) {
+            console.log("load API group overview from remote");
+            this.loadRemoteAPIGroupOverview(results);
+        }
     }
 
     private handleError(response: any) {
@@ -497,45 +523,20 @@ export class ApiListComponent implements OnInit {
         }
     }
 
-    /**
-     * Private Function - load the API group overview text for the default product in the config.js.
-     */
-    private loadAPIGroupOverview(localOverviewPath: string) : void {
-        var useLocal = false;
-
-        if (localOverviewPath && typeof localOverviewPath !== 'undefined') {
-            useLocal = true;
-            console.log("load API group overview from local, " + localOverviewPath);
-            this.loading++;
-            this.apixApiService.getLocalHTMLResponse(localOverviewPath).then(result => {
-                this.loading--;
-                this.overviewHtml = result._body;
-            }).catch(response => {
-                this.loading--;
-                if (response instanceof Response)
-                    this.errorMessage = response.text() ? response.text() : response.statusText;
-                else
-                    this.errorMessage = response;
-            });
+    private loadRemoteAPIGroupOverview(formattedApis: any[]) {
+        // copy apis
+        let apis: any[] = [];
+        for (let api of formattedApis) {
+            apis.push(api);
         }
-
-        if( !useLocal) {
-            console.log("load API group overview from remote");
-            this.loadRemoteAPIGroupOverview();
-        }
-
-    }
-
-    private loadRemoteAPIGroupOverview() {
         if (this.filters.products && this.filters.products.length > 0) {
             var apiGroup = this.filters.products[0];
             //console.log(apiGroup);
             var overviewApiId = null;
             if (apiGroup) {
-                var result: any[] = this.apis.filter(api => api.type == 'internal' && api.apiGroup == apiGroup.replace(" ", "-").toLowerCase());
+                var result: any[] = apis.filter(api => api.type == 'internal' && api.apiGroup == apiGroup.replace(" ", "-").toLowerCase());
                 if (result && result.length > 0) {
                     overviewApiId = parseInt(result[0].id, 10);
-                    console.log("id=" + overviewApiId);
                 }
 
                 if (overviewApiId) {
@@ -559,6 +560,8 @@ export class ApiListComponent implements OnInit {
                             this.apixApiService.getRemoteHTMLResponse(overviewResource.downloadUrl).then(result => {
                                 this.loading--;
                                 this.overviewHtml = result._body;
+                                this.setApis(formattedApis);
+                                this.setFilteredApis();
                             }).catch(response => {
                                 this.loading--;
                                 if (response instanceof Response)
@@ -566,6 +569,9 @@ export class ApiListComponent implements OnInit {
                                 else
                                     this.errorMessage = response;
                             });
+                        } else {
+                            this.setApis(formattedApis);
+                            this.setFilteredApis();
                         }
                     }).catch(response => {
                         this.loading--;
@@ -574,8 +580,17 @@ export class ApiListComponent implements OnInit {
                         else
                             this.errorMessage = response;
                     });
+                } else {
+                    this.setApis(formattedApis);
+                    this.setFilteredApis();
                 }
+            } else {
+                this.setApis(formattedApis);
+                this.setFilteredApis();
             }
+        } else {
+            this.setApis(formattedApis);
+            this.setFilteredApis();
         }
     }
 

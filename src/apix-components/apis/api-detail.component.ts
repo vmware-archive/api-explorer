@@ -34,6 +34,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     swaggerPreferences: ApiPreferences;
     showPreferences: boolean = false;
     hidePreferenceSection: boolean = config.hidePreference;
+    hideApiInfo: boolean = config.hideApiInfo;
     showDetail = false;
     tab: number = 1;
 
@@ -71,6 +72,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             this.path = this.configService.getConfigValue("path");
             this.useHash = this.configService.getConfigValue("useHash");
             this.hidePreferenceSection = this.configService.getConfigValue("hidePreference");
+            this.hideApiInfo = this.configService.getConfigValue("hideApiInfo");
             this.getApi(this.id);
         } else {
             let readySubscription = this.configService.ready.subscribe((ready: string) => {
@@ -122,6 +124,8 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             this.remoteSampleExchangeUrl = value.remoteSampleExchangeUrl;
         if (value.hidePreference)
             this.hidePreferenceSection = value.hidePreference;
+        if (value.hideApiInfo)
+            this.hideApiInfo = value.hideApiInfo;
     }
 
     private getApi(apiId: number) {
@@ -215,8 +219,16 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                     this.loadLocalResources();
                 }
             }
+            // If the "hidePreference" is set to true in the apix-config.json, hide the swagger preference section
             if (!this.hidePreferenceSection) {
                 this.setSwaggerPreferences();
+            }
+
+            // If the "host" and "basePath" are set to true in the local.json, use them in the swagger-ui try out
+            if (this.api.host && this.api.basePath) {
+                this.swaggerPreferences = new ApiPreferences();
+                this.swaggerPreferences.host = this.api.host;
+                this.swaggerPreferences.basePath = this.api.basePath;
             }
         }
     }

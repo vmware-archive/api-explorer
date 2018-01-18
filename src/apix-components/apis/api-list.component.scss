@@ -12,6 +12,10 @@
 }
 
 /* apis */
+.apis .title {
+    margin-left:20px;
+    margin-bottom:20px;
+}
 
 .filters ul li label,
 .filters ul li input {
@@ -170,4 +174,9 @@ i {
 
 .card-block .method_info .description {
 	float: right;
+}
+
+.card-block {
+    border-bottom: 0px !important;
+    margin: 10px;
 }

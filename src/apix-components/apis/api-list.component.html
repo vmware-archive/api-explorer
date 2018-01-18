@@ -4,7 +4,8 @@
   ~ The full license information can be found in LICENSE in the root directory of this project.
   -->
 
-<div class="apis">
+<div class="apis" *ngIf="apis && apis.length && apis.length > 0">
+  <h1 class="title">{{title}}</h1>
   <div class="col-md-12">
     <div class="filters-trigger" *ngIf="!hideFilters && hideLeftNav" (click)="toggleFilterDisplay()">
         <i class="right"></i>
@@ -19,7 +20,7 @@
 
         <clr-tab *ngIf="apis" >
             <button clrTabLink>APIs</button>
-            <clr-tab-content *clrIfActive="isActiveTab(2)" >
+            <clr-tab-content  *clrIfActive="isActiveTab(2)">
             <div class="row">
                 <div class="filters col-md-2" *ngIf="!hideFilters && !hideLeftNav" >
                     <div class="card">
@@ -74,7 +75,7 @@
                             </div>
                         </div>
                         <div class="card-block">
-                            <ul class="list-group">
+                            <ul class="list-unstyled">
                                 <li class="api list-group-item"  *ngFor="let api of filteredApis | orderBy: ['-productDisplayString', 'name']">
                                     <!--<api-details [apiId]="api.id" (hrefClick)="apiHrefClick($event)"></api-details>-->
                                     <div class="row">

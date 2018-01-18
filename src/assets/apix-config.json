@@ -2,8 +2,9 @@
     "useHash": true,
     "base" : "/",
     "path" : "",
+    "title" : "",
     "apiListHeaderText" : "Available APIs",
-    "remoteApiUrl" : "https://vdc-repo.vmware.com/apix",
+    "remoteApiUrl" : "https://vdc-stg-repo-vip.vmware.com:8443/dcr/rest/apix",
     "remoteSampleExchangeUrl" : "https://apigw.vmware.com/sampleExchange/v1",
     "localApiUrl" : "local.json",
     "enableLocal" : true,
@@ -22,6 +23,7 @@
     "hideLanguagesFilter" : false,
     "hideSourcesFilter" : false,
     "hidePreference" : false,
+    "hideApiInfo" : false,
     "sso" : [
     {   "id": "basic",
         "swaggerAuthName": "BasicAuth",
