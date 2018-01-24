@@ -35,6 +35,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     showPreferences: boolean = false;
     hidePreferenceSection: boolean = config.hidePreference;
     hideApiInfo: boolean = config.hideApiInfo;
+    schemes: any[];
     showDetail = false;
     tab: number = 1;
 
@@ -224,11 +225,15 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                 this.setSwaggerPreferences();
             }
 
-            // If the "host" and "basePath" are set to true in the local.json, use them in the swagger-ui try out
+            // If the "host" and "basePath" are set in the local.json, use them in the swagger-ui try out
             if (this.api.host && this.api.basePath) {
                 this.swaggerPreferences = new ApiPreferences();
                 this.swaggerPreferences.host = this.api.host;
                 this.swaggerPreferences.basePath = this.api.basePath;
+            }
+            // If the api has "schemas" set in local.json, use it
+            if (this.api.schemes) {
+                this.schemes = this.api.schemes;
             }
         }
     }

@@ -236,13 +236,19 @@
                 $.getJSON(qs.url, function(json) {
 
                     // Override "host"
-                    if (qs.host) {
+                    if (qs.host && qs.host != "null") {
                         json.host = qs.host;
                     }
 
                     // Override "basePath"
-                    if (qs.basePath) {
+                    if (qs.basePath && qs.basePath != "null") {
                         json.basePath = qs.basePath;
+                    }
+
+                    // Override "schemas"
+                    if (qs.schemes && qs.schemes != 'undefined') {
+                        json.schemes = [];
+                        json.schemes.push(qs.schemes);
                     }
 
                     hljs.configure({

@@ -23,6 +23,7 @@ export class Api {
     resources: any[];
     host: string;
     basePath: string;
+    schemes: any[];
 }
 
 /**

@@ -4,9 +4,10 @@
   ~ The full license information can be found in LICENSE in the root directory of this project.
   -->
 
-<div class="apis" *ngIf="apis && apis.length && apis.length > 0">
-  <h1 class="title">{{title}}</h1>
+<div class="apis row" *ngIf="apis && apis.length && apis.length > 0">
+
   <div class="col-md-12">
+    <h1 class="title">{{title}}</h1>
     <div class="filters-trigger" *ngIf="!hideFilters && hideLeftNav" (click)="toggleFilterDisplay()">
         <i class="right"></i>
     </div>
