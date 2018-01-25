@@ -8,11 +8,14 @@
 
 <div class="api row" *ngIf="api">
     <div class="col-md-12">
-        <h1>
-            {{api?.name}}
-            <a [routerLink]="[backUrl]" (click)="setHomePageTab()" class="back" target="_self" class="back">
-                &lt;&lt; Back
-            </a>
+
+        <h1>{{api?.name}}
+            <div class="back row">
+                <a [routerLink]="[backUrl]" (click)="setHomePageTab()"   target="_self">
+                    <clr-icon shape="caret left" size="24" style="width: 24px; height: 24px;"></clr-icon>
+                </a>
+                <span class="back-text">Back</span>
+            </div>
         </h1>
         <clr-tabs>
             <clr-tab *ngIf="overviewHtml">

@@ -652,7 +652,7 @@ export class ApiListComponent implements OnInit {
      * @param type type of the ref doc, e.g. "swagger", "raml", "iframe"
      * @param _apiRefDocUrl  the URL to the API reference doc, e.g. http://0.0.0.0:9000/local/swagger/someApi.json
      * @param _apiUrl the user visible URL to the API itself including the API id, e.g. http://0.0.0.0:9000/#!/apis/10001
-     * @returns {Array}
+     *
      */
     private createMethodsForProduct(type, _apiRefDocUrl, _apiUrl) : string[] {
         var methods = [];

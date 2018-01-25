@@ -4,7 +4,7 @@
     "path" : "",
     "title" : "",
     "apiListHeaderText" : "Available APIs",
-    "remoteApiUrl" : "https://vdc-repo.vmware.com/apix",
+    "remoteApiUrl" : "https://apigw.vmware.com/v1/m4/api/dcr/rest/apix",
     "remoteSampleExchangeUrl" : "https://apigw.vmware.com/sampleExchange/v1",
     "localApiUrl" : "local.json",
     "enableLocal" : true,

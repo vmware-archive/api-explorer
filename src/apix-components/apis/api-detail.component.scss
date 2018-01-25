@@ -49,8 +49,17 @@
 }
 
 .api .back {
-    float: right;
-    font-size: 0.6em;
+    float:right;
+    text-align: center;
+    vertical-align:middle;
+    //align-items: center;
+    //margin-left:20px;
+}
+
+.api .back-text {
+    font-size: 0.9rem;
+    text-align: center;
+    padding-bottom:10px;
 }
 
 .api .swagger-ui .api-name {
