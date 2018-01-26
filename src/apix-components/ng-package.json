@@ -1,8 +1,8 @@
 {
     "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
-    "dest": "../../dist/apix-component",
+    "dest": "../../dist/apix-components",
     "lib": {
       "entryFile": "./public_api.ts",
-      "flatModuleFile": "apix-component"
+      "flatModuleFile": "apix-components"
     }
   }
