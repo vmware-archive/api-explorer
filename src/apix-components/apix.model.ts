@@ -20,7 +20,7 @@ export class Api {
     type: string;
     url: string;
     apiGroup: string;
-    resources: any[];
+    resources: ApiResources;
     host: string;
     basePath: string;
     schemes: any[];

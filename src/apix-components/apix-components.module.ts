@@ -7,7 +7,7 @@
 import { NgModule, ModuleWithProviders, Injector } from '@angular/core';
 import { CommonModule } from "@angular/common";
 import { FormsModule } from '@angular/forms';
-import { HttpModule, Http, XHRBackend, RequestOptions } from '@angular/http';
+import { HttpModule, Http, XHRBackend, RequestOptions, XSRFStrategy } from '@angular/http';
 import { RouterModule } from "@angular/router";
 import { ClarityModule } from '@clr/angular';
 
@@ -18,6 +18,7 @@ import { ApixApiService } from './apis/apix-api.service';
 import { ApixAuthService } from './login/apix-auth.service';
 import { ApixHttp } from './apix.http';
 import { ApixRoutingModule} from './apix.routing';
+import { ApixCookieXSRFStrategyFactory } from './xsrf-cookie-strategy';
 
 import { ApixComponentsConfig } from "./config/config.component";
 import { ApixConfigService } from './config/config.service';
@@ -45,6 +46,7 @@ export function getApixHttp(xhrBackend: XHRBackend, requestOptions: RequestOptio
         PIPES_DIRECTIVES
     ],
     providers: [
+        { provide: XSRFStrategy, useFactory: ApixCookieXSRFStrategyFactory },
         {
             provide: Http,
             useFactory: getApixHttp,
