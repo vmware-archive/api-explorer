@@ -18,9 +18,9 @@
         "@angular/platform-browser-dynamic": "^5.0.0",
         "@angular/router": "^5.0.0",
         "@webcomponents/custom-elements": "1.0.0",
-        "@clr/angular": "0.11.1",
-        "@clr/icons": "0.11.1",
-        "@clr/ui": "0.11.1",
+        "@clr/angular": "~0.11.1",
+        "@clr/icons": "~0.11.1",
+        "@clr/ui": "~0.11.1",
         "swagger-ui": "2.x"
     },
     "author": "vmwarecode",
