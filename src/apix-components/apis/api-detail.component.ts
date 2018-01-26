@@ -281,7 +281,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             console.log("fetching resources for api id=" + apiId );
 
             this.loading++;
-            this.apixApiService.getRemoteApiResources(apiId).then(res => {
+            this.apixApiService.getRemoteApiResources(apiId).then((res: ApiResources) => {
                 this.loading--;
                 this.prepareApiResources(res);
             }).catch(response => {
@@ -317,7 +317,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         }
     }
 
-    private prepareApiResources (resources) {
+    private prepareApiResources (resources: ApiResources) {
         var emptyResult = {
             resources : {
             	sdks : [],
@@ -338,9 +338,9 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             var sdks = [];
             var docs = [];
 
-            for (let resource of resources) {
-                this.setArray("SDK", sdks, resource);
-                this.setArray("DOC", docs, resource);
+            for (let key of Object.keys(resources)) {
+                this.setArray("SDK", sdks, resources[key]);
+                this.setArray("DOC", docs, resources[key]);
             }
 
             if (sdks.length || docs.length) {
