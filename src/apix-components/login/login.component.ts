@@ -8,6 +8,7 @@ import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
 import { ApixAuthService } from './apix-auth.service';
+import { ApixConfigService } from '../config/config.service';
 import { Auth } from '../apix.model';
 import { config } from '../config/config';
 
@@ -20,7 +21,7 @@ import { config } from '../config/config';
 export class LoginComponent implements OnInit{
     user = {username: '', password: '', tenant: ''};
 
-    @Input() authSchemas: any[] = config.sso;
+    @Input() authSchemas: any[] = null;
 
     selectedAuthId : string = 'basic';
     selectedAuth : Auth;
@@ -33,11 +34,12 @@ export class LoginComponent implements OnInit{
 
     constructor(private route: ActivatedRoute,
         private router: Router,
-        private apixAuthService: ApixAuthService)
+        private apixAuthService: ApixAuthService,
+        private configService: ApixConfigService)
     {}
 
     ngOnInit() {
-        if (this.authSchemas.length == 1) {
+        if (this.authSchemas && this.authSchemas.length == 1) {
             //console.log(this.authSchemas);
             this.selectedAuthId = this.authSchemas[0].id;
             this.selectedAuthChanged();

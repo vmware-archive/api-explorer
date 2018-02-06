@@ -2,8 +2,8 @@
     "useHash": true,
     "base" : "/",
     "path" : "",
-    "title" : "",
-    "apiListHeaderText" : "Available APIs",
+    "title" : "VMware API Explorer",
+    "apiListHeaderText" : "VMware Cloud on AWS APIs",
     "remoteApiUrl" : "https://apigw.vmware.com/v1/m4/api/dcr/rest/apix",
     "remoteSampleExchangeUrl" : "https://apigw.vmware.com/sampleExchange/v1",
     "localApiUrl" : "local.json",
@@ -13,32 +13,16 @@
     "vmwareCodeClientUUID" : null,
     "defaultFilters" : {
         "keywords" : "",
-        "products" : [],
+        "products" : ["VMware Cloud on AWS"],
         "languages": [],
         "types" : [],
-        "sources" : []
+        "sources" : ["local"]
     },
-    "hideFilters" : false,
+    "hideFilters" : true,
     "hideProductsFilter" : false,
     "hideLanguagesFilter" : false,
     "hideSourcesFilter" : false,
     "hidePreference" : false,
-    "hideApiInfo" : false,
-    "sso" : [
-    {   "id": "basic",
-        "swaggerAuthName": "BasicAuth",
-        "displayName": "BasicAuth",
-        "authUrl": "/api/v1"
-    },
-    {   "id": "vcenter_sso",
-        "swaggerAuthName": "ApiKeyAuth",
-        "displayName": "vCenter SSO",
-        "authUrl": "/rest/com/vmware/cis/session"
-    },
-    {   "id": "vra_sso",
-        "swaggerAuthName": "ApiKeyAuth",
-        "displayName": "vRealize Automation SSO",
-        "authUrl": "/api/v1"
-    }
-    ]
+    "hideApiInfo" : false
+
 }

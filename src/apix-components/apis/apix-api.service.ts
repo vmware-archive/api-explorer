@@ -88,21 +88,21 @@ export class ApixApiService {
             .catch(this.handleError);
     }
 
-    getRemoteHTMLResponse (url: string) {
-        let headers = new Headers();
-        this.addClientHeaders(headers);
+    getHTMLResponse (url: string, source: string) {
+        if (source == 'local') {
+            return this.http.get(`${url}`)
+                .toPromise()
+                .then(response => response)
+                .catch(this.handleError);
+        } else {
+            let headers = new Headers();
+            this.addClientHeaders(headers);
 
-        return this.http.get(`${url}`, new RequestOptions({headers: headers}))
-            .toPromise()
-            .then(response => response)
-            .catch(this.handleError);
-    }
-
-    getLocalHTMLResponse (url: string) {
-        return this.http.get(`${url}`)
-            .toPromise()
-            .then(response => response)
-            .catch(this.handleError);
+            return this.http.get(`${url}`, new RequestOptions({headers: headers}))
+                .toPromise()
+                .then(response => response)
+                .catch(this.handleError);
+        }
     }
 
     getJSONResponse (url: string, source: string) {

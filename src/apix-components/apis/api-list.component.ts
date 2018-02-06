@@ -256,7 +256,7 @@ export class ApiListComponent implements OnInit {
             useLocal = true;
             console.log("load API group overview from local, " + overviewPath);
             this.loading++;
-            this.apixApiService.getLocalHTMLResponse(overviewPath).then(result => {
+            this.apixApiService.getHTMLResponse(overviewPath, 'local').then(result => {
                 this.loading--;
                 this.overviewHtml = result._body;
                 this.setApis(results);
@@ -557,7 +557,7 @@ export class ApiListComponent implements OnInit {
                         }
                         if (overviewResource) {
                             this.loading++;
-                            this.apixApiService.getRemoteHTMLResponse(overviewResource.downloadUrl).then(result => {
+                            this.apixApiService.getHTMLResponse(overviewResource.downloadUrl, 'remote').then(result => {
                                 this.loading--;
                                 this.overviewHtml = result._body;
                                 this.setApis(formattedApis);

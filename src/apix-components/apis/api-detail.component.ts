@@ -69,7 +69,6 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         });
 
         if (this.configService.isReady) {
-            //console.log('config is ready');
             this.path = this.configService.getConfigValue("path");
             this.useHash = this.configService.getConfigValue("useHash");
             this.hidePreferenceSection = this.configService.getConfigValue("hidePreference");
@@ -147,6 +146,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     }
 
     private getLocalApi(apiId: number) : any {
+        //console.log('get local api');
         this.loading++;
         this.apixApiService.getLocalApis().then(res => {
             this.loading--;
@@ -204,8 +204,10 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                     this.loading++;
                     this.apixApiService.getLatestRemoteApiIdForApiUid(this.api.api_uid).then(result => {
                         this.loading--;
-                        remoteId = +result[0].id;
-                        this.loadResourcesForRemoteApi(remoteId);
+                        if (result && result.length > 0) {
+                            remoteId = +result[0].id;
+                            this.loadResourcesForRemoteApi(remoteId);
+                        }
                     }).catch(response => {
                         this.loading--;
                         if (response instanceof Response)
@@ -244,7 +246,6 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             var value = localStorage.getItem(ApixUtils.SWAGGER_PREFERENCES_KEY + this.api.id);
 
             if (value) {
-                //console.log('found preferences in cache');
                 var preferences = JSON.parse(value);
                 this.preferences = new ApiPreferences();
                 this.preferences.host = preferences.host;
@@ -273,7 +274,8 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
     }
 
     private loadLocalResources() {
-        this.prepareApiResources(this.api.resources);
+        //console.log("fetching loacl resources");
+        this.prepareApiResources(this.api.resources, 'local');
     }
 
     private loadResourcesForRemoteApi(apiId: number) {
@@ -283,7 +285,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
             this.loading++;
             this.apixApiService.getRemoteApiResources(apiId).then((res: ApiResources) => {
                 this.loading--;
-                this.prepareApiResources(res);
+                this.prepareApiResources(res, 'remote');
             }).catch(response => {
                 this.loading--;
                 if (response instanceof Response)
@@ -317,7 +319,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         }
     }
 
-    private prepareApiResources (resources: ApiResources) {
+    private prepareApiResources (resources: ApiResources, source: string) {
         var emptyResult = {
             resources : {
             	sdks : [],
@@ -380,7 +382,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                 }
             }
 
-            this.loadOverviewHtml(overviewResource);
+            this.loadOverviewHtml(overviewResource, source);
 
             // categories are the values that we are going to pass to the sample search service
             // to search for matching samples.
@@ -418,6 +420,7 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
                 this.apixApiService.getSamples(categories).then(result => {
                     this.loading--;
                     var samples = [];
+
                     for (let sample of result) {
                         var tags = [];
                         if (sample.tags) {
@@ -450,19 +453,20 @@ export class ApiDetailComponent implements OnInit, OnDestroy {
         }
     }
 
-    private loadOverviewHtml (overviewResource) {
+    private loadOverviewHtml (overviewResource, source) {
         if (overviewResource) {
             // now we need to fetch the overview from the overviewResource.downloadUrl, merge it with the template
             // and set it as the overview body
             //console.log(overviewResource);
             this.loading++;
-            this.apixApiService.getRemoteHTMLResponse(overviewResource.downloadUrl).then(result => {
+            this.apixApiService.getHTMLResponse(overviewResource.downloadUrl, source).then(result => {
                 this.loading--;
                 this.overviewHtml = result._body;
             }).catch(response => {
                 this.loading--;
                 this.overviewHtml = null;
                 this.tab = 2;
+
                 if (response instanceof Response)
                     this.errorMessage = response.text() ? response.text() : response.statusText;
                 else

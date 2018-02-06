@@ -13,7 +13,7 @@
       </a>
     </div>
 
-    <div class="header-actions header-nav">
+    <div class="header-actions header-nav" *ngIf="apixAuth && apixAuth.length > 0">
         <apix-login [authSchemas]="apixAuth"></apix-login>
     </div>
   </clr-header>
