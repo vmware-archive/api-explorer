@@ -1,50 +1,37 @@
 {
-    "apis": [
-        {
-            "api_uid": "api_cloud_services_platform",
-            "description": "VMware Cloud SaaS Platform public APIs",
-            "name": "Common SaaS Platform APIs",
-            "products": [
-                "VMware Cloud on AWS;1.0"
-            ],
-            "resources": [
+    "overview" : "examples/api-explorer-local-apis-overview.html",
+    "apis": [ {
+        "api_uid": "api_sample_exchange",
+        "description": "REST API to search, download, and manage samples on VMware Sample Exchange.",
+        "name" : "VMware Sample Exchange REST API",
+        "products": [
+            "VMware {code} Sample Exchange;1.0"
+        ],
+        "resources": [
                 {
                     "resource_type":"DOC",
                     "categories": [
                             "API_OVERVIEW"
                         ],
                     "name": "API Overview",
-                    "download_url": "local/swagger/csp.html",
-                    "web_url": "local/swagger/csp.html"
+                    "download_url": "examples/sx-api-overview.html",
+                    "web_url": "examples/sx-api-overview.html"
                 }
-            ],
+        ],
+        "type": "swagger",
+        "version" : "v1",
+        "url" : "https://apigw.vmware.com/sampleExchange/v1/swagger.json",
+        "languages" : ["Java","Python"]
 
-            "type": "swagger",
-            "url": "local/swagger/csp.json",
-            "version": "(VMC 1.0)"
-        },
-        {
-            "api_uid": "api_vmware_cloud_on_aws",
-            "description": "VMware Cloud on AWS is an on-demand service that enables you to run applications across vSphere-based cloud environments with access to a broad range of AWS services.",
-            "name": "VMware Cloud on AWS API",
-            "products": [
-                "VMware Cloud on AWS;1.0"
-            ],
-            "resources": [
-                {
-                    "resource_type":"DOC",
-                    "categories": [
-                            "API_OVERVIEW"
-                        ],
-                    "name": "API Overview",
-                    "download_url": "local/swagger/vmc.html",
-                    "web_url": "local/swagger/vmc.html"
-                }
-            ],
-            "type": "swagger",
-            "url": "local/swagger/vmc.json",
-            "version": "(VMC 1.0)",
-            "schemas": ["https"]
-        }
+    }, {
+        "name" : "Box.com",
+        "description": "Box.com rest API as maintained at https://github.com/box/box-openapi",
+        "version" : "v1",
+        "url" : "https://raw.githubusercontent.com/box/box-openapi/master/v2.0/openapi-v2.json",
+        "products": ["Box.com"],
+        "type": "swagger",
+        "languages" : [".NET"]
+    }
+
     ]
 }
