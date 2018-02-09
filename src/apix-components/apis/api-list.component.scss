@@ -22,42 +22,29 @@
     cursor: pointer;
 }
 
-.overview {
-    //padding: 15px;
+.apis .overview {
     overflow-x:auto;
 }
 
-.overview h2 {
-    color: #565656 !important;
-    font-size: 25px !important;
-    font-weight: 300 !important;
-    margin: 0px;
-}
-
-.overview h3 {
-    color: #565656;
-    font-size: 20px;
-    font-weight: 300;
-    margin: 0 0 10px 0!important;
-    padding: 20px 0!important;
-}
-
 .overview table {
+    border-spacing: 10px !important;
+    margin-top:20px !important;
     position: relative;
     display: block;
     border-collapse: collapse;
     width: 100%;
 }
 
-.overview th {
-    background-color: #4CAF50;
-    color: white;
-    font-size: 18px;
+.overview table th {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    font-size: 18px !important;
 }
-.overview th, td {
-    padding: 10px;
-    text-align: left;
-    min-width: 20%;
+
+.overview table th, td {
+    padding: 10px !important;
+    text-align: left !important;
+    min-width: 20% !important;
 }
 
 .overview tr:hover {

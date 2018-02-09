@@ -151,7 +151,7 @@ export class ApiListComponent implements OnInit {
             }
         }
         // Load cached filters
-        let filtersFromCache = localStorage.getItem("filters");
+        let filtersFromCache = sessionStorage.getItem("filters");
         if (filtersFromCache) {
             this.filters = JSON.parse(filtersFromCache);
             this.setFilteredApis();
@@ -493,7 +493,7 @@ export class ApiListComponent implements OnInit {
         }
 
         // Persist the current filters
-        localStorage.setItem("filters", JSON.stringify(this.filters));
+        sessionStorage.setItem("filters", JSON.stringify(this.filters));
         this.filteredApis = this.filterByKeywords(apis);
     }
 
@@ -531,7 +531,6 @@ export class ApiListComponent implements OnInit {
         }
         if (this.filters.products && this.filters.products.length > 0) {
             var apiGroup = this.filters.products[0];
-            //console.log(apiGroup);
             var overviewApiId = null;
             if (apiGroup) {
                 var result: any[] = apis.filter(api => api.type == 'internal' && api.apiGroup == apiGroup.replace(" ", "-").toLowerCase());
@@ -543,21 +542,17 @@ export class ApiListComponent implements OnInit {
                     this.loading++;
                     this.apixApiService.getRemoteApiResources(overviewApiId).then(result => {
                         this.loading--;
-                        var docList = result.resources.docs;
                         var overviewResource = null;
-                        if (docList) {
-                            for (var i = docList.length - 1; i >= 0; --i) {
-                                var resource = docList[i];
-                                if (resource.categories && (resource.categories.length > 0) && (resource.categories[0] == 'API_OVERVIEW')) {
-                                    overviewResource = resource;
-                                    docList.splice(i, 1);
-                                    break;
-                                }
+                        for (let resource of result) {
+                            if (resource.resource_type && resource.resource_type == 'DOC' && resource.categories && (resource.categories.length > 0) && (resource.categories[0] == 'API_OVERVIEW')) {
+                                overviewResource = resource.download_url;
+                                break;
                             }
                         }
+
                         if (overviewResource) {
                             this.loading++;
-                            this.apixApiService.getHTMLResponse(overviewResource.downloadUrl, 'remote').then(result => {
+                            this.apixApiService.getHTMLResponse(overviewResource, 'remote').then(result => {
                                 this.loading--;
                                 this.overviewHtml = result._body;
                                 this.setApis(formattedApis);
