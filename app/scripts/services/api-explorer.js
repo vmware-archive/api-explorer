@@ -563,13 +563,22 @@
                 * versions from the web service and returns the id of the latest one in the result.data.
                 * @return a promise for an object with data = id of the API
                 */
-                getLatestRemoteApiIdForApiUid : function(api_uid) {
+                getLatestRemoteApiIdForApiUid : function(api_uid, api_version) {
                     var deferred = $q.defer();
                     var result = {data:null};
 
+                    var endpointUrl=null;
+                    if (api_version) {
+                        endpointUrl = $rootScope.settings.remoteApisEndpoint + '/apis/uids/' + api_uid + "/versions/" + api_version
+                    } else {
+                        // legacy no version case
+                        endpointUrl = $rootScope.settings.remoteApisEndpoint + '/apis/uids/' + api_uid
+                    }
+
+                    console.log("getting APIs using " + endpointUrl)
                     $http({
                         method : 'GET',
-                        url : $rootScope.settings.remoteApisEndpoint + '/apis/uids/' + api_uid
+                        url : endpointUrl
                     }).then(function(response) {
 
                         //console.log("got response " + response)
@@ -581,7 +590,7 @@
                             angular.forEach(response.data, function(value, index) {
                                 console.log("api_uid=" + api_uid + " id=" + value.id + " version=" + value.version);
                             });
-                            // get the last one
+                            // get the first one
                             result.data = response.data[response.data.length-1].id;
 
                         } else {
