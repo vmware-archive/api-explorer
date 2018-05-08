@@ -24,7 +24,6 @@
             "styles": [
                 "../node_modules/@clr/icons/clr-icons.min.css",
                 "../node_modules/@clr/ui/clr-ui.min.css",
-                "../node_modules/swagger-ui/dist/css/screen.css",
 				"styles.css"
 
             ],
