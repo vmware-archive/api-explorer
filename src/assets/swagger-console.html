@@ -129,36 +129,7 @@
                     if (sso)
                         sso = JSON.parse(sso);
 
-                      if (user && sso) {
-                        //basic authentication
-                        if (sso.id == 'basic') {
-                          var username = user.username;
-                          var password = user.password;
-                          if (username && password) {
-                            var swaggerAuthName = sso.swaggerAuthName;
-                            if (!swaggerAuthName) {
-                              swaggerAuthName = "BasicAuth";
-                            }
-                          } else {
-                            console.log("No basic auth credentials for swagger.");
-                          }
-                        } else {
-                          //vRA and vCenter
-                          var sessionId = sessionStorage.getItem('apix-session-id');
-                            console.log("session id " + sessionId);
-                            if (sessionId && sessionId.trim() != "") {
-                                if (sso && sso.id == 'vra_sso') {
-                                    ui.preauthorizeApiKey("apiKey", "acbde12345"); 
-                                    var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("Authorization", "Bearer " + sessionId, "header");
-                                    ui.api.clientAuthorizations.add("Authorization", apiKeyAuth);
-                                } else if (sso && sso.id == 'vcenter_sso') {
-                                    var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", sessionId, "header");
-                                    ui.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
-                                    ui.preauthorizeApiKey("apiKey", "acbde12345"); 
-                                }
-                            }
-                        }
-                      }    
+ 
                       // Build a system
                       const ui = SwaggerUIBundle({
                             spec: json,
@@ -175,7 +146,7 @@
                             ],
                             docExpansion: "none",
                             layout: "StandaloneLayout",
-                            //TODO: Authorization
+                            //older than Swagger 3.13
                             /*requestInterceptor:
                               function (request) {
                                   console.log('[Swagger] intercept try-it-out request');            
@@ -183,7 +154,32 @@
                                   return request;
                               },*/
                             onComplete: function () {
-                                //ui.preauthorizeBasic ("basicAuth", username, password);
+                                if (user && sso) {
+                                    //basic authentication
+                                    if (sso.id == 'basic') {
+                                        var username = user.username;
+                                        var password = user.password;
+                                        if (username && password) {
+                                            /*var swaggerAuthName = sso.swaggerAuthName;
+                                            if (!swaggerAuthName) {
+                                                swaggerAuthName = "BasicAuth";
+                                            }*/
+                                            ui.preauthorizeBasic ("basicAuth", username, password);
+                                        } else {
+                                            console.log("No basic auth credentials for swagger.");
+                                        }
+                                } else {
+                                    var sessionId = sessionStorage.getItem('apix-session-id');
+                                    console.log("session id " + sessionId);
+                                    if (sessionId && sessionId.trim() != "") {
+                                        if (sso && sso.id == 'vra_sso') {
+                                            ui.preauthorizeApiKey("Authorization", "Bearer "+ sessionId); 
+                                        } else if (sso && sso.id == 'vcenter_sso') {
+                                            ui.preauthorizeApiKey("vmware-api-session-id", sessionId); 
+                                        }
+                                    }
+                                }
+                            }   
 
                                 //remove the models section
                                 $('.models').remove();
@@ -203,12 +199,10 @@
                                 var toggleOperations = function () {
                                   var value = $input.val();
                                   if (value) {
-                                    $(".swagger-ui .wrapper .opblock-tag-section a").click();
-                                    //$(".opblock-tag-section").not(".is-open").click();
-                                    //$(".swagger-ui").find(".wrapper .opblock-tag-section:not(.is-open)").click();
+                                    $(".swagger-ui").find(".wrapper .opblock-tag-section:not(.is-open)").click();
                                     //$('.expand-operation').click();
                                   } else {
-                                    //$(".swagger-ui .opblock-tag-section .is-open").click();
+                                    $(".swagger-ui .opblock-tag-section .is-open").click();
                                   }
                             };
 
