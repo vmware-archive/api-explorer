@@ -233,6 +233,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
             if (!$scope.api || ($scope.api && $scope.api.id !== selectedApi.id)) {
                 // because we mutate the api with removing resources and merging remote resources into it possibly,
                 // we make a copy here.
+		console.log(selectedApi) //FIXME
                 $scope.api = angular.copy(selectedApi);
 
                 if ( true ) { //! $scope.api.isLoaded
@@ -246,8 +247,11 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                         loadResourcesForRemoteApi($scope.api.id);
                     } else if ($scope.api.url && $scope.api.source == 'local') {
                         if ($scope.api.api_uid) {
-                            console.log("fetching remote resources for local api_uid=" + $scope.api.api_uid);
-                            apis.getLatestRemoteApiIdForApiUid($scope.api.api_uid).then(function (response) {
+                            console.log("fetching remote resources for local api_uid=" + $scope.api.api_uid + " version=" + $scope.api.version);
+
+                            console.log( $scope.api )
+
+                            apis.getLatestRemoteApiIdForApiUid($scope.api.api_uid, $scope.api.version).then(function (response) {
                                 // response.data should have the id.  Might be null
                                 loadResourcesForRemoteApi(response.data);
                             }).finally(function () {
@@ -257,7 +261,6 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                             console.log("No api_uid. synchronizing local resources.");
                             loadResourcesForRemoteApi(null);
                         }
-
                     }
 
                     if ($scope.api.type === "swagger") {
