@@ -1,183 +1,54 @@
-<!doctype html>
-<!--
-  ~ Copyright (c) 2016-2017 VMware, Inc. All Rights Reserved.
-  ~ This software is released under MIT license.
-  ~ The full license information can be found in LICENSE in the root directory of this project.
-  -->
-<html>
-<head>
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="@@folder@@assets/swagger-ui/swagger-ui.css" >
+    <link rel="stylesheet" type="text/css" href="@@folder@@assets/swagger-ui/style.css">
+    <link rel="stylesheet"  href="@@folder@@assets/css/clr-ui.min.css">
+    <link rel="stylesheet"  href="@@folder@@assets/css/clr-icons.min.css">
+    <link rel="icon" type="image/png" href="../swagger-ui/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="../swagger-ui/favicon-16x16.png" sizes="16x16" />
+    <style>
+      html
+      {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
 
-<meta charset="UTF-8">
-    <title>Swagger Console</title>
+      *,
+      *:before,
+      *:after
+      {
+        box-sizing: inherit;
+      }
 
-    <base href='@@base@@'/>
-    <!-- build:css({.tmp,app,.}) styles/swagger-console.css -->
+      body
+      {
+        margin:0 !important;
+        background: #fafafa;
+      }
 
-    <!-- build:css({.tmp,app,.}) styles/swagger-console.css -->
 
-    <link media='screen' href='@@folder@@assets/swagger-ui/css/screen.css' rel='stylesheet'/>
-    <link rel="stylesheet" href="@@folder@@assets/css/clr-ui.min.css">
-    <link rel="stylesheet" href="@@folder@@assets/css/clr-icons.min.css">
+</style>
 
-    <!-- endbuild -->
+  </head>
 
-    <style type="text/css">
-    body p {
-        margin-top: 0px;
-    }
+  <body>
+    <div id="swagger-ui"></div>
 
-    button, [type="button"], [type="reset"], [type="submit"] {
-        background-color: #007cbb;
-        border-color: #007cbb;
-        border-style: solid;
-        color: #fff;
-    }
+    <!--<script src="../assets/swagger-ui/swagger-ui-bundle.js"> </script>
+    <script src="../assets/swagger-ui/swagger-ui-standalone-preset.js"> </script>-->
 
-    div.loading {
-        bottom: 0;
-        cursor: wait;
-        left: 0;
-        opacity: 0.5;
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: 9999;
-        text-align: center;
-    }
+    <script src="@@folder@@assets/swagger-ui/swagger-ui-bundle.js"> </script>
+    <script src="@@folder@@assets/swagger-ui/swagger-ui-standalone-preset.js"> </script>
+    <script src="@@folder@@assets/swagger-ui/jquery-1.8.0.min.js"> </script>
+    <script src="@@folder@@assets/swagger-ui/jquery.sieve.min.js"></script>
+    <script>
 
-    div.loading .spinner {
-        margin-top: 20%;
-    }
-
-    .form-control {
-        width: 100%;
-    }
-
-    .swagger-section {
-        margin: 20px 20px;
-        padding-top:15px;
-    }
-
-    .swagger-section .swagger-ui-wrap {
-        max-width: 100%;
-    }
-
-    .swagger-section .info_title {
-        display: none;
-    }
-
-    .swagger-section #auth_container {
-        float: right;
-        width: 100px;
-        text-align: center;
-    }
-
-    .swagger-section #auth_container a {
-        background-color: #007cbb !important;
-        border-radius: 0 !important;
-        text-transform: uppercase;
-    }
-
-    .swagger-section .api-popup-actions {
-        text-align: right;
-    }
-
-    .swagger-section .swagger-ui-wrap ul#resources li.resource div.heading h2 {
-        font-weight: normal;
-        margin: 0px;
-        padding: 0px;
-    }
-
-    .swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li {
-        font-size: 12px;
-        font-weight: 100;
-    }
-
-    .swagger-section div.heading h3 span.http_method a {
-        border-radius: 0px !important;
-    }
-
-    .swagger-section .endpoints, .swagger-section .operations {
-        margin-left: 0;
-    }
-
-    .swagger-section .operation.get .http_method a {
-        background-color: #0b88b9 !important;
-    }
-
-    .swagger-section .operation.post .http_method a {
-        background-color: #1ea18d !important;
-    }
-
-    .swagger-section .operation.put .http_method a {
-        background-color: #87538f !important;
-    }
-
-    .swagger-section .operation.delete .http_method a {
-        background-color: #d14956 !important;
-    }
-
-    .swagger-section .operation.patch .http_method a {
-        /* background-color: #02b0e2 !important; */
-
-    }
-
-    .swagger-section .operation.connect .http_method a {
-        background-color: #e48f0a !important;
-    }
-
-    .swagger-section .operation.head .http_method a {
-        background-color: #8a45a2 !important;
-    }
-
-    .swagger-section .operation.options .http_method a {
-        background-color: #1ebd77 !important;
-    }
-
-    .swagger-section .operation.trace .http_method a {
-        background-color: #98b805 !important;
-    }
-
-    .swagger-section #resources_container {
-        margin: 0;
-        max-width: 100%;
-        width: 100%;
-        padding: 0;
-    }
-    </style>
-
-</head>
-
-<body class="swagger-section">
-
-    <div id='auth_container'></div>
-    <div id="swagger-ui-container" class="swagger-ui-wrap">
-        <div class="loading">
-            <div class="spinner"></div>
-        </div>
-    </div>
-
-    <!-- build:js({.tmp,app,.}) scripts/swagger-console.js -->
-
-    <script src='@@folder@@assets/swagger-ui/lib/object-assign-pollyfill.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/jquery-1.8.0.min.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/jquery.slideto.min.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/jquery.wiggle.min.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/jquery.ba-bbq.min.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/handlebars-4.0.5.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/lodash.min.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/backbone-min.js'></script>
-    <script src='@@folder@@assets/swagger-ui/swagger-ui.min.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/highlight.9.1.0.pack.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/highlight.9.1.0.pack_extended.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/jsoneditor.min.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/marked.js'></script>
-    <script src='@@folder@@assets/swagger-ui/lib/swagger-oauth.js'></script>
-    <script src="@@folder@@assets/jquery.sieve.min.js"></script>
-
-    <!-- endbuild -->
-
-    <script type="text/javascript">
         (function($) {
             $.QueryString = (function(a) {
                 if (a == "")
@@ -190,13 +61,12 @@
                     b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
                 }
                 return b;
+                
             })((window.location.hash || window.location.search).substr(1).split('&'))
         })(jQuery);
 
         $(function() {
             var qs = $.QueryString;
-            //console.log(qs);
-
             // Add to the parent's hash, without triggering any "hashchange" event
             if (window.parent && window.parent.history.replaceState) {
                 var hash = window.parent.document.location.hash;
@@ -218,8 +88,8 @@
                         window.location.hash = decodeURIComponent(hash);
                     }
                 }
-
                 var parentUrl = window.parent.document.location.href;
+
                 $(window).on("hashchange", function() {
                     if (!parentUrl.includes(window.location.hash)) {
                         if (qs.useHash && qs.useHash == 'true') {
@@ -250,47 +120,90 @@
                         json.schemes.push(qs.schemes);
                     }
 
-                    hljs.configure({
-                        highlightSizeThreshold : 5000
-                    });
+                    //get username and password
+                    var user = sessionStorage.getItem('apix-user');
+                    if (user)
+                        user = JSON.parse(user);
 
-                    window.swaggerUi = new SwaggerUi({
-                        spec : json,
-                        dom_id : "swagger-ui-container",
-                        supportedSubmitMethods : [ 'get', 'post', 'put', 'delete', 'patch' ],
-                        onComplete : function(swaggerApi, swaggerUi) {
-                            if (typeof initOAuth == "function") {
-                                initOAuth({
-                                    clientId : "your-client-id",
-                                    clientSecret : "your-client-secret-if-required",
-                                    realm : "your-realms",
-                                    appName : "your-app-name",
-                                    scopeSeparator : " ",
-                                    additionalQueryStringParams : {}
-                                });
-                            }
+                    var sso= sessionStorage.getItem('apix-sso');
+                    if (sso)
+                        sso = JSON.parse(sso);
 
-                            // Add the filter input
-                            var template = "<br><div class='filter'><input type='text' class='form-control' placeholder='Filter Methods... '></div><br>";
-                            $("#" + swaggerUi.dom_id).find("#resources").sieve({
-                                itemSelector: "li",
-                                searchTemplate: template
-                            });
-
-                            // Reference to the created input field
-                            var $filter = $(".filter");
-                            var $input = $filter.find("input");
-
-                            // Function that toggles all available operations
-                            var toggleOperations = function(){
-
-                                var value = $input.val();
-                                if (value) {
-                                    $(".resource:not(.active) .options .toggleEndpointList").click();
+ 
+                      // Build a system
+                      const ui = SwaggerUIBundle({
+                            spec: json,
+                            dom_id: '#swagger-ui',
+                            supportedSubmitMethods : [ 'get', 'post', 'put', 'delete', 'patch' ],
+                            deepLinking: true,
+                            presets: [
+                              SwaggerUIBundle.presets.apis,
+                              SwaggerUIStandalonePreset
+                            ],
+                            plugins: [
+                              SwaggerUIBundle.plugins.DownloadUrl,
+                              HideTopbarPlugin
+                            ],
+                            docExpansion: "none",
+                            layout: "StandaloneLayout",
+                            //older than Swagger 3.13
+                            /*requestInterceptor:
+                              function (request) {
+                                  console.log('[Swagger] intercept try-it-out request');            
+                                  request.headers.Authorization = "Basic " + (username + ":" + password);
+                                  return request;
+                              },*/
+                            onComplete: function () {
+                                if (user && sso) {
+                                    //basic authentication
+                                    if (sso.id == 'basic') {
+                                        var username = user.username;
+                                        var password = user.password;
+                                        if (username && password) {
+                                            /*var swaggerAuthName = sso.swaggerAuthName;
+                                            if (!swaggerAuthName) {
+                                                swaggerAuthName = "BasicAuth";
+                                            }*/
+                                            ui.preauthorizeBasic ("basicAuth", username, password);
+                                        } else {
+                                            console.log("No basic auth credentials for swagger.");
+                                        }
                                 } else {
-                                    $(".resource.active .options .toggleEndpointList").click();
+                                    var sessionId = sessionStorage.getItem('apix-session-id');
+                                    console.log("session id " + sessionId);
+                                    if (sessionId && sessionId.trim() != "") {
+                                        if (sso && sso.id == 'vra_sso') {
+                                            ui.preauthorizeApiKey("Authorization", "Bearer "+ sessionId); 
+                                        } else if (sso && sso.id == 'vcenter_sso') {
+                                            ui.preauthorizeApiKey("vmware-api-session-id", sessionId); 
+                                        }
+                                    }
                                 }
+                            }   
 
+                                //remove the models section
+                                $('.models').remove();
+
+                                // Add the filter input
+                                var template = "<br><div class='filter'><input type='text' class='form-control' placeholder='Filter Methods... '></div><br>";
+                                $(".swagger-ui").find(".wrapper:eq(2)").sieve({
+                                  itemSelector: "div",
+                                  searchTemplate: template
+                                });
+
+                                // Reference to the created input field
+                                var $filter = $(".filter");
+                                var $input = $filter.find("input");
+
+                                // Function that toggles all available operations
+                                var toggleOperations = function () {
+                                  var value = $input.val();
+                                  if (value) {
+                                    $(".swagger-ui").find(".wrapper .opblock-tag-section:not(.is-open)").click();
+                                    //$('.expand-operation').click();
+                                  } else {
+                                    $(".swagger-ui .opblock-tag-section .is-open").click();
+                                  }
                             };
 
                             // When filtering, we first need to "expand" all the operations
@@ -301,72 +214,32 @@
                                 $("#auth_container").hide();
                                 $("#api_info").hide();
                             }
-                        },
-                        onFailure : function(data) {
+                              },
+                          onFailure : function(data) {
                             console.log("Unable to load SwaggerUI");
-                        },
-                        docExpansion : "none",
-                        jsonEditor : false,
-                        defaultModelRendering : 'schema',
-                        showRequestHeaders : false,
-                        validatorUrl : null
-                    });
-
-                    window.swaggerUi.load();
-
-
-                    var user = sessionStorage.getItem('apix-user');
-                    if (user)
-                        user = JSON.parse(user);
-
-                    var sso= sessionStorage.getItem('apix-sso');
-                    if (sso)
-                        sso = JSON.parse(sso);
-
-                    if (sso && user) {
-                        if (sso.id == 'basic') {
-                            var username = user.username;
-                            var password = user.password;
-                            if (username && password) {
-                                var swaggerAuthName = sso.swaggerAuthName;
-                                if (!swaggerAuthName) {
-                                    swaggerAuthName = "BasicAuth";
-                                }
-                                var basicAuth = new SwaggerClient.PasswordAuthorization(username, password);
-                                window.swaggerUi.api.clientAuthorizations.add(swaggerAuthName, basicAuth);
-                            } else {
-                                console.log("No basic auth credentials for swagger.");
-                            }
-                        } else {
-                            var sessionId = sessionStorage.getItem('apix-session-id');
-                            if (sessionId && sessionId.trim() != "") {
-                                if (sso && sso.id == 'vra_sso') {
-                                    var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("Authorization", "Bearer " + sessionId, "header");
-                                    window.swaggerUi.api.clientAuthorizations.add("Authorization", apiKeyAuth);
-                                } else if (sso && sso.id == 'vcenter_sso') {
-                                    var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", sessionId, "header");
-                                    window.swaggerUi.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
-                                }
-                            }
                         }
+                      });
+                            window.ui = ui;
 
-                    }
+                    /*hljs.configure({
+                        highlightSizeThreshold : 5000
+                    });*/
 
                 }).fail(function(event, textStatus, error) {
-                    $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " gives error: " + error + "</p>");
+                    $("#swagger-ui").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " gives error: " + error + "</p>");
                 })
             }
         });
 
-        function addApiKeyAuthorization(){
-            var key = sessionStorage.getItem('vmware-api-session-id');
-            if (key && key.trim() != "") {
-                var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("vmware-api-session-id", key, "header");
-                window.swaggerUi.api.clientAuthorizations.add("vmware-api-session-id", apiKeyAuth);
-                log("added key " + key);
-            }
+    function HideTopbarPlugin() {
+     // this plugin overrides the Topbar component to return nothing
+      return {
+        components: {
+           Topbar: function() { return null },
+           Wrapper: function() { return null}
         }
-    </script>
-
-</body>
+      }
+    }
+  </script>
+  </body>
 </html>

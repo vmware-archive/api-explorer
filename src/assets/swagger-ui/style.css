@@ -1,0 +1,231 @@
+body p {
+    margin-top: 0px;
+}
+
+body{
+    margin:0 !important;
+    background: #fafafa;
+}
+
+button, [type="button"], [type="reset"], [type="submit"] {
+    background-color: #007cbb;
+    border-color: #007cbb;
+    border-style: solid;
+    color: #fff;
+}
+
+div.loading {
+    bottom: 0;
+    cursor: wait;
+    left: 0;
+    opacity: 0.5;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 9999;
+    text-align: center;
+}
+
+div.loading .spinner {
+    margin-top: 20%;
+}
+
+.info div:nth-of-type(2){
+    display:none;
+}
+
+/*FIXME : This hides the title but API version also gets hidden */
+.info .title {
+    display: none;
+}
+
+.form-control {
+   width: 100%;
+   max-width: 100% !important;
+}
+
+.swagger-ui .scheme-container {
+    padding-bottom: 30px 0;
+    background: none;
+    margin:0;
+    box-shadow: none;
+}
+
+.swagger-ui .scheme-container .schemes>label{
+    display: none;
+}
+
+.swagger-ui #auth-wrapper {
+    float: right;
+    text-align: center;
+}
+
+.swagger-ui .btn.authorize {
+    display: inline-block;
+    color: #fff !important;
+    border-color: #007cbb;
+    background-color: #007cbb !important;
+    text-transform: uppercase;
+    padding-right: 20px;
+    margin-right: 10px;
+}
+
+.swagger-ui .btn.authorize svg {
+      display: none;
+}    
+
+.swagger-ui .info .base-url{
+   font-family:Droid Sans,sans-serif;
+   color: #999;
+   width: 100%;
+   max-width: 100% !important;
+   border: none;
+}
+
+.swagger-ui input[type=search], .swagger-ui input[type=text]{
+     border-top: none;
+     border-left: none;
+     border-right: none;
+     border-bottom: 1px solid #9a9a9a;
+ }
+
+.swagger-ui .filter input {
+  width: 100%;
+}
+
+.swagger-ui .wrapper{
+    margin:0 !important;
+    max-width: 100% !important;
+}
+
+.swagger-ui .opblock-tag-section{
+    width:100% !important;
+}
+
+
+.swagger-ui .opblock-tag {
+    font-weight: normal;
+    font-size: 16px;
+    font-family:Droid Sans,sans-serif;
+    color: #999;
+}
+
+.swagger-ui .opblock-tag-section.active {
+    font-weight: normal;
+    font-size: 16px;
+    font-family:Droid Sans,sans-serif;
+    color: #000;
+    /*margin: 2px;
+    padding: 2px;*/
+}
+
+div#swagger-ui {
+   margin: 0 !important;
+   max-width: 100%;
+}
+
+.swagger-ui .opblock-summary {
+    text-align: right;
+}
+    
+/* GET method */
+.swagger-ui .opblock.opblock-get .opblock-summary-method{
+    background-color: #0b88b9 !important;
+    font-size: 12px; 
+}
+
+.swagger-ui .opblock.opblock-get .opblock-summary-path a{
+    font-weight: normal;
+    font-size: 14px; 
+    color : #000;
+    text-decoration: none;
+}
+
+.swagger-ui .opblock.opblock-get .opblock-summary-description{
+    color:#0f6ab4;
+}
+
+/*POST method */
+.swagger-ui .opblock.opblock-post .opblock-summary-method {
+    background: #1ea18d !important;
+    font-size: 12px;
+}
+
+.swagger-ui .opblock.opblock-post .opblock-summary-path a{
+    font-weight: normal;
+    font-size: 14px; 
+    color : #000;
+    text-decoration: none;
+}
+
+.swagger-ui .opblock.opblock-post .opblock-summary-description{
+    color:#10a54a;
+}
+
+/*PUT method */
+.swagger-ui .opblock.opblock-put .opblock-summary-method {
+    background-color: #87538f !important;
+    font-size: 12px;
+}
+
+.swagger-ui .opblock.opblock-put .opblock-summary-path a{
+    font-weight: normal;
+    font-size: 14px; 
+    color : #000;
+    text-decoration: none;
+}
+
+.swagger-ui .opblock.opblock-put .opblock-summary-description{
+    color:#c5862b;
+}
+
+/*DELETE method */
+.swagger-ui .opblock.opblock-delete .opblock-summary-method  {
+    background-color: #d14956 !important;
+    font-size: 12px;
+}
+
+.swagger-ui .opblock.opblock-delete .opblock-summary-path a{
+    font-weight: normal;
+    font-size: 14px; 
+    color : #000;
+    text-decoration: none;
+}
+
+.swagger-ui .opblock.opblock-delete .opblock-summary-description{
+    color:#a41e22;
+    
+}
+
+/*.swagger-ui .opblock.opblock-delete{
+   border: 1px solid #e8c6c7;
+}*/
+
+
+/* PATCH method */
+.swagger-ui .opblock.opblock-patch .opblock-summary-method {
+        background-color: #d38042 !important; 
+}
+
+.swagger-ui .opblock.opblock-patch .opblock-summary-path a{
+    font-weight: normal;
+    font-size: 14px; 
+    color : #000;
+    text-decoration: none;
+}
+
+.swagger-ui .opblock.opblock-patch .opblock-summary-description{
+    color:#d38042;
+}
+.swagger-ui .opblock.opblock-patch{
+   background-color:#fce9e3;
+   border: 1px solid #f5d5c3;
+}
+
+
+
+
+
+
+
+
