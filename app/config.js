@@ -43,7 +43,11 @@
 
   // Remote APIs endpoint.
   window.config.remoteSampleExchangeApiEndPoint = "https://apigw.vmware.com/sampleExchange/v1";
-  window.config.remoteApiEndPoint = "https://vdc-repo.vmware.com/apix";
+  window.config.remoteApiEndPoint = "https://apigw.vmware.com/v1/m4/api/dcr/rest/apix";
+
+  window.config.clientID = "apix,base,1.1.1";
+  window.config.clientUUID = null;
+  window.config.clientUserID = null;
 
   // By default SSO is disabled with a value of "none" for the ssoId. To enable it,
   // provide a supported string for the ssoId and a valid SSO endpoint host/path for
