@@ -35,6 +35,19 @@
         // aaron note: I don't know if this is the best way to declare utility code.  perhaps this should be in a
         // separate file and not in this service file?
         var utils = {
+            getCodeClientHttpHeaders : function() {
+                var _headers = {};
+                if ($rootScope.settings.clientID) {
+                    _headers['X-VMware-Code-Client'] = $rootScope.settings.clientID;
+                }
+                if ($rootScope.settings.clientUUID) {
+                    _headers['X-VMware-Code-Client-UUID'] = $rootScope.settings.clientUUID;
+                }
+                if ($rootScope.settings.clientUserID) {
+                    _headers['X-VMware-Code-User'] = $rootScope.settings.clientUserID;
+                }
+                return _headers;
+            },
             createDisplayStringForProducts : function(products) {
                 var productDisplayString = "";
                 // create a display string to be used in the list view
@@ -100,7 +113,7 @@
                     tagOperationId = tagOperationId.replace(SWAGGER_PATH_SLASH_RE, '47');
                 }
 
-		if (!operationId || operationId == "undefined") {
+            if (!operationId || operationId == "undefined") {
                     operationId = utils.swagger_path_to_operationId(methodType, methodPath)
                 } else {
                     operationId = utils.swagger_fix_operationId(operationId);
@@ -112,61 +125,6 @@
                 }
                 url = url + operationId;
                 return url;
-            },
-
-            /**
-             *
-             * @param type type of the ref doc, e.g. "swagger", "raml", "iframe"
-             * @param _apiRefDocUrl  the URL to the API reference doc, e.g. http://0.0.0.0:9000/local/swagger/someApi.json
-             * @param _apiUrl the user visible URL to the API itself including the API id, e.g. http://0.0.0.0:9000/#!/apis/10001
-             * @returns {Array}
-             */
-            createMethodsForProduct : function(type, _apiRefDocUrl, _apiUrl) {
-                var methods = [];
-                // Add methods for Swagger APIs
-                if(type === 'swagger'){
-                    //FIXME use a cache for these files for performance.  there is other code that fetchs the swagger.json as well and we need to do this ONCE.
-                    $.ajax({
-                        url: _apiRefDocUrl,
-                        type: 'GET',
-                        dataType: 'json',
-                         async: false,
-                         success: function(data){
-                             var name = data.info.title;
-                             var version = data.info.version;
-                             $.each(data.paths, function(_k, _v){
-                                 // here _v is the map of http methods, e.g. "get", "post" to swagger objects. and _k is
-                                 // the URL/path
-                                 for(var _httpMethodType in _v){
-
-                                     // there can be multiple tags, which are in theory multiple ways to get at the same
-                                     // method.  just pick the first one to create a URL with.
-                                     var tag = null;
-                                     var tagList = _v[_httpMethodType].tags;
-                                     if (tagList && tagList.length > 0) {
-                                         tag = tagList[0];
-                                     }
-                                     var operationId = _v[_httpMethodType].operationId; // may be null
-
-                                     var methodUrl = utils.createUrlForSwaggerMethod(_apiUrl, _httpMethodType, _k, tag, operationId);
-
-                                     // Add filter columns here in the json object if needed
-                                     methods.push({ "http_method": _httpMethodType,
-                                                    "path": _k,
-                                                    "name": name,
-                                                    "url" : methodUrl,
-                                                    "version": version,
-                                                    "summary": _v[_httpMethodType].summary,
-                                                    "description": _v[_httpMethodType].description,
-                                                    "deprecated": _v[_httpMethodType].deprecated
-                                                   });
-                                     break;
-                                 }
-                             });
-                         }
-                     });
-                 }
-                 return methods;
             }
         };
 
@@ -274,7 +232,6 @@
                     //};
 
                      // https://{{va-fqdn}}/identity/api/tokens/{{token}}
-
                     $http({
                         method : 'DELETE',
                         url : url,
@@ -323,7 +280,8 @@
 
                     $http({
                         method : 'GET',
-                        url : $rootScope.settings.remoteApisEndpoint + '/apis'
+                        url : $rootScope.settings.remoteApisEndpoint + '/apis',
+                        headers: utils.getCodeClientHttpHeaders()
                     }).then(function(response) {
                         angular.forEach(response.data, function(value, index) {
                         	var source = "remote";
@@ -432,9 +390,10 @@
 
                             var apiUrl = "#!/apis/" + value.id;
 
-                            // Add api details to search content
-                            value.methods = utils.createMethodsForProduct(value.type, value.url, apiUrl);
-
+                            // Previously we added API details to search content here.  We are going to defer
+                            // indexing the files here and index them when the files come back via callback.
+                            value.methods = [];
+                            
                             result.apis.push(value);
                         });
 
@@ -452,7 +411,8 @@
 
                     $http({
                         method : 'GET',
-                        url : $rootScope.settings.remoteApisEndpoint + '/apis/' + apiId + '/resources'
+                        url : $rootScope.settings.remoteApisEndpoint + '/apis/' + apiId + '/resources',
+                        headers: utils.getCodeClientHttpHeaders()
                     }).then(function(response) {
 
                     	var sdks = [];
@@ -505,6 +465,7 @@
                     if (!platform) {
                     	return;
                     }
+
                     var url = $rootScope.settings.remoteSampleExchangeApiEndPoint + '/search/samples?';
 
                     // aaron note: it seems that the apigw can only support the syntax of having a single instance of
@@ -515,7 +476,8 @@
 
                     $http({
                         method : 'GET',
-                        url : url
+                        url : url,
+                        headers: utils.getCodeClientHttpHeaders()
                     }).then(function(response) {
                     	var samples = [];
 
@@ -578,7 +540,8 @@
                     console.log("getting APIs using " + endpointUrl)
                     $http({
                         method : 'GET',
-                        url : endpointUrl
+                        url : endpointUrl,
+                        headers: utils.getCodeClientHttpHeaders()
                     }).then(function(response) {
 
                         //console.log("got response " + response)
@@ -658,6 +621,61 @@
                     });
                     return deferred.promise;
                 },
+                /**
+                 *
+                 * @param type type of the ref doc, e.g. "swagger", "raml", "iframe"
+                 * @param _apiRefDocUrl  the URL to the API reference doc, e.g. http://0.0.0.0:9000/local/swagger/someApi.json
+                 * @param _apiUrl the user visible URL to the API itself including the API id, e.g. http://0.0.0.0:9000/#!/apis/10001
+                 * @returns {Array}
+                 */
+                createMethodsForProduct : function(type, _apiRefDocUrl, _apiUrl, callback) {
+                    var methods = [];
+
+                    // Add methods for Swagger APIs
+                    if(type === 'swagger'){
+
+                        $http({
+                            method : 'GET',
+                            url: _apiRefDocUrl
+                        }).then(function(response) {
+                            var data = response.data;
+
+                            var name = data.info.title;
+                            var version = data.info.version;
+                            $.each(data.paths, function(_k, _v){
+                                // here _v is the map of http methods, e.g. "get", "post" to swagger objects. and _k is
+                                // the URL/path
+                                for(var _httpMethodType in _v){
+
+                                    // there can be multiple tags, which are in theory multiple ways to get at the same
+                                    // method.  just pick the first one to create a URL with.
+                                    var tag = null;
+                                    var tagList = _v[_httpMethodType].tags;
+                                    if (tagList && tagList.length > 0) {
+                                        tag = tagList[0];
+                                    }
+                                    var operationId = _v[_httpMethodType].operationId; // may be null
+
+                                    var methodUrl = utils.createUrlForSwaggerMethod(_apiUrl, _httpMethodType, _k, tag, operationId);
+
+                                    // Add filter columns here in the json object if needed
+                                    methods.push({ "http_method": _httpMethodType,
+                                                    "path": _k,
+                                                    "name": name,
+                                                    "url" : methodUrl,
+                                                    "version": version,
+                                                    "summary": _v[_httpMethodType].summary,
+                                                    "description": _v[_httpMethodType].description,
+                                                    "deprecated": _v[_httpMethodType].deprecated
+                                                });
+                                    break;
+                                }
+                            });
+
+                            callback(methods);
+                        });
+                    }
+                }
             };
 
         return definitions;

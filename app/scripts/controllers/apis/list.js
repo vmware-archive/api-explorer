@@ -185,6 +185,12 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             result.filters.sources.pushUnique(value.source);
             result.apis.push(value);
 
+            if (value.source === 'local') {
+                apis.createMethodsForProduct(value.type, value.url, "#!/apis/" + value.id, function(methods){
+                    $scope.apis[index].methods = methods;
+                });
+            }
+
         });
         $scope.products = result.filters.products;
     	$scope.languages = result.filters.languages;
