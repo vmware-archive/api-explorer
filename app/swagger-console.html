@@ -170,6 +170,28 @@
     <!-- endbuild -->
 
     <script type="text/javascript">
+
+        var getSwaggerJson = function(url, callback) {
+            var cachedJson = sessionStorage.getItem(url);
+            if (cachedJson) {
+                console.log("swagger-console Got cached value for '" + url + "'");
+                var jsonObj = JSON.parse(cachedJson);
+                console.log(jsonObj);
+                if (callback) {
+                    callback(jsonObj)
+                }
+                var dfd = jQuery.Deferred();
+                dfd.resolve(jsonObj);
+                return dfd.promise();
+            }
+
+            return $.getJSON(url, function( data, textStatus, jqXHR ) {
+                //console.log("getJSON('" + url + "') RAW RESULT:");
+                //console.log(data);
+                callback(data, textStatus, jqXHR);
+            });
+        };
+
         (function($) {
             $.QueryString = (function(a) {
                 if (a == "")
@@ -204,7 +226,19 @@
             }
 
             if (qs.url) {
-                $.getJSON(qs.url, function(json) {
+                var url = qs.url
+                // if (!url.startsWith('http')) {
+                //     var fullurl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? (":" + window.location.port) : "")
+                //     if (url.startsWith("/")) {
+                //         url = fullurl + url;
+                //     } else {
+                //         url = fullurl + "/" + url;
+                //     }
+                // }
+                // console.log("converted url='" + qs.url + "' to '" + url + "'")
+
+                //$.getJSON(url, function(json) {
+                getSwaggerJson(url, function(json) {
 
                     // Override "host"
                     if (qs.host) {

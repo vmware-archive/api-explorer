@@ -113,7 +113,7 @@
                     tagOperationId = tagOperationId.replace(SWAGGER_PATH_SLASH_RE, '47');
                 }
 
-            if (!operationId || operationId == "undefined") {
+                if (!operationId || operationId == "undefined") {
                     operationId = utils.swagger_path_to_operationId(methodType, methodPath)
                 } else {
                     operationId = utils.swagger_fix_operationId(operationId);
@@ -244,6 +244,51 @@
                         deferred.resolve(result);
                     });
 
+                    return deferred.promise;
+                },
+                /**
+                 *  Assuming that the URL is absolute or relative for swagger json, return a promise for the value
+                 * @param url
+                 */
+                getSwaggerJson : function(url) {
+                   var deferred = $q.defer();
+                   var result = {data:null};
+
+                   // see if we have this json cached already
+                   var cachedJson = sessionStorage.getItem(url);
+                   if (cachedJson) {
+                       console.log("getSwaggerJson('" + url + "') CACHE HIT");
+                       result.data = JSON.parse(cachedJson);
+
+                       //console.log("RAW cached value:");
+                       //console.log(result.data);
+                       deferred.resolve(result);
+                   } else {
+                        console.log("getSwaggerJson('" + url + "') GET");
+                        $http({
+                            method : 'GET',
+                            url : url
+                        }).then(function(response) {
+                            console.log("getSwaggerJson('" + url + "') RESULT");
+                            result.data = response["data"];
+
+                            //console.log("getSwaggerJson RAW result.data:");
+                            //console.log(result.data);
+
+                            // add to the cache if enabled
+                            if ($rootScope.settings.enableSessionStorageCache) {
+                                try {
+                                    sessionStorage.setItem(url, JSON.stringify(result.data));
+                                } catch(e) {
+                                    console.log("Exception in sessionStorage.setItem. Setting enableSessionStorageCache=false");
+                                    $rootScope.settings.enableSessionStorageCache = false;
+                                }
+
+                            }
+                        }).finally(function() {
+                            deferred.resolve(result);
+                        });
+                    }
                     return deferred.promise;
                 },
                 getAllApis : function(){
@@ -634,11 +679,13 @@
                     // Add methods for Swagger APIs
                     if(type === 'swagger'){
 
-                        $http({
-                            method : 'GET',
-                            url: _apiRefDocUrl
-                        }).then(function(response) {
+                        console.log("Starting method load for '" + _apiRefDocUrl + "'");
+
+                        definitions.getSwaggerJson(_apiRefDocUrl).then(function(response) {
                             var data = response.data;
+
+                            //console.log("getSwaggerJson RESPONSE");
+                            //console.log(response);
 
                             var name = data.info.title;
                             var version = data.info.version;

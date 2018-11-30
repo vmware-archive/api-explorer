@@ -116,3 +116,70 @@ a{
   float:left;
   margin: 0 10px 0 0;
 }
+
+/*****************************************************************************************
+The modifications below all come from customizations that the AirWatch team made to APIX.
+These ones are additional properties that were added
+*/
+.http_code {
+    font-weight: bold
+}
+
+.auth_col {
+    width: 10%
+}
+
+.other_col {
+    width: 30%
+}
+
+.Permissions {
+    width: 50%
+}
+
+.Permissions td {
+    text-align: left;
+    padding: 8px;
+}
+
+.PermissionsRole {
+    width: 30%
+}
+
+.Permissions th {
+    text-align: left
+}
+
+.Permissions tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.InitialSetupImg {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border: solid;
+    border-width: 1px;
+    border-color: #bbbbbb;
+    border-radius: 5px;
+}
+
+/****************************************************************************
+These are copy/pasted modifications of base css properties with only the 
+differences
+*/
+h1, h2, h3, h4 {
+    color: #0c8d63 !important;
+    margin: 16px 0 16px;
+    padding-top: 20px !important
+}
+
+// this was actually removed by AirWatch, which I think results in a 0 margin
+body p {
+    margin-top: 0
+}
+
+// margin-top was removed as well, which in theory results in 0 size
+body .p2,body .p3,body p.p2,body p.p3 {
+    margin-top: 0;
+}
+

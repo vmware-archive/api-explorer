@@ -16,13 +16,13 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     $scope.api = null;
     $scope.tab = 1;
     $scope.showPreferences = false;
+    $scope.showSwaggerPreferences = $rootScope.settings.hideSwaggerPreferences ? false : true;
 
     $scope.overviewTemplateHtml = null;
 
     $scope.noOverviewMessage = "<i>No overview is available for this API.</i>";
 
     $scope.ssoId = $rootScope.settings.ssoId;
-
 
     /**
      * Private Variables
@@ -163,12 +163,13 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
 
     var loadOverviewHtml = function(overviewResource) {
         if (overviewResource) {
+            console.log("Starting load of overview HTML");
             // now we need to fetch the overview from the overviewResource.downloadUrl, merge it with the template
             // and set it as the overview body
             $scope.loading += 1;
             apis.getOverviewBody(overviewResource.downloadUrl).then(function (response) {
                 if (response.data) {
-                    console.log("got overview HTML");
+                    //console.log("got overview HTML");
                     //console.log(response);
 
                     $scope.api.overviewHtml = response.data;
@@ -233,7 +234,7 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
             if (!$scope.api || ($scope.api && $scope.api.id !== selectedApi.id)) {
                 // because we mutate the api with removing resources and merging remote resources into it possibly,
                 // we make a copy here.
-		console.log(selectedApi) //FIXME
+		        //console.log(selectedApi)
                 $scope.api = angular.copy(selectedApi);
 
                 if ( true ) { //! $scope.api.isLoaded
@@ -266,19 +267,42 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                     if ($scope.api.type === "swagger") {
                         // Load swagger's JSON definition to read the default "preferences"
                         if ($scope.api.url) {
-                            $scope.loading += 1;
-                            var apiUrl = (ABSOLUTE_URL_RE.test($scope.api.url) ? "" : $rootScope.settings.currentPath) + $scope.api.url;
 
-                            // FIXME this is a redundant fetch of the swagger.json file (redundant with search as well as with
-                            // the swagger html page fetching it as well. Figure out a way to get it once.
-                            $http.get(apiUrl).then(function (response) {
+                            var apiUrl = $scope.api.url;
+                            // if (ABSOLUTE_URL_RE.test($scope.api.url)) {
+                            //     apiUrl = $scope.api.url;
+                            // } else {
+                            //     if ($scope.api.url.startsWith("/")) {
+                            //         if ($rootScope.settings.currentPath.endsWith('/')) {
+                            //             // remove redundant slash
+                            //             apiUrl = $rootScope.settings.currentPath + $scope.api.url.substring(1);
+                            //         } else {
+                            //             apiUrl = $rootScope.settings.currentPath + $scope.api.url;
+                            //         }
+                            //     } else {
+                            //         apiUrl = $rootScope.settings.currentPath + $scope.api.url;
+                            //     }
+                            // }
+
+                            if ($scope.showSwaggerPreferences) {
+                                $scope.loading += 1;
+                                console.log("Starting preference load of '" + apiUrl + "'");
+
+                                apis.getSwaggerJson(apiUrl).then(function (response) {
+                                    $scope.api.preferences = {
+                                        host: response.data.host,
+                                        basePath: response.data.basePath
+                                    }
+                                }).finally(function () {
+                                    $scope.loading -= 1;
+                                });
+
+                            } else {
                                 $scope.api.preferences = {
-                                    host: response.data.host,
-                                    basePath: response.data.basePath
+                                    host: null,
+                                    basePath: null
                                 }
-                            }).finally(function () {
-                                $scope.loading -= 1;
-                            });
+                            }
                         }
                     }
                 } else {
@@ -295,7 +319,6 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
 
         //var search = $routeParams.search;
         //console.log("routeParams.search='" + search + "'");
-        console.log("calling loadApis, tab=" + $scope.tab); //FIXME delete this
 
         $scope.loading += 1;
         console.log("loading APIs in details...");
@@ -316,6 +339,19 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
         }, 500);
     };
 
+    $scope.getSwaggerConsoleUrl = function(currentUrl){
+
+        var url = $rootScope.settings.currentPath + 'swagger-console.html?url=' +$scope.api.url;
+        if ($scope.showSwaggerPreferences && $scope.api.swaggerPreferences) {
+            url = url + '&host=' + $scope.api.swaggerPreferences.host + '&basePath=' + $scope.api.swaggerPreferences.basePath;
+        } else {
+            // we default to whatever is in the swagger spec already
+        }
+        url = url + '&ssoId=' + $scope.ssoId +'&loggedIn=' + $scope.loggedIn;
+        console.log("using URL='" + url + " for swagger console");
+        return $sce.trustAsResourceUrl(url);
+    };
+
     // Toggles the detail view preferences
     $scope.togglePreferences = function(){
         $scope.showPreferences = !$scope.showPreferences;
@@ -327,7 +363,10 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
     };
 
     // Sets the active tab
-    $scope.setActiveTab = function(newTab) {
+    $scope.setActiveTab = function(newTab,e) {
+        if (e) {
+            e.preventDefault();
+        }
         $scope.tab = newTab;
     };
 
