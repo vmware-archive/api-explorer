@@ -75,6 +75,16 @@ app.run(function($rootScope, $window) {
       // Determine if enable remote APIs
       $rootScope.settings.enableRemote = env.enableRemote;
 
+      // check if we have a session storage cache enabled set explicitly and use that value if
+      // so.  default to true if not
+      if (env.hasOwnProperty('enableSwaggerSessionStorageCache')) {
+          $rootScope.settings.enableSwaggerSessionStorageCache = env.enableSwaggerSessionStorageCache;
+      } else {
+          $rootScope.settings.enableSwaggerSessionStorageCache = true;
+      }
+      console.log("enableSwaggerSessionStorageCache=");  //FIXME DON'T COMMIT THIS
+      console.log($rootScope.settings.enableSwaggerSessionStorageCache);
+
       // set any default filter selections
       $rootScope.settings.defaultFilters = env.defaultFilters;
 
@@ -83,6 +93,7 @@ app.run(function($rootScope, $window) {
       $rootScope.settings.hideProductFilter = env.hideProductFilter;
       $rootScope.settings.hideLanguageFilter = env.hideLanguageFilter;
       $rootScope.settings.hideSourcesFilter = env.hideSourcesFilter;
+      $rootScope.settings.hideSwaggerPreferences = env.hideSwaggerPreferences;
 
       // text displayed above the API list
       $rootScope.settings.apiListHeaderText = env.apiListHeaderText;
@@ -91,7 +102,6 @@ app.run(function($rootScope, $window) {
       $rootScope.settings.ssoId = env.ssoId;
       $rootScope.settings.authApiEndPoint = env.authApiEndPoint;
       $rootScope.settings.swaggerAuthName = env.swaggerAuthName;
-
   };
 
   // Initialize global settings

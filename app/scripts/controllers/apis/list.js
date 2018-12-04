@@ -36,6 +36,10 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     $scope.overviewHtml = null;
     $scope.tab = 1;
 
+    var cachedTab = sessionStorage.getItem("activeTab");
+    if (cachedTab) {
+         $scope.tab = parseInt(cachedTab,10);
+    }
 
     /**
      * Private Variables
@@ -387,8 +391,12 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     };
 
     // Sets the active tab
-    $scope.setActiveTab = function(newTab) {
+    $scope.setActiveTab = function(newTab,e) {
+        if (e) {
+            e.preventDefault();
+        }
         $scope.tab = newTab;
+        sessionStorage.setItem("activeTab",$scope.tab.toString());
     };
 
     // Checks if a tab is active

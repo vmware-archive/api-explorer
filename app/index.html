@@ -21,23 +21,6 @@
 <link rel="stylesheet" href="styles/clarity-mod.css">
 <!-- endbuild -->
 
-<script type="text/javascript">
-    (function() {
-        // Load external theme... if applicable
-        var theme = window.location.search.match(/theme=([^&]+)/);
-        if (theme && theme.length > 1) {
-            var link = document.createElement("link");
-            link.href = theme[1];
-            link.type = "text/css";
-            link.rel = "stylesheet";
-            link.media = "screen,print";
-            document.getElementsByTagName("head")[0].appendChild(link);
-        }
-    })();
-
-
-</script>
-
 <!-- build:js({.tmp,app}) scripts/head.js -->
 <script src="scripts/polyfill.js"></script>
 <!-- endbuild -->

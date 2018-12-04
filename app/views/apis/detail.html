@@ -167,21 +167,21 @@ table.prettytable {
     <ul ng-if="api.resources && (api.overviewHtml || api.resources.docs || api.resources.samples || api.resources.sdks)" id="tabs" class="nav" role="tablist">
 
         <li ng-show="api.overviewHtml" role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(1)" role="tab" aria-controls="overview" class="nav-link" ng-class="{active:isTabActive(1)}">Overview</a>
+            <a href="#" ng-click="setActiveTab(1,$event)" role="tab" aria-controls="overview" class="nav-link" ng-class="{active:isTabActive(1)}">Overview</a>
         </li>
 
         <li role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(2)" role="tab" aria-controls="apiReference" class="nav-link" ng-class="{active:isTabActive(2)}">API Reference</a>
+            <a href="#" ng-click="setActiveTab(2,$event)" role="tab" aria-controls="apiReference" class="nav-link" ng-class="{active:isTabActive(2)}">API Reference</a>
         </li>
 
         <li ng-if="api.resources.docs && (api.resources.docs.length > 0)" role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(3)" role="tab" aria-controls="docs" class="nav-link" ng-class="{active:isTabActive(3)}">Documentation</a>
+            <a href="#" ng-click="setActiveTab(3,$event)" role="tab" aria-controls="docs" class="nav-link" ng-class="{active:isTabActive(3)}">Documentation</a>
         </li>
         <li ng-if="api.resources.sdks && (api.resources.sdks.length > 0)" role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(4)" role="tab" aria-controls="sdks" class="nav-link" ng-class="{active:isTabActive(4)}">Related SDKs</a>
+            <a href="#" ng-click="setActiveTab(4,$event)" role="tab" aria-controls="sdks" class="nav-link" ng-class="{active:isTabActive(4)}">Related SDKs</a>
         </li>
         <li ng-if="api.resources.samples" role="presentation" class="nav-item">
-            <a href="javascript:void(0);" ng-click="setActiveTab(5)" role="tab" aria-controls="samples" class="nav-link" ng-class="{active:isTabActive(5)}">Related Code Samples</a>
+            <a href="#" ng-click="setActiveTab(5,$event)" role="tab" aria-controls="samples" class="nav-link" ng-class="{active:isTabActive(5)}">Related Code Samples</a>
         </li>
 
     </ul>
@@ -199,7 +199,7 @@ table.prettytable {
 
             <div ng-switch-when="swagger" ng-if="api.url" class="swagger">
 
-                <div class="card preferences">
+                <div class="card preferences" ng-if="showSwaggerPreferences">
                     <div class="card-block">
                         <div class="card-title hand" ng-click="togglePreferences()">
                             Preferences
@@ -222,7 +222,7 @@ table.prettytable {
                 </div>
 
                 <iframe
-                    local-iframe="{{getTrustedUrl(settings.currentPath + 'swagger-console.html?url=' + api.url + '&host=' + api.swaggerPreferences.host + '&basePath=' + api.swaggerPreferences.basePath + '&ssoId=' + ssoId +'&loggedIn=' + loggedIn)}}">
+                    local-iframe="{{getSwaggerConsoleUrl(settings.currentPath)}}">
                 </iframe>
 
                 <!--
