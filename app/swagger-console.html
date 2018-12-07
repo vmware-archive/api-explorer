@@ -227,17 +227,14 @@
 
             if (qs.url) {
                 var url = qs.url
-                // if (!url.startsWith('http')) {
-                //     var fullurl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? (":" + window.location.port) : "")
-                //     if (url.startsWith("/")) {
-                //         url = fullurl + url;
-                //     } else {
-                //         url = fullurl + "/" + url;
-                //     }
-                // }
-                // console.log("converted url='" + qs.url + "' to '" + url + "'")
 
-                //$.getJSON(url, function(json) {
+                // validate that we were passed a relative URL and exit with an error message if it is not.
+                var ABSOLUTE_URL_RE = new RegExp('^(?:[a-z]+:)?//', 'i');
+                if (ABSOLUTE_URL_RE.test(url)) {
+                    $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " is an absolute URL.  Only relative URLs are supported.</p>");
+                    return;
+                }
+
                 getSwaggerJson(url, function(json) {
 
                     // Override "host"

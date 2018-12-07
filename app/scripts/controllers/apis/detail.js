@@ -269,20 +269,6 @@ angular.module('apiExplorerApp').controller('ApisDetailCtrl', function($rootScop
                         if ($scope.api.url) {
 
                             var apiUrl = $scope.api.url;
-                            // if (ABSOLUTE_URL_RE.test($scope.api.url)) {
-                            //     apiUrl = $scope.api.url;
-                            // } else {
-                            //     if ($scope.api.url.startsWith("/")) {
-                            //         if ($rootScope.settings.currentPath.endsWith('/')) {
-                            //             // remove redundant slash
-                            //             apiUrl = $rootScope.settings.currentPath + $scope.api.url.substring(1);
-                            //         } else {
-                            //             apiUrl = $rootScope.settings.currentPath + $scope.api.url;
-                            //         }
-                            //     } else {
-                            //         apiUrl = $rootScope.settings.currentPath + $scope.api.url;
-                            //     }
-                            // }
 
                             if ($scope.showSwaggerPreferences) {
                                 $scope.loading += 1;
