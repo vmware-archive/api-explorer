@@ -82,8 +82,6 @@ app.run(function($rootScope, $window) {
       } else {
           $rootScope.settings.enableSwaggerSessionStorageCache = true;
       }
-      console.log("enableSwaggerSessionStorageCache=");  //FIXME DON'T COMMIT THIS
-      console.log($rootScope.settings.enableSwaggerSessionStorageCache);
 
       // set any default filter selections
       $rootScope.settings.defaultFilters = env.defaultFilters;
