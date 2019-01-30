@@ -231,7 +231,7 @@
                 // validate that we were passed a relative URL and exit with an error message if it is not.
                 var ABSOLUTE_URL_RE = new RegExp('^(?:[a-z]+:)?//', 'i');
                 if (ABSOLUTE_URL_RE.test(url)) {
-                    $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " is an absolute URL.  Only relative URLs are supported.</p>");
+                    $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  encodeURI(qs.url) + " is an absolute URL.  Only relative URLs are supported.</p>");
                     return;
                 }
 
@@ -342,7 +342,7 @@
                     }
 
                 }).fail(function(event, textStatus, error) {
-                    $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  qs.url + " gives error: " + error + "</p>");
+                    $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  encodeURI(qs.url) + " gives error: " + error + "</p>");
                 })
 
             }
