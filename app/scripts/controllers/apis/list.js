@@ -13,6 +13,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     $scope.loading = 0; // Loading when > 0
     $scope.overviewHtml = "";
     $scope.apis = [];
+	$scope.statusCodeHtml = [];
     $scope.filteredApis = [];
     $scope.products = [];
     $scope.languages = [];
@@ -236,6 +237,37 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             }
         });
     }
+	
+	var loadAPIStatusCode = function() {
+        var useLocal = false;
+
+        // try local first
+        apis.getLocalAPIStatusCodePath().then(function (response) {
+
+            var localStatusCodePath = response.data;
+            if (localStatusCodePath && typeof localStatusCodePath !== 'undefined') {
+                useLocal = true;
+                console.log("load API status code from local");
+                $scope.loading += 1;
+                apis.getOverviewBody(localStatusCodePath).then(function (response) {
+                    if (response.data) {
+                        $scope.statusCodeHtml = response.data;
+                    }
+                }, function (response) {
+                    //error
+                    console.log(response);
+                }).finally(function () {
+                    $scope.loading -= 1;
+                });
+            }
+
+        }).finally(function () {
+            if( !useLocal) {
+                console.log("load API status code from remote");
+                loadRemoteAPIGroupOverview();
+            }
+        });
+    }
 
     var loadRemoteAPIGroupOverview = function() {
         if ($scope.filters.products && $scope.filters.products.length > 0) {
@@ -345,6 +377,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             }).finally(function() {
                 setFilteredApis();
                 loadAPIGroupOverview();
+				loadAPIStatusCode();
                 $scope.loading -= 1;
             });
         } else if (enableLocal == false && enableRemote == true){
@@ -353,6 +386,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             }).finally(function() {
                 setFilteredApis();
                 loadAPIGroupOverview();
+				loadAPIStatusCode();
                 $scope.loading -= 1;
             });
         } else if (enableLocal == true && enableRemote == false){

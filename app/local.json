@@ -32,7 +32,6 @@
         "products": ["Box.com"],
         "type": "swagger",
         "languages" : [".NET"]
-    }
-
-    ]
+    }],
+	"statuscode": "local/swagger/StatusCode.html"
 }
