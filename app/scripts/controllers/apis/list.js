@@ -13,7 +13,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     $scope.loading = 0; // Loading when > 0
     $scope.overviewHtml = "";
     $scope.apis = [];
-    $scope.statusCodeHtml = [];
+    $scope.statusCodeHtml = "";
     $scope.filteredApis = [];
     $scope.products = [];
     $scope.languages = [];
@@ -248,7 +248,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
         apis.getLocalAPIStatusCodePath().then(function (response) {
 
             var localStatusCodePath = response.data;
-            if (localStatusCodePath && typeof localStatusCodePath !== 'undefined') {
+            if (localStatusCodePath) {
                 useLocal = true;
                 console.log("load API status code from local");
                 $scope.loading += 1;
