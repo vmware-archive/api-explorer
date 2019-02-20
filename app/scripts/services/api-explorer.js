@@ -627,7 +627,11 @@
                     return deferred.promise;
                 },
 
-				getLocalAPIStatusCodePath : function(){
+		/**
+                 * Get the local statuscode path
+		 * @returns {String}
+                 */
+		getLocalAPIStatusCodePath : function(){
                     var deferred = $q.defer();
                     var result = {data:null};
                     $http({
