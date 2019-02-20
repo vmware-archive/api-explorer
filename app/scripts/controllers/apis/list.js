@@ -13,7 +13,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
     $scope.loading = 0; // Loading when > 0
     $scope.overviewHtml = "";
     $scope.apis = [];
-	$scope.statusCodeHtml = [];
+    $scope.statusCodeHtml = [];
     $scope.filteredApis = [];
     $scope.products = [];
     $scope.languages = [];
@@ -237,8 +237,11 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             }
         });
     }
-	
-	var loadAPIStatusCode = function() {
+    
+    /**
+     * Private Function - load the API statuscode text for the default product in the config.js.
+     */
+    var loadAPIStatusCode = function() {
         var useLocal = false;
 
         // try local first
@@ -377,7 +380,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             }).finally(function() {
                 setFilteredApis();
                 loadAPIGroupOverview();
-				loadAPIStatusCode();
+		loadAPIStatusCode();
                 $scope.loading -= 1;
             });
         } else if (enableLocal == false && enableRemote == true){
@@ -386,7 +389,7 @@ angular.module('apiExplorerApp').controller('ApisListCtrl', function($rootScope,
             }).finally(function() {
                 setFilteredApis();
                 loadAPIGroupOverview();
-				loadAPIStatusCode();
+		loadAPIStatusCode();
                 $scope.loading -= 1;
             });
         } else if (enableLocal == true && enableRemote == false){
