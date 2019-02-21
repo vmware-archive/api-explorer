@@ -626,6 +626,25 @@
                     });
                     return deferred.promise;
                 },
+
+		/**
+                 * Get the local statuscode path
+		 * @returns {String}
+                 */
+		getLocalAPIStatusCodePath : function(){
+                    var deferred = $q.defer();
+                    var result = {data:null};
+                    $http({
+                        method : 'GET',
+                        url : $rootScope.settings.localApisEndpoint
+                    }).then(function(response) {
+                        result.data = response.data.statuscode;
+                    }).finally(function() {
+                        deferred.resolve(result);
+                    });
+                    return deferred.promise;
+                },
+				
                 /**
                  * Get the local overview-template.html file as a string and return it as a promise.
                  * String will be present in return objects .data member when resolved.
