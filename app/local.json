@@ -32,6 +32,7 @@
         "products": ["Box.com"],
         "type": "swagger",
         "languages" : [".NET"]
-    }],
-	"statuscode": "examples/api-explorer-local-apis-overview.html"
+    }
+
+    ]
 }
