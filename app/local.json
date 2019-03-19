@@ -33,5 +33,5 @@
         "type": "swagger",
         "languages" : [".NET"]
     }],
-	"statuscode": "examples/example-status-codes.html"
+	"statuscode": "examples/api-explorer-local-apis-overview.html"
 }
