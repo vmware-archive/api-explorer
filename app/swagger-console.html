@@ -320,7 +320,6 @@
                                 if (!swaggerAuthName) {
                                     swaggerAuthName = "BasicAuth";
                                 }
-                                console.log("Setting swagger basic username='" + username + "' password='" + password + "'");
                                 var basicAuth = new SwaggerClient.PasswordAuthorization(username, password);
                                 window.swaggerUi.api.clientAuthorizations.add(swaggerAuthName, basicAuth);
                             } else {
