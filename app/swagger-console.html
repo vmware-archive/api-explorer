@@ -229,7 +229,7 @@
                 var url = qs.url
 
                 // validate that we were passed a relative URL and exit with an error message if it is not.
-                var ABSOLUTE_URL_RE = new RegExp('^(?:[a-z]+:)?//', 'i');
+                var ABSOLUTE_URL_RE = new RegExp('^(?:[a-z]+:)?(\\/|\\\\){2}', 'i');
                 if (ABSOLUTE_URL_RE.test(url)) {
                     $("#swagger-ui-container").empty().append("<p>Oops!  Request failed! The API documentation at " +  encodeURI(qs.url) + " is an absolute URL.  Only relative URLs are supported.</p>");
                     return;
